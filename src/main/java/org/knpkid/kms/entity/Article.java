@@ -37,7 +37,7 @@ public class Article {
     private String teaser;
 
     @ManyToOne
-    @JoinColumn(name = "admin_id", referencedColumnName = "id")
+    @JoinColumn(name = "username", referencedColumnName = "username")
     private Admin admin;
 
     @ManyToMany

@@ -82,3 +82,28 @@ ALTER TABLE articles_tags
 DESC tags;
 
 DESC articles_tags;
+
+ALTER TABLE articles
+    DROP CONSTRAINT fk_articles_admin;
+
+DESC articles;
+
+ALTER TABLE articles
+    DROP COLUMN admin_id,
+    ADD COLUMN username VARCHAR(20) NOT NULL;
+
+
+ALTER TABLE admin
+    DROP PRIMARY KEY,
+    DROP COLUMN id,
+    ADD PRIMARY KEY (username);
+
+ALTER TABLE articles
+    ADD CONSTRAINT fk_articles_admin FOREIGN KEY (username) REFERENCES admin (username);
+
+DESC admin;
+
+DESC articles;
+
+ALTER TABLE admin
+    MODIFY COLUMN password VARCHAR(100) NOT NULL;

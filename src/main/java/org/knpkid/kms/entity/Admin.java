@@ -11,9 +11,6 @@ import java.util.List;
 public class Admin {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
-
     private String username;
 
     private String password;
