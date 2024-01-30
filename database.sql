@@ -68,3 +68,17 @@ CREATE TABLE article_images
 ) ENGINE = InnoDB;
 
 DESC article_images;
+
+ALTER TABLE articles_tags
+    DROP CONSTRAINT fk_tags_to_articles_tags;
+
+ALTER TABLE tags
+    MODIFY COLUMN id VARCHAR(50) NOT NULL;
+
+ALTER TABLE articles_tags
+    MODIFY tag_id VARCHAR(50) NOT NULL,
+    ADD CONSTRAINT fk_tags_to_articles_tags FOREIGN KEY (tag_id) REFERENCES tags (id);
+
+DESC tags;
+
+DESC articles_tags;
