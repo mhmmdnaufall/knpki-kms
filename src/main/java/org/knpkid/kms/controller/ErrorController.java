@@ -18,7 +18,7 @@ public class ErrorController {
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<WebResponse<String>> methodArgumentNotValidException(ConstraintViolationException exception) {
+    public ResponseEntity<WebResponse<String>> constraintViolationException(ConstraintViolationException exception) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new WebResponse<>(null, exception.getMessage()));
     }
