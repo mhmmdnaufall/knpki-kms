@@ -3,16 +3,21 @@ package org.knpkid.kms.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import java.time.Duration;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+@AllArgsConstructor
+@NoArgsConstructor
 @Component
 public class JwtTokenUtils {
 
@@ -37,7 +42,7 @@ public class JwtTokenUtils {
 
     private Claims getAllClaimsFromToken(String token) {
         return Jwts.parser()
-                .verifyWith(Keys.hmacShaKeyFor(token.getBytes()))
+                .verifyWith(Keys.hmacShaKeyFor(jwtSecret.getBytes()))
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
@@ -53,8 +58,10 @@ public class JwtTokenUtils {
                 .claims(claims)
                 .subject(subject)
                 .issuedAt(new Date())
-                .expiration(new Date(Duration.ofDays(jwtExpirationDays).toMillis()))
-                .signWith(Keys.hmacShaKeyFor(jwtSecret.getBytes()))
+                .expiration(new Date(
+                        Instant.now().plus(jwtExpirationDays, ChronoUnit.DAYS).toEpochMilli())
+                )
+                .signWith(Keys.hmacShaKeyFor(jwtSecret.getBytes()), Jwts.SIG.HS512)
                 .compact();
     }
 
