@@ -69,6 +69,50 @@ paths:
                 type: string
                 example: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ...
 
+        400:
+          description: Wrong Format
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebResponse"
+              examples:
+                blank username:
+                  description: username blank error
+                  value:
+                    data: null
+                    errors: "username: must not be blank"
+                    paging: null
+                blank password:
+                  description: password blank error
+                  value:
+                    data: null
+                    errors: "password: size must be between 5 and 30, password: must not be blank"
+                    paging: null
+                blank username & password:
+                  description: username & password blank error
+                  value:
+                    data: null
+                    errors: "password: size must be between 5 and 30, password: must not be blank, username: must not be blank"
+                    paging: null
+                username length:
+                  description: username is not compatible with size format
+                  value:
+                    data: null
+                    errors: "username: size must be between 0 and 20"
+                    paging: null
+                password length:
+                  description: password is not compatible with size format
+                  value:
+                    data: null
+                    errors: "password: size must be between 5 and 30"
+                    paging: null
+                username & password length:
+                  description: username and password is not compatible with size format
+                  value:
+                    data: null
+                    errors: "password: size must be between 5 and 30, username: size must be between 0 and 20"
+                    paging: null
+
         401:
           description: Failed authorizing account
           content:
