@@ -7,8 +7,10 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
+import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 class JwtTokenUtilsTest {
 
@@ -44,8 +46,30 @@ class JwtTokenUtilsTest {
 
     @Test
     void validateToken() {
-        final var isTokenTrue = jwtTokenUtils.validateToken(getJwtToken(), getAdmin());
-        assertTrue(isTokenTrue);
+        final var admin = getAdmin();
+        final var jwtToken = getJwtToken();
+
+        // valid
+        var isTokenValid = jwtTokenUtils.validateToken(getJwtToken(), admin);
+        assertTrue(isTokenValid);
+
+        // not valid expired token
+        final var mockJwtTokenUtils = spy(jwtTokenUtils);
+        when(mockJwtTokenUtils.getExpirationDateFromToken(jwtToken))
+                .thenReturn(new Date(System.currentTimeMillis() - 10000000000L));
+        when(mockJwtTokenUtils.getUsernameFromToken(jwtToken)).thenReturn(admin.getUsername());
+
+        isTokenValid = mockJwtTokenUtils.validateToken(jwtToken, admin);
+        assertFalse(isTokenValid);
+
+        // not valid mismatch username
+        admin.setUsername("notadmin");
+        isTokenValid = jwtTokenUtils.validateToken(getJwtToken(), admin);
+        assertFalse(isTokenValid);
+
+        // not valid both expired and not mismatch username
+        isTokenValid = mockJwtTokenUtils.validateToken(getJwtToken(), admin);
+        assertFalse(isTokenValid);
     }
 
     @Test
