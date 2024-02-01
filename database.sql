@@ -107,3 +107,8 @@ DESC articles;
 
 ALTER TABLE admin
     MODIFY COLUMN password VARCHAR(100) NOT NULL;
+
+ALTER TABLE admin
+    MODIFY COLUMN image MEDIUMBLOB;
+
+DESC admin;
