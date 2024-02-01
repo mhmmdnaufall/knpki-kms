@@ -5,7 +5,6 @@ import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -20,6 +19,7 @@ public class Admin implements UserDetails {
 
     private String password;
 
+    @Lob
     private byte[] image;
 
     private String name;
