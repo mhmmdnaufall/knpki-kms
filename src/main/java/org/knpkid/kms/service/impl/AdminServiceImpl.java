@@ -1,6 +1,8 @@
 package org.knpkid.kms.service.impl;
 
 import lombok.AllArgsConstructor;
+import org.knpkid.kms.entity.Admin;
+import org.knpkid.kms.model.AdminResponse;
 import org.knpkid.kms.repository.AdminRepository;
 import org.knpkid.kms.service.AdminService;
 import org.springframework.http.HttpStatus;
@@ -21,4 +23,8 @@ public class AdminServiceImpl implements AdminService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized"));
     }
 
+    @Override
+    public AdminResponse get(Admin admin) {
+        return new AdminResponse(admin.getUsername(), admin.getName(), admin.getImage());
+    }
 }
