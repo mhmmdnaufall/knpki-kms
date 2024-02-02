@@ -6,7 +6,6 @@ import org.knpkid.kms.model.AdminResponse;
 import org.knpkid.kms.model.WebResponse;
 import org.knpkid.kms.service.AdminService;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,8 +19,7 @@ public class AdminController {
             path = "/api/admin/current",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public WebResponse<AdminResponse> get() {
-        final var admin = (Admin) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public WebResponse<AdminResponse> get(Admin admin) {
         final var adminResponse = adminService.get(admin);
         return new WebResponse<>(adminResponse, null);
     }
