@@ -112,3 +112,13 @@ ALTER TABLE admin
     MODIFY COLUMN image MEDIUMBLOB;
 
 DESC admin;
+
+ALTER TABLE articles
+    MODIFY cover_image MEDIUMBLOB;
+
+ALTER TABLE article_images
+    MODIFY image MEDIUMBLOB NOT NULL;
+
+DESC articles;
+
+DESC article_images;
