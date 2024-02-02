@@ -40,4 +40,16 @@ class AdminServiceImplTest {
          assertEquals("Unauthorized", exception.getReason());
          assertEquals(HttpStatus.UNAUTHORIZED, exception.getStatusCode());
     }
+
+    @Test
+    void get() {
+        final var admin = new Admin();
+        admin.setName("Admin Test");
+        admin.setUsername("admin");
+
+        final var adminResponse = adminService.get(admin);
+        assertEquals(admin.getName(), adminResponse.name());
+        assertEquals(admin.getUsername(), adminResponse.username());
+        assertEquals(admin.getImage(), adminResponse.image());
+    }
 }
