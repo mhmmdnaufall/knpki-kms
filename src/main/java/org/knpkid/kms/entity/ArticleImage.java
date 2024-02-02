@@ -12,6 +12,7 @@ public class ArticleImage {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
+    @Lob
     private byte[] image;
 
     @ManyToOne

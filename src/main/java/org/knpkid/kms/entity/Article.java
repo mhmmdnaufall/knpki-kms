@@ -8,6 +8,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Entity
@@ -29,6 +30,7 @@ public class Article {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Lob
     @Column(name = "cover_image")
     private byte[] coverImage;
 
@@ -46,6 +48,9 @@ public class Article {
             joinColumns = @JoinColumn(name = "article_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id")
     )
-    private List<Tag> tags;
+    private Set<Tag> tags;
+
+    @OneToMany(mappedBy = "article")
+    private List<ArticleImage> images;
 
 }
