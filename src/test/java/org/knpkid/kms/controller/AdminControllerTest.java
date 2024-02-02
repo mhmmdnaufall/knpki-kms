@@ -31,8 +31,8 @@ class AdminControllerTest {
                 .thenReturn(new AdminResponse(admin.getUsername(), admin.getName(), admin.getImage()));
 
         final var webResponse = adminController.get(admin);
-        assertEquals(admin.getName(), webResponse.data().name());
-        assertEquals(admin.getUsername(), webResponse.data().username());
-        assertEquals(admin.getImage(), webResponse.data().image());
+        assertEquals(admin.getName(), webResponse.data().getName());
+        assertEquals(admin.getUsername(), webResponse.data().getUsername());
+        assertEquals(admin.getImage(), webResponse.data().getImage());
     }
 }

@@ -1,30 +1,14 @@
 package org.knpkid.kms.model;
 
-import java.util.Arrays;
-import java.util.Objects;
+import lombok.Value;
 
-public record AdminResponse(String username, String name, byte[] image) {
+@Value
+public class AdminResponse{
 
-    @Override
-    public boolean equals(Object object) {
-        if (this == object) return true;
-        if (object == null || getClass() != object.getClass()) return false;
-        AdminResponse that = (AdminResponse) object;
-        return Objects.equals(username, that.username) && Objects.equals(name, that.name) && Arrays.equals(image, that.image);
-    }
+    String username;
 
-    @Override
-    public int hashCode() {
-        int result = Objects.hash(username, name);
-        result = 31 * result + Arrays.hashCode(image);
-        return result;
-    }
+    String name;
 
-    @Override
-    public String toString() {
-        return "AdminResponse{" +
-                "username='" + username + '\'' +
-                ", name='" + name + '\'' +
-                '}';
-    }
+    byte[] image;
+
 }

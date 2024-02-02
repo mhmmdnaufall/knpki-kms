@@ -48,8 +48,8 @@ class AdminServiceImplTest {
         admin.setUsername("admin");
 
         final var adminResponse = adminService.get(admin);
-        assertEquals(admin.getName(), adminResponse.name());
-        assertEquals(admin.getUsername(), adminResponse.username());
-        assertEquals(admin.getImage(), adminResponse.image());
+        assertEquals(admin.getName(), adminResponse.getName());
+        assertEquals(admin.getUsername(), adminResponse.getUsername());
+        assertEquals(admin.getImage(), adminResponse.getImage());
     }
 }
