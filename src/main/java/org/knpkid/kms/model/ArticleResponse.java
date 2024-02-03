@@ -36,7 +36,7 @@ public class ArticleResponse {
 
         byte[] coverImage;
 
-        @JsonIgnoreProperties("articles")
+        @JsonIgnoreProperties("article")
         List<ArticleImage> images;
 
 

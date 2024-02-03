@@ -8,4 +8,5 @@ public interface ArticleService {
 
     ArticleResponse create(CreateArticleRequest request, Admin admin);
 
+    ArticleResponse get(String articleId);
 }

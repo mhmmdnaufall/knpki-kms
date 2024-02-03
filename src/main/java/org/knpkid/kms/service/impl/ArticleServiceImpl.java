@@ -12,7 +12,9 @@ import org.knpkid.kms.repository.ArticleRepository;
 import org.knpkid.kms.repository.TagRepository;
 import org.knpkid.kms.service.ArticleService;
 import org.knpkid.kms.service.ValidationService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -67,6 +69,20 @@ public class ArticleServiceImpl implements ArticleService {
 
         article.setImages(images);
 
+        return toArticleResponse(article);
+    }
+
+    @Override
+    public ArticleResponse get(String articleId) {
+        return toArticleResponse(
+                articleRepository.findById(articleId)
+                        .orElseThrow(() -> new ResponseStatusException(
+                                HttpStatus.NOT_FOUND, "article with id `" + articleId + "` is not found")
+                        )
+        );
+    }
+
+    private ArticleResponse toArticleResponse(Article article) {
         return new ArticleResponse(
                 article.getId(),
                 article.getTitle(),

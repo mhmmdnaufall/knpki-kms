@@ -27,4 +27,13 @@ public class ArticleController {
         return new WebResponse<>(articleResponse, null);
     }
 
+    @GetMapping(
+            path = "/api/articles/{articleId}",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public WebResponse<ArticleResponse> get(@PathVariable("articleId") String articleId) {
+        final var articleResponse = articleService.get(articleId);
+        return new WebResponse<>(articleResponse, null);
+    }
+
 }
