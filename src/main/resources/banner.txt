@@ -1,0 +1,21 @@
+
+
+
+KKKKKKKKK    KKKKKKK     NNNNNNNN        NNNNNNNN     PPPPPPPPPPPPPPPPP        KKKKKKKKK    KKKKKKK     IIIIIIIIII
+K:::::::K    K:::::K     N:::::::N       N::::::N     P::::::::::::::::P       K:::::::K    K:::::K     I::::::::I
+K:::::::K    K:::::K     N::::::::N      N::::::N     P::::::PPPPPP:::::P      K:::::::K    K:::::K     I::::::::I
+K:::::::K   K::::::K     N:::::::::N     N::::::N     PP:::::P     P:::::P     K:::::::K   K::::::K     II::::::II
+KK::::::K  K:::::KKK     N::::::::::N    N::::::N       P::::P     P:::::P     KK::::::K  K:::::KKK       I::::I
+  K:::::K K:::::K        N:::::::::::N   N::::::N       P::::P     P:::::P       K:::::K K:::::K          I::::I
+  K::::::K:::::K         N:::::::N::::N  N::::::N       P::::PPPPPP:::::P        K::::::K:::::K           I::::I
+  K:::::::::::K          N::::::N N::::N N::::::N       P:::::::::::::PP         K:::::::::::K            I::::I
+  K:::::::::::K          N::::::N  N::::N:::::::N       P::::PPPPPPPPP           K:::::::::::K            I::::I
+  K::::::K:::::K         N::::::N   N:::::::::::N       P::::P                   K::::::K:::::K           I::::I
+  K:::::K K:::::K        N::::::N    N::::::::::N       P::::P                   K:::::K K:::::K          I::::I
+KK::::::K  K:::::KKK     N::::::N     N:::::::::N       P::::P                 KK::::::K  K:::::KKK       I::::I
+K:::::::K   K::::::K     N::::::N      N::::::::N     PP::::::PP               K:::::::K   K::::::K     II::::::II
+K:::::::K    K:::::K     N::::::N       N:::::::N     P::::::::P               K:::::::K    K:::::K     I::::::::I
+K:::::::K    K:::::K     N::::::N        N::::::N     P::::::::P               K:::::::K    K:::::K     I::::::::I
+KKKKKKKKK    KKKKKKK     NNNNNNNN         NNNNNNN     PPPPPPPPPP               KKKKKKKKK    KKKKKKK     IIIIIIIIII
+
+
