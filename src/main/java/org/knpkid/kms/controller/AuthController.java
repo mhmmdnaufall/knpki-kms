@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.knpkid.kms.model.LoginAdminRequest;
 import org.knpkid.kms.model.WebResponse;
 import org.knpkid.kms.service.AuthService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.WebUtils;
@@ -34,6 +35,7 @@ public class AuthController {
             path = "/api/auth/logout",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
     public WebResponse<String> logout(HttpServletRequest request, HttpServletResponse response) {
         final var cookie = WebUtils.getCookie(request, "token");
 
