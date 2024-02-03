@@ -52,9 +52,8 @@ public class WebSecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth ->
-                        auth.requestMatchers("/api/auth/login").permitAll()
-                                .requestMatchers(HttpMethod.POST, "/api/articles").authenticated()
-                                .anyRequest().authenticated()
+                        auth.requestMatchers(HttpMethod.POST, "/api/articles").authenticated()
+                                .anyRequest().permitAll()
                 )
                 .authenticationProvider(daoAuthenticationProvider())
                 .exceptionHandling(x -> x.authenticationEntryPoint(jwtAuthenticationEntryPoint))
