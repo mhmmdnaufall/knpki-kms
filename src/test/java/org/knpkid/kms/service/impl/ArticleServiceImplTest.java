@@ -14,8 +14,11 @@ import org.knpkid.kms.service.ValidationService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -109,6 +112,26 @@ class ArticleServiceImplTest {
         assertEquals("body", articleResponse.getBody());
         assertEquals("teaser", articleResponse.getTeaser());
         assertSame(coverImage, articleResponse.getCoverImage());
+
+    }
+
+    @Test
+    void get() {
+        final var article = new Article();
+        article.setId("exist");
+        {
+            when(articleRepository.findById("exist")).thenReturn(Optional.of(article));
+            when(articleRepository.findById("not exist")).thenReturn(Optional.empty());
+        }
+
+        var articleResponse = assertDoesNotThrow(() -> articleService.get("exist"));
+        assertEquals(article.getId(), articleResponse.getId());
+
+
+        final var exception = assertThrows(ResponseStatusException.class, () -> articleService.get("not exist"));
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+        assertEquals("article with id `not exist` is not found", exception.getReason());
+
 
     }
 }

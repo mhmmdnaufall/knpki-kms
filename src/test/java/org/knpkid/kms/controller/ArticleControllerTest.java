@@ -3,14 +3,19 @@ package org.knpkid.kms.controller;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.knpkid.kms.entity.Admin;
+import org.knpkid.kms.entity.ArticleImage;
+import org.knpkid.kms.entity.Tag;
 import org.knpkid.kms.model.ArticleResponse;
 import org.knpkid.kms.model.CreateArticleRequest;
+import org.knpkid.kms.model.WebResponse;
 import org.knpkid.kms.service.ArticleService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -54,4 +59,39 @@ class ArticleControllerTest {
         assertEquals(response, webResponse.data());
     }
 
+    @Test
+    void get() {
+        final var articleId = "articleId";
+        final var title = "title";
+        final var now = LocalDateTime.now();
+        final var body = "body";
+        final var teaser = "teaser";
+        final var coverImage = "coverImage".getBytes();
+        final var tags = Set.of(new Tag());
+        final var images = List.of(new ArticleImage());
+
+        when(articleService.get(anyString())).thenReturn(
+                new ArticleResponse(
+                        articleId, title, now,
+                        now, body, teaser,
+                        tags, coverImage, images
+                )
+        );
+
+        final var webResponse = articleController.get(articleId);
+
+        verify(articleService).get(articleId);
+
+        assertNotNull(webResponse);
+        assertEquals(articleId, webResponse.data().getId());
+        assertEquals(title, webResponse.data().getTitle());
+        assertEquals(now, webResponse.data().getCreatedAt());
+        assertEquals(now, webResponse.data().getUpdatedAt());
+        assertEquals(body, webResponse.data().getBody());
+        assertEquals(teaser, webResponse.data().getTeaser());
+        assertEquals(coverImage, webResponse.data().getCoverImage());
+        assertEquals(tags, webResponse.data().getTags());
+        assertEquals(images, webResponse.data().getImages());
+
+    }
 }
