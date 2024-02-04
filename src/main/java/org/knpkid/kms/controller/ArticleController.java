@@ -18,11 +18,11 @@ public class ArticleController {
 
     @PostMapping(
             path = "/api/articles",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @ResponseStatus(code = HttpStatus.CREATED)
-    public WebResponse<ArticleResponse> create(@RequestBody CreateArticleRequest request, Admin admin) {
+    public WebResponse<ArticleResponse> create(@ModelAttribute CreateArticleRequest request, Admin admin) {
         final var articleResponse = articleService.create(request, admin);
         return new WebResponse<>(articleResponse, null);
     }

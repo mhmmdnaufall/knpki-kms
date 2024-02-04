@@ -15,11 +15,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.ErrorResponseException;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.io.IOException;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -43,12 +44,15 @@ class ArticleServiceImplTest {
     private ValidationService validationService;
 
     @Test
-    void create() {
+    void create() throws IOException {
+
+        final var multipartFile = mock(MultipartFile.class);
+        when(multipartFile.getBytes()).thenReturn("image".getBytes());
 
         // not null tags & images
         var tags = Set.of("tag1", "tag2", "tag3");
-        var images = List.of("image1".getBytes(), "image2".getBytes(), "image3".getBytes());
-        var coverImage = "coverImage".getBytes();
+        var images = List.of(multipartFile, multipartFile, multipartFile);
+        var coverImage = multipartFile;
 
         var request = new CreateArticleRequest(
                 "title", coverImage, "body",
@@ -60,18 +64,18 @@ class ArticleServiceImplTest {
 
         {
             doNothing().when(validationService).validate(request);
-            when(tagRepository.save(any())).thenReturn(new Tag());
+            when(tagRepository.saveAll(any())).thenReturn(List.of(new Tag()));
             when(articleRepository.save(any())).thenReturn(new Article());
-            when(articleImageRepository.save(any())).thenReturn(new ArticleImage());
+            when(articleImageRepository.saveAll(any())).thenReturn(List.of(new ArticleImage()));
         }
 
         var articleResponse = articleService.create(request, admin);
 
         {
             verify(validationService).validate(any());
-            verify(tagRepository, times(tags.size())).save(any());
+            verify(tagRepository).saveAll(any());
             verify(articleRepository).save(any());
-            verify(articleImageRepository, times(images.size())).save(any());
+            verify(articleImageRepository).saveAll(any());
         }
 
         assertNotNull(articleResponse.getTags());
@@ -79,13 +83,15 @@ class ArticleServiceImplTest {
         assertEquals("title", articleResponse.getTitle());
         assertEquals("body", articleResponse.getBody());
         assertEquals("teaser", articleResponse.getTeaser());
-        assertSame(coverImage, articleResponse.getCoverImage());
+        assertSame(coverImage.getBytes(), articleResponse.getCoverImage());
 
+
+        // null tags, images & coverImage
         reset(articleRepository, articleImageRepository, tagRepository, validationService);
 
-        // null tags & images
         tags = null;
         images = null;
+        coverImage = null;
 
         request = new CreateArticleRequest(
                 "title", coverImage, "body",
@@ -101,17 +107,35 @@ class ArticleServiceImplTest {
 
         {
             verify(validationService).validate(any());
-            verify(tagRepository, times(0)).save(any());
+            verify(tagRepository).saveAll(any());
             verify(articleRepository).save(any());
-            verify(articleImageRepository, times(0)).save(any());
+            verify(articleImageRepository).saveAll(any());
         }
 
-        assertNull(articleResponse.getTags());
-        assertNull(articleResponse.getImages());
+        assertEquals(Collections.emptySet(), articleResponse.getTags());
+        assertEquals(Collections.emptyList(), articleResponse.getImages());
         assertEquals("title", articleResponse.getTitle());
         assertEquals("body", articleResponse.getBody());
         assertEquals("teaser", articleResponse.getTeaser());
-        assertSame(coverImage, articleResponse.getCoverImage());
+        assertSame(null, articleResponse.getCoverImage());
+
+        // Multipart.getBytes() error
+        when(multipartFile.getBytes()).thenThrow(new IOException());
+
+        images = List.of(multipartFile, multipartFile, multipartFile);
+        request = new CreateArticleRequest(
+                "title", coverImage, "body",
+                "teaser", tags, images
+        );
+
+        final var finalRequest = request;
+        final var errorResponseException = assertThrows(
+                ErrorResponseException.class,
+                () -> articleService.create(finalRequest, admin)
+        );
+
+        assertEquals(HttpStatus.BAD_REQUEST, errorResponseException.getStatusCode());
+
 
     }
 

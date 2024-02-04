@@ -7,12 +7,13 @@ import org.knpkid.kms.entity.ArticleImage;
 import org.knpkid.kms.entity.Tag;
 import org.knpkid.kms.model.ArticleResponse;
 import org.knpkid.kms.model.CreateArticleRequest;
-import org.knpkid.kms.model.WebResponse;
 import org.knpkid.kms.service.ArticleService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
@@ -30,10 +31,13 @@ class ArticleControllerTest {
     private ArticleService articleService;
 
     @Test
-    void create() {
+    void create() throws IOException {
+        final var multipartFile = mock(MultipartFile.class);
+        when(multipartFile.getBytes()).thenReturn("image".getBytes());
+
         final var request = new CreateArticleRequest(
                 "title",
-                "coverImage".getBytes(),
+                multipartFile,
                 "body",
                 "teaser",
                 null,
@@ -41,12 +45,12 @@ class ArticleControllerTest {
         );
         final var response = new ArticleResponse(
                 "id",
-                request.getTitle(),
+                request.title(),
                 LocalDateTime.now(),
                 LocalDateTime.now(),
-                request.getBody(),
-                request.getTeaser(),
-                null, request.getCoverImage(), null
+                request.body(),
+                request.teaser(),
+                null, request.coverImage().getBytes(), null
         );
         final var admin = new Admin();
         admin.setUsername("admin");

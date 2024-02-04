@@ -62,6 +62,17 @@ class MultipartImageValidatorTest {
         isValid = imageValidator.isValid(multipartFile, null);
         assertFalse(isValid);
 
+        // jpg
+        when(multipartFile.getOriginalFilename()).thenReturn("this is image.jpg");
+        assertDoesNotThrow(() -> imageValidator.isValid(multipartFile, null));
+
+        // jpeg
+        when(multipartFile.getOriginalFilename()).thenReturn("this is image.jpeg");
+        assertDoesNotThrow(() -> imageValidator.isValid(multipartFile, null));
+
+        // png
+        when(multipartFile.getOriginalFilename()).thenReturn("this is image.png");
+        assertDoesNotThrow(() -> imageValidator.isValid(multipartFile, null));
 
 
     }
