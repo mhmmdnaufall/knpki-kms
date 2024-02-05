@@ -14,13 +14,13 @@ public class ErrorController {
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<WebResponse<String>> responseStatusException(ResponseStatusException exception) {
         return ResponseEntity.status(exception.getStatusCode())
-                .body(new WebResponse<>(null, exception.getReason()));
+                .body(new WebResponse<>(null, exception.getReason(), null));
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<WebResponse<String>> constraintViolationException(ConstraintViolationException exception) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new WebResponse<>(null, exception.getMessage()));
+                .body(new WebResponse<>(null, exception.getMessage(), null));
     }
 
 }

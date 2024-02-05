@@ -25,7 +25,7 @@ public class ArticleController {
     @ResponseStatus(code = HttpStatus.CREATED)
     public WebResponse<String> create(@ModelAttribute CreateArticleRequest request, Admin admin) {
         final var articleId = articleService.create(request, admin);
-        return new WebResponse<>("article created with id `" + articleId + "`", null);
+        return new WebResponse<>("article created with id `" + articleId + "`", null, null);
     }
 
     @GetMapping(
@@ -34,7 +34,7 @@ public class ArticleController {
     )
     public WebResponse<ArticleResponse> get(@PathVariable("articleId") String articleId) {
         final var articleResponse = articleService.get(articleId);
-        return new WebResponse<>(articleResponse, null);
+        return new WebResponse<>(articleResponse, null, null);
     }
 
     @PutMapping(
@@ -46,7 +46,7 @@ public class ArticleController {
                                                @ModelAttribute UpdateArticleRequest request,
                                                Admin admin) {
         final var articleResponse = articleService.update(articleId, request, admin);
-        return new WebResponse<>(articleResponse, null);
+        return new WebResponse<>(articleResponse, null, null);
     }
 
     @DeleteMapping("/api/articles/{articleId}")

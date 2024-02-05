@@ -28,7 +28,7 @@ public class AuthController {
         final var cookie = new Cookie("token", jwtToken);
         response.addCookie(cookie);
 
-        return new WebResponse<>("OK", null);
+        return new WebResponse<>("OK", null, null);
     }
 
     @DeleteMapping(
@@ -44,7 +44,7 @@ public class AuthController {
             response.addCookie(cookie);
         }
 
-        return new WebResponse<>("OK", null);
+        return new WebResponse<>("OK", null, null);
     }
 
 

@@ -50,6 +50,7 @@ class ArticleControllerTest {
         verify(articleService).create(request, admin);
 
         assertNull(webResponse.errors());
+        assertNull(webResponse.paging());
         assertEquals("article created with id `articleId`", webResponse.data());
     }
 
@@ -87,6 +88,8 @@ class ArticleControllerTest {
         assertEquals(coverImage, webResponse.data().getCoverImage());
         assertEquals(tags, webResponse.data().getTags());
         assertEquals(images, webResponse.data().getImages());
+        assertNull(webResponse.errors());
+        assertNull(webResponse.paging());
 
     }
 
@@ -122,6 +125,7 @@ class ArticleControllerTest {
         verify(articleService).update("articleId", request, admin);
 
         assertNull(webResponse.errors());
+        assertNull(webResponse.paging());
         assertEquals(response, webResponse.data());
     }
 

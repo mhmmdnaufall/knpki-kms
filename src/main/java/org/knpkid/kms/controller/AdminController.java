@@ -21,7 +21,7 @@ public class AdminController {
     )
     public WebResponse<AdminResponse> get(Admin admin) {
         final var adminResponse = adminService.get(admin);
-        return new WebResponse<>(adminResponse, null);
+        return new WebResponse<>(adminResponse, null, null);
     }
 
 }

@@ -44,6 +44,7 @@ class ErrorControllerTest {
                 () -> assertNotNull(responseEntity),
                 () -> assertNotNull(responseEntity.getBody()),
                 () -> assertNull(responseEntity.getBody().data()),
+                () -> assertNull(responseEntity.getBody().paging()),
                 () -> assertNotNull(responseEntity.getBody().errors()),
                 () -> assertEquals(expectedErrorMessage, responseEntity.getBody().errors()),
                 () -> assertEquals(expectedStatus, responseEntity.getStatusCode())

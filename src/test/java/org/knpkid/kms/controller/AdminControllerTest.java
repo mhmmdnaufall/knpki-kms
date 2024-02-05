@@ -34,5 +34,7 @@ class AdminControllerTest {
         assertEquals(admin.getName(), webResponse.data().getName());
         assertEquals(admin.getUsername(), webResponse.data().getUsername());
         assertEquals(admin.getImage(), webResponse.data().getImage());
+        assertNull(webResponse.errors());
+        assertNull(webResponse.paging());
     }
 }

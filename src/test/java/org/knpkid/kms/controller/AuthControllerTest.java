@@ -38,6 +38,7 @@ class AuthControllerTest {
 
         assertEquals("OK", webResponse.data());
         assertNull(webResponse.errors());
+        assertNull(webResponse.paging());
     }
 
     @Test

@@ -24,7 +24,9 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
 
-        String jsonResponse = objectMapper.writeValueAsString(new WebResponse<>(null, "Unauthorized"));
+        String jsonResponse = objectMapper.writeValueAsString(
+                new WebResponse<>(null, "Unauthorized", null)
+        );
 
         response.getWriter().println(jsonResponse);
     }
