@@ -19,10 +19,10 @@ public class Admin implements UserDetails {
 
     private String password;
 
+    private String name;
+
     @Lob
     private byte[] image;
-
-    private String name;
 
     @OneToMany(mappedBy = "admin")
     private transient List<Article> articles;

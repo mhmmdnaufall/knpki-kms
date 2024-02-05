@@ -51,7 +51,8 @@ class ArticleControllerTest {
                 LocalDateTime.now(),
                 request.body(),
                 request.teaser(),
-                null, request.coverImage().getBytes(), null
+                null, new Admin(),
+                request.coverImage().getBytes(), null
         );
         final var admin = new Admin();
         admin.setUsername("admin");
@@ -74,12 +75,13 @@ class ArticleControllerTest {
         final var coverImage = "coverImage".getBytes();
         final var tags = Set.of(new Tag());
         final var images = List.of(new ArticleImage());
+        final var admin = new Admin();
 
         when(articleService.get(anyString())).thenReturn(
                 new ArticleResponse(
                         articleId, title, now,
                         now, body, teaser,
-                        tags, coverImage, images
+                        tags, admin, coverImage, images
                 )
         );
 
@@ -112,6 +114,10 @@ class ArticleControllerTest {
                 null,
                 null
         );
+
+        final var admin = new Admin();
+        admin.setUsername("admin");
+
         final var response = new ArticleResponse(
                 "id",
                 request.title(),
@@ -119,10 +125,9 @@ class ArticleControllerTest {
                 LocalDateTime.now(),
                 request.body(),
                 request.teaser(),
-                null, request.coverImage().getBytes(), null
+                null, admin, request.coverImage().getBytes(), null
         );
-        final var admin = new Admin();
-        admin.setUsername("admin");
+
         when(articleService.update("articleId", request, admin)).thenReturn(response);
 
         final var webResponse = articleController.update("articleId", request, admin);

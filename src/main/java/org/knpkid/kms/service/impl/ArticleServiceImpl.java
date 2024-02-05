@@ -108,6 +108,7 @@ public class ArticleServiceImpl implements ArticleService {
                 article.getBody(),
                 article.getTeaser(),
                 article.getTags(),
+                article.getAdmin(),
                 article.getCoverImage(),
                 article.getImages()
         );
