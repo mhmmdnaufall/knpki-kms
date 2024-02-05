@@ -19,13 +19,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.ErrorResponseException;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -47,49 +46,15 @@ public class ArticleServiceImpl implements ArticleService {
     public ArticleResponse create(CreateArticleRequest request, Admin admin) {
         validationService.validate(request);
 
-        final var tags = Optional.ofNullable(request.tags())
-                .map(stringSet -> stringSet.stream()
-                        .map(tag -> tag.replaceAll("[^a-zA-Z0-9 ]", ""))
-                        .map(String::trim)
-                        .map(String::toLowerCase)
-                        .map(tagName -> {
-                            final var tag = new Tag();
-                            tag.setId(tagName.replace(' ', '-'));
-                            tag.setName(tagName);
-                            return tag;
-                        })
-                        .collect(Collectors.toSet())
-                )
-                .orElse(Collections.emptySet());
-        tagRepository.saveAll(tags);
-
         final var article = new Article();
         article.setTitle(request.title());
         article.setBody(request.body());
         article.setTeaser(request.teaser());
         article.setCoverImage(Objects.nonNull(request.coverImage()) ? request.coverImage().getBytes() : null);
         article.setAdmin(admin);
-        article.setTags(tags);
+        article.setTags(extractAndSaveTags(request.tags()));
         articleRepository.save(article);
-
-        final var images = Optional.ofNullable(request.images())
-                .map(multipartList -> multipartList.stream()
-                        .map(image -> {
-                            final var articleImage = new ArticleImage();
-                            try {
-                                articleImage.setImage(image.getBytes());
-                            } catch (IOException e) {
-                                throw new ErrorResponseException(HttpStatus.BAD_REQUEST);
-                            }
-                            articleImage.setArticle(article);
-                            return articleImage;
-                        })
-                        .toList()
-                )
-                .orElse(Collections.emptyList());
-        articleImageRepository.saveAll(images);
-
-        article.setImages(images);
+        article.setImages(extractAndSaveArticleImages(request.images(), article));
 
         return toArticleResponse(article);
     }
@@ -113,56 +78,19 @@ public class ArticleServiceImpl implements ArticleService {
                         HttpStatus.NOT_FOUND, "article with id `" + articleId + "` is not found")
                 );
 
-        if (!admin.equals(article.getAdmin())) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "this article belongs to someone else");
-        }
-
+        checkArticleAuthor(article, admin);
         validationService.validate(request);
-
-        final var tags = Optional.ofNullable(request.tags())
-                .map(stringSet -> stringSet.stream()
-                        .map(tag -> tag.replaceAll("[^a-zA-Z0-9 ]", ""))
-                        .map(String::trim)
-                        .map(String::toLowerCase)
-                        .map(tagName -> {
-                            final var tag = new Tag();
-                            tag.setId(tagName.replace(' ', '-'));
-                            tag.setName(tagName);
-                            return tag;
-                        })
-                        .collect(Collectors.toSet())
-                )
-                .orElse(Collections.emptySet());
-        tagRepository.saveAll(tags);
-
         articleImageRepository.deleteAllByArticle(article);
-        final var images = Optional.ofNullable(request.images())
-                .map(multipartList -> multipartList.stream()
-                        .map(image -> {
-                            final var articleImage = new ArticleImage();
-                            try {
-                                articleImage.setImage(image.getBytes());
-                            } catch (IOException e) {
-                                throw new ErrorResponseException(HttpStatus.BAD_REQUEST);
-                            }
-                            articleImage.setArticle(article);
-                            return articleImage;
-                        })
-                        .toList()
-                )
-                .orElse(Collections.emptyList());
-        articleImageRepository.saveAll(images);
 
         article.setTitle(request.title());
         article.setBody(request.body());
         article.setTeaser(request.teaser());
         article.setUpdatedAt(LocalDateTime.now());
-        article.setTags(tags);
+        article.setTags(extractAndSaveTags(request.tags()));
         article.setCoverImage(Objects.nonNull(request.coverImage()) ? request.coverImage().getBytes() : null);
-
+        article.setImages(extractAndSaveArticleImages(request.images(), article));
         articleRepository.save(article);
 
-        article.setImages(images);
 
         return toArticleResponse(article);
     }
@@ -179,6 +107,60 @@ public class ArticleServiceImpl implements ArticleService {
                 article.getCoverImage(),
                 article.getImages()
         );
+    }
+
+    private void checkArticleAuthor(Article article, Admin admin) {
+        if (!admin.equals(article.getAdmin())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "this article belongs to someone else");
+        }
+    }
+
+    private List<ArticleImage> extractAndSaveArticleImages(List<MultipartFile> multipartFileImages, Article article) {
+        if (multipartFileImages == null) {
+            return Collections.emptyList();
+        }
+
+        final var articleImages = multipartFileImages.stream()
+                .map(image -> createArticleImage(image, article))
+                .toList();
+
+        return articleImageRepository.saveAll(articleImages);
+    }
+
+    private ArticleImage createArticleImage(MultipartFile multipartFileImage, Article article) {
+        final var articleImage = new ArticleImage();
+        try {
+            articleImage.setImage(multipartFileImage.getBytes());
+        } catch (IOException e) {
+            throw new ErrorResponseException(HttpStatus.BAD_REQUEST);
+        }
+        articleImage.setArticle(article);
+        return articleImage;
+
+    }
+
+    private Set<Tag> extractAndSaveTags(Set<String> tagsString) {
+        if (tagsString == null) {
+            return Collections.emptySet();
+        }
+
+        final var tags = tagsString.stream()
+                .map(this::createTag)
+                .collect(Collectors.toSet());
+
+        tagRepository.saveAll(tags);
+
+        return tags;
+    }
+
+    private Tag createTag(String tagName) {
+        final var cleanedTagName = tagName.replaceAll("[^a-zA-Z0-9 ]", "").trim().toLowerCase();
+
+        final var tag = new Tag();
+        tag.setId(cleanedTagName.replace(' ', '-'));
+        tag.setName(cleanedTagName);
+        return tag;
+
     }
 
 }

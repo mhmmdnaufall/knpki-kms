@@ -1,5 +1,6 @@
 package org.knpkid.kms.service.impl;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.knpkid.kms.entity.Admin;
@@ -44,19 +45,18 @@ class ArticleServiceImplTest {
     @Mock
     private ValidationService validationService;
 
+    @DisplayName("create() - success")
     @Test
     void create() throws IOException {
 
         final var multipartFile = mock(MultipartFile.class);
         when(multipartFile.getBytes()).thenReturn("image".getBytes());
 
-        // not null tags & images
-        var tags = Set.of("tag1", "tag2", "tag3");
-        var images = List.of(multipartFile, multipartFile, multipartFile);
-        var coverImage = multipartFile;
+        final var tags = Set.of("tag1", "tag2", "tag3");
+        final var images = List.of(multipartFile, multipartFile, multipartFile);
 
-        var request = new CreateArticleRequest(
-                "title", coverImage, "body",
+        final var request = new CreateArticleRequest(
+                "title", multipartFile, "body",
                 "teaser", tags, images
         );
 
@@ -70,7 +70,7 @@ class ArticleServiceImplTest {
             when(articleImageRepository.saveAll(any())).thenReturn(List.of(new ArticleImage()));
         }
 
-        var articleResponse = articleService.create(request, admin);
+        final var articleResponse = articleService.create(request, admin);
 
         {
             verify(validationService).validate(any());
@@ -84,33 +84,30 @@ class ArticleServiceImplTest {
         assertEquals("title", articleResponse.getTitle());
         assertEquals("body", articleResponse.getBody());
         assertEquals("teaser", articleResponse.getTeaser());
-        assertSame(coverImage.getBytes(), articleResponse.getCoverImage());
+        assertSame(multipartFile.getBytes(), articleResponse.getCoverImage());
 
+    }
 
-        // null tags, images & coverImage
-        reset(articleRepository, articleImageRepository, tagRepository, validationService);
-
-        tags = null;
-        images = null;
-        coverImage = null;
-
-        request = new CreateArticleRequest(
-                "title", coverImage, "body",
-                "teaser", tags, images
+    @DisplayName("create() - null tags, images & coverImage")
+    @Test
+    void create_nullTagsImagesCoverImage() {
+        final var request = new CreateArticleRequest(
+                "title", null, "body",
+                "teaser", null, null
         );
+
+        final var admin = new Admin();
 
         {
             doNothing().when(validationService).validate(request);
             when(articleRepository.save(any())).thenReturn(new Article());
         }
 
-        articleResponse = articleService.create(request, admin);
+        final var articleResponse = articleService.create(request, admin);
 
         {
             verify(validationService).validate(any());
-            verify(tagRepository).saveAll(any());
             verify(articleRepository).save(any());
-            verify(articleImageRepository).saveAll(any());
         }
 
         assertEquals(Collections.emptySet(), articleResponse.getTags());
@@ -119,25 +116,30 @@ class ArticleServiceImplTest {
         assertEquals("body", articleResponse.getBody());
         assertEquals("teaser", articleResponse.getTeaser());
         assertSame(null, articleResponse.getCoverImage());
+    }
 
-        // Multipart.getBytes() error
+    @DisplayName("create() - MultipartFile.getBytes() error")
+    @Test
+    void create_MultipartGetBytesError() throws IOException {
+        final var multipartFile = mock(MultipartFile.class);
         when(multipartFile.getBytes()).thenThrow(new IOException());
 
-        images = List.of(multipartFile, multipartFile, multipartFile);
-        request = new CreateArticleRequest(
-                "title", coverImage, "body",
+        var tags = Set.of("tag1", "tag2", "tag3");
+        var images = List.of(multipartFile, multipartFile, multipartFile);
+
+        final var request = new CreateArticleRequest(
+                "title", null, "body",
                 "teaser", tags, images
         );
 
-        final var finalRequest = request;
+        final var admin = new Admin();
+
         final var errorResponseException = assertThrows(
                 ErrorResponseException.class,
-                () -> articleService.create(finalRequest, admin)
+                () -> articleService.create(request, admin)
         );
 
         assertEquals(HttpStatus.BAD_REQUEST, errorResponseException.getStatusCode());
-
-
     }
 
     @Test
@@ -160,6 +162,7 @@ class ArticleServiceImplTest {
 
     }
 
+    @DisplayName("update() - success")
     @Test
     void update() throws IOException {
         final var multipartFile = mock(MultipartFile.class);
@@ -167,10 +170,9 @@ class ArticleServiceImplTest {
 
         var tags = Set.of("tag1", "tag2", "tag3");
         var images = List.of(multipartFile, multipartFile, multipartFile);
-        var coverImage = multipartFile;
 
         final var request = new UpdateArticleRequest(
-                "title", coverImage, "body", "teaser",
+                "title", multipartFile, "body", "teaser",
                 tags, images
         );
 
@@ -181,7 +183,6 @@ class ArticleServiceImplTest {
         article.setAdmin(admin);
         article.setId("articleId");
 
-        // success update
         {
             when(articleRepository.findById("articleId")).thenReturn(Optional.of(article));
             when(tagRepository.saveAll(any())).thenReturn(List.of(new Tag()));
@@ -196,7 +197,7 @@ class ArticleServiceImplTest {
         assertEquals("title", articleResponse.getTitle());
         assertEquals("body", articleResponse.getBody());
         assertEquals("teaser", articleResponse.getTeaser());
-        assertSame(coverImage.getBytes(), articleResponse.getCoverImage());
+        assertSame(multipartFile.getBytes(), articleResponse.getCoverImage());
 
         {
             verify(validationService).validate(request);
@@ -204,48 +205,157 @@ class ArticleServiceImplTest {
             verify(articleImageRepository).saveAll(any());
         }
 
-        // use another account to update another article
+    }
+
+    @DisplayName("update() - use Another Account forbidden")
+    @Test
+    void update_useAnotherAccount() {
+        final var multipartFile = mock(MultipartFile.class);
+
+        var tags = Set.of("tag1", "tag2", "tag3");
+        var images = List.of(multipartFile, multipartFile, multipartFile);
+
+        final var request = new UpdateArticleRequest(
+                "title", multipartFile, "body", "teaser",
+                tags, images
+        );
+
+        final var article = new Article();
+        final var admin = new Admin();
+        admin.setUsername("admin");
+
+        article.setAdmin(admin);
+        article.setId("articleId");
+
         final var anotherAdmin = new Admin();
         anotherAdmin.setUsername("another admin");
 
-        var responseStatusException = assertThrows(
+        {
+            when(articleRepository.findById("articleId")).thenReturn(Optional.of(article));
+        }
+
+        final var responseStatusException = assertThrows(
                 ResponseStatusException.class,
                 () -> articleService.update("articleId", request, anotherAdmin)
         );
         assertEquals(HttpStatus.FORBIDDEN, responseStatusException.getStatusCode());
         assertEquals("this article belongs to someone else", responseStatusException.getReason());
+    }
 
-        // article not found
+    @DisplayName("update() - article not found")
+    @Test
+    void update_articleNotFound() {
+        final var multipartFile = mock(MultipartFile.class);
+
+        var tags = Set.of("tag1", "tag2", "tag3");
+        var images = List.of(multipartFile, multipartFile, multipartFile);
+
+        final var request = new UpdateArticleRequest(
+                "title", multipartFile, "body", "teaser",
+                tags, images
+        );
+
+        final var article = new Article();
+        final var admin = new Admin();
+        admin.setUsername("admin");
+
+        article.setAdmin(admin);
+        article.setId("articleId");
+
         {
             when(articleRepository.findById("not found")).thenReturn(Optional.empty());
         }
-        responseStatusException = assertThrows(
+        final var responseStatusException = assertThrows(
                 ResponseStatusException.class,
                 () -> articleService.update("not found", request, admin)
         );
 
         assertEquals(HttpStatus.NOT_FOUND, responseStatusException.getStatusCode());
         assertEquals("article with id `not found` is not found", responseStatusException.getReason());
+    }
 
-        // MultipartFile.getBytes() error
+    @DisplayName("update() - null coverImage")
+    @Test
+    void update_nullCoverImage() throws IOException {
+        final var multipartFile = mock(MultipartFile.class);
+
+        var tags = Set.of("tag1", "tag2", "tag3");
+        var images = List.of(multipartFile, multipartFile, multipartFile);
+
+        final var request = new UpdateArticleRequest(
+                "title", null, "body", "teaser",
+                tags, images
+        );
+
+        final var article = new Article();
+        final var admin = new Admin();
+        admin.setUsername("admin");
+
+        article.setAdmin(admin);
+        article.setId("articleId");
+
+        {
+            when(multipartFile.getBytes()).thenReturn("image".getBytes());
+            when(articleRepository.findById("articleId")).thenReturn(Optional.of(article));
+        }
+
+        final var articleResponse = assertDoesNotThrow(() -> articleService.update("articleId", request, admin));
+        assertNull(articleResponse.getCoverImage());
+    }
+
+    @DisplayName("update() - MultipartFile.getBytes() error")
+    @Test
+    void update_MultipartGetBytesError() throws IOException {
+
+        final var multipartFile = mock(MultipartFile.class);
+
+        var tags = Set.of("tag1", "tag2", "tag3");
+        var images = List.of(multipartFile, multipartFile, multipartFile);
+
+        final var request = new UpdateArticleRequest(
+                "title", null, "body", "teaser",
+                tags, images
+        );
+
+        final var article = new Article();
+        final var admin = new Admin();
+        admin.setUsername("admin");
+
+        article.setAdmin(admin);
+        article.setId("articleId");
+
         {
             when(multipartFile.getBytes()).thenThrow(new IOException());
+            when(articleRepository.findById("articleId")).thenReturn(Optional.of(article));
         }
+
         final var errorResponseException = assertThrows(
                 ErrorResponseException.class,
                 () -> articleService.update("articleId", request, admin)
         );
         assertEquals(HttpStatus.BAD_REQUEST, errorResponseException.getStatusCode());
 
-        // null coverImage
-        reset(multipartFile);
-        coverImage = null;
-        final var nullCoverImageRequest = new UpdateArticleRequest(
-                "title", coverImage, "body", "teaser",
-                tags, images
-        );
-        articleResponse = assertDoesNotThrow(() -> articleService.update("articleId", nullCoverImageRequest, admin));
-        assertNull(articleResponse.getCoverImage());
+    }
 
+    @DisplayName("update() - null tags and images")
+    @Test
+    void update_nullTagImage() {
+        final var request = new UpdateArticleRequest(
+                "title", null, "body", "teaser",
+                null, null
+        );
+
+        final var article = new Article();
+        final var admin = new Admin();
+        admin.setUsername("admin");
+
+        article.setAdmin(admin);
+        article.setId("articleId");
+
+        when(articleRepository.findById("articleId")).thenReturn(Optional.of(article));
+
+        final var articleResponse = assertDoesNotThrow(() -> articleService.update("articleId", request, admin));
+        assertTrue(articleResponse.getImages().isEmpty());
+        assertTrue(articleResponse.getTags().isEmpty());
     }
 }
