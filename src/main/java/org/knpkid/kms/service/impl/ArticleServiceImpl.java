@@ -61,12 +61,7 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public ArticleResponse get(String articleId) {
-        return toArticleResponse(
-                articleRepository.findById(articleId)
-                        .orElseThrow(() -> new ResponseStatusException(
-                                HttpStatus.NOT_FOUND, "article with id `" + articleId + "` is not found")
-                        )
-        );
+        return toArticleResponse(getArticleById(articleId));
     }
 
     @Transactional
@@ -95,6 +90,15 @@ public class ArticleServiceImpl implements ArticleService {
         return toArticleResponse(article);
     }
 
+    @Transactional
+    @Override
+    public void delete(String articleId, Admin admin) {
+        final var article = getArticleById(articleId);
+        checkArticleAuthor(article, admin);
+        articleImageRepository.deleteAllByArticle(article);
+        articleRepository.delete(article);
+    }
+
     private ArticleResponse toArticleResponse(Article article) {
         return new ArticleResponse(
                 article.getId(),
@@ -107,6 +111,13 @@ public class ArticleServiceImpl implements ArticleService {
                 article.getCoverImage(),
                 article.getImages()
         );
+    }
+
+    private Article getArticleById(String articleId) {
+        return articleRepository.findById(articleId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "article with id `" + articleId + "` is not found")
+                );
     }
 
     private void checkArticleAuthor(Article article, Admin admin) {

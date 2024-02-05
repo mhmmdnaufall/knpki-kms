@@ -49,4 +49,11 @@ public class ArticleController {
         return new WebResponse<>(articleResponse, null);
     }
 
+    @DeleteMapping("/api/articles/{articleId}")
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable("articleId") String articleId, Admin admin) {
+        articleService.delete(articleId, admin);
+    }
+
+
 }

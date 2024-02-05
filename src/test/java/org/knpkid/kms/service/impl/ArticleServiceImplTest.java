@@ -358,4 +358,65 @@ class ArticleServiceImplTest {
         assertTrue(articleResponse.getImages().isEmpty());
         assertTrue(articleResponse.getTags().isEmpty());
     }
+
+    @DisplayName("delete() - success")
+    @Test
+    void delete() {
+        final var admin = new Admin();
+        final var article = new Article();
+        article.setAdmin(admin);
+        {
+            when(articleRepository.findById("articleId")).thenReturn(Optional.of(article));
+            doNothing().when(articleImageRepository).deleteAllByArticle(article);
+            doNothing().when(articleRepository).delete(article);
+        }
+        assertDoesNotThrow(() -> articleService.delete("articleId", admin));
+        {
+            verify(articleImageRepository).deleteAllByArticle(article);
+            verify(articleRepository).delete(article);
+        }
+    }
+
+    @DisplayName("delete() - article not found")
+    @Test
+    void delete_articleNotFound() {
+
+        final var admin = new Admin();
+
+        {
+            when(articleRepository.findById("not found")).thenReturn(Optional.empty());
+        }
+
+        final var responseStatusException = assertThrows(
+                ResponseStatusException.class,
+                () -> articleService.delete("not found", admin)
+        );
+        assertEquals(HttpStatus.NOT_FOUND, responseStatusException.getStatusCode());
+        assertEquals("article with id `not found` is not found", responseStatusException.getReason());
+    }
+
+    @DisplayName("delete() - use another account forbidden")
+    @Test
+    void delete_useAnotherAccount() {
+
+        final var admin = new Admin();
+        admin.setUsername("admin");
+
+        final var article = new Article();
+        article.setAdmin(admin);
+
+        {
+            when(articleRepository.findById("articleId")).thenReturn(Optional.of(article));
+        }
+
+        final var anotherAdmin = new Admin();
+        admin.setUsername("another_admin");
+
+        final var responseStatusException = assertThrows(
+                ResponseStatusException.class,
+                () -> articleService.delete("articleId", anotherAdmin)
+        );
+        assertEquals(HttpStatus.FORBIDDEN, responseStatusException.getStatusCode());
+        assertEquals("this article belongs to someone else", responseStatusException.getReason());
+    }
 }

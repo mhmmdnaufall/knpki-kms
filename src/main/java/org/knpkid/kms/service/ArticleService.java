@@ -12,4 +12,6 @@ public interface ArticleService {
     ArticleResponse get(String articleId);
 
     ArticleResponse update(String articleId, UpdateArticleRequest request, Admin admin);
+
+    void delete(String articleId, Admin admin);
 }

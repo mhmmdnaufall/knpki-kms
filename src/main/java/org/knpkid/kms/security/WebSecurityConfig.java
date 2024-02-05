@@ -54,6 +54,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers(HttpMethod.POST, "/api/articles").authenticated()
                                 .requestMatchers(HttpMethod.PUT, "/api/articles/{articleId}").authenticated()
+                                .requestMatchers(HttpMethod.DELETE, "/api/articles/{articleId}").authenticated()
                                 .anyRequest().permitAll()
                 )
                 .authenticationProvider(daoAuthenticationProvider())

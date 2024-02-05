@@ -131,4 +131,12 @@ class ArticleControllerTest {
         assertNull(webResponse.errors());
         assertEquals(response, webResponse.data());
     }
+
+    @Test
+    void delete() {
+        final var admin = new Admin();
+        doNothing().when(articleService).delete("articleId", admin);
+        articleController.delete("articleId", admin);
+        verify(articleService).delete("articleId", admin);
+    }
 }
