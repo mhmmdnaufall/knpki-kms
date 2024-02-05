@@ -43,7 +43,7 @@ public class ArticleServiceImpl implements ArticleService {
     @Transactional
     @SneakyThrows
     @Override
-    public ArticleResponse create(CreateArticleRequest request, Admin admin) {
+    public String create(CreateArticleRequest request, Admin admin) {
         validationService.validate(request);
 
         final var article = new Article();
@@ -56,7 +56,7 @@ public class ArticleServiceImpl implements ArticleService {
         articleRepository.save(article);
         article.setImages(extractAndSaveArticleImages(request.images(), article));
 
-        return toArticleResponse(article);
+        return article.getId();
     }
 
     @Override

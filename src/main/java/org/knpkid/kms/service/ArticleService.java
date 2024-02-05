@@ -7,7 +7,7 @@ import org.knpkid.kms.model.UpdateArticleRequest;
 
 public interface ArticleService {
 
-    ArticleResponse create(CreateArticleRequest request, Admin admin);
+    String create(CreateArticleRequest request, Admin admin);
 
     ArticleResponse get(String articleId);
 

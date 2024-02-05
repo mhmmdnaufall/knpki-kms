@@ -32,37 +32,25 @@ class ArticleControllerTest {
     private ArticleService articleService;
 
     @Test
-    void create() throws IOException {
-        final var multipartFile = mock(MultipartFile.class);
-        when(multipartFile.getBytes()).thenReturn("image".getBytes());
-
+    void create() {
         final var request = new CreateArticleRequest(
                 "title",
-                multipartFile,
+                null,
                 "body",
                 "teaser",
                 null,
                 null
         );
-        final var response = new ArticleResponse(
-                "id",
-                request.title(),
-                LocalDateTime.now(),
-                LocalDateTime.now(),
-                request.body(),
-                request.teaser(),
-                null, new Admin(),
-                request.coverImage().getBytes(), null
-        );
+
         final var admin = new Admin();
         admin.setUsername("admin");
-        when(articleService.create(request, admin)).thenReturn(response);
+        when(articleService.create(request, admin)).thenReturn("articleId");
 
         final var webResponse = articleController.create(request, admin);
         verify(articleService).create(request, admin);
 
         assertNull(webResponse.errors());
-        assertEquals(response, webResponse.data());
+        assertEquals("article created with id `articleId`", webResponse.data());
     }
 
     @Test

@@ -50,7 +50,8 @@ class ArticleServiceImplTest {
     void create() throws IOException {
 
         final var multipartFile = mock(MultipartFile.class);
-        when(multipartFile.getBytes()).thenReturn("image".getBytes());
+        final var imageBytes = "image".getBytes();
+        when(multipartFile.getBytes()).thenReturn(imageBytes);
 
         final var tags = Set.of("tag1", "tag2", "tag3");
         final var images = List.of(multipartFile, multipartFile, multipartFile);
@@ -66,11 +67,32 @@ class ArticleServiceImplTest {
         {
             doNothing().when(validationService).validate(request);
             when(tagRepository.saveAll(any())).thenReturn(List.of(new Tag()));
-            when(articleRepository.save(any())).thenReturn(new Article());
-            when(articleImageRepository.saveAll(any())).thenReturn(List.of(new ArticleImage()));
+            when(articleRepository.save(any())).then(invocation -> {
+                final var article = (Article) invocation.getArgument(0);
+                {
+                    assertEquals("title", article.getTitle());
+                    assertEquals("body", article.getBody());
+                    assertEquals("teaser", article.getTeaser());
+                    assertEquals(admin, article.getAdmin());
+                    assertSame(imageBytes, article.getCoverImage());
+                    assertTrue(
+                            article.getTags().stream()
+                                    .allMatch(tag -> tags.contains(tag.getName()))
+                    );
+                }
+                article.setId("articleId");
+                return article;
+            });
+
+            when(articleImageRepository.saveAll(any())).then(invocation -> {
+                final var articleImages = (List<ArticleImage>) invocation.getArgument(0);
+                assertNotNull(articleImages);
+                assertFalse(articleImages.isEmpty());
+                return articleImages;
+            });
         }
 
-        final var articleResponse = articleService.create(request, admin);
+        final var articleId = articleService.create(request, admin);
 
         {
             verify(validationService).validate(any());
@@ -79,12 +101,7 @@ class ArticleServiceImplTest {
             verify(articleImageRepository).saveAll(any());
         }
 
-        assertNotNull(articleResponse.getTags());
-        assertNotNull(articleResponse.getImages());
-        assertEquals("title", articleResponse.getTitle());
-        assertEquals("body", articleResponse.getBody());
-        assertEquals("teaser", articleResponse.getTeaser());
-        assertSame(multipartFile.getBytes(), articleResponse.getCoverImage());
+        assertEquals("articleId", articleId);
 
     }
 
@@ -100,22 +117,32 @@ class ArticleServiceImplTest {
 
         {
             doNothing().when(validationService).validate(request);
-            when(articleRepository.save(any())).thenReturn(new Article());
+            when(articleRepository.save(any())).then(invocation -> {
+                final var article = (Article) invocation.getArgument(0);
+                {
+                    assertEquals("title", article.getTitle());
+                    assertEquals("body", article.getBody());
+                    assertEquals("teaser", article.getTeaser());
+                    assertEquals(admin, article.getAdmin());
+                    assertSame(null, article.getCoverImage());
+                    assertEquals(Collections.emptySet(), article.getTags());
+                }
+                article.setId("articleId");
+                return article;
+            });
         }
 
-        final var articleResponse = articleService.create(request, admin);
+        final var articleId = articleService.create(request, admin);
 
         {
             verify(validationService).validate(any());
+            verify(tagRepository, times(0)).saveAll(any());
             verify(articleRepository).save(any());
+            verify(articleImageRepository, times(0)).saveAll(any());
         }
 
-        assertEquals(Collections.emptySet(), articleResponse.getTags());
-        assertEquals(Collections.emptyList(), articleResponse.getImages());
-        assertEquals("title", articleResponse.getTitle());
-        assertEquals("body", articleResponse.getBody());
-        assertEquals("teaser", articleResponse.getTeaser());
-        assertSame(null, articleResponse.getCoverImage());
+        assertEquals("articleId", articleId);
+
     }
 
     @DisplayName("create() - MultipartFile.getBytes() error")

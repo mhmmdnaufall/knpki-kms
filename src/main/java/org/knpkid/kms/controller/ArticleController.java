@@ -23,9 +23,9 @@ public class ArticleController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @ResponseStatus(code = HttpStatus.CREATED)
-    public WebResponse<ArticleResponse> create(@ModelAttribute CreateArticleRequest request, Admin admin) {
-        final var articleResponse = articleService.create(request, admin);
-        return new WebResponse<>(articleResponse, null);
+    public WebResponse<String> create(@ModelAttribute CreateArticleRequest request, Admin admin) {
+        final var articleId = articleService.create(request, admin);
+        return new WebResponse<>("article created with id `" + articleId + "`", null);
     }
 
     @GetMapping(
