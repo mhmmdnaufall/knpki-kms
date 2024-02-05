@@ -3,18 +3,24 @@ package org.knpkid.kms.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.knpkid.kms.entity.Admin;
 import org.knpkid.kms.entity.Article;
 import org.knpkid.kms.entity.ArticleImage;
 import org.knpkid.kms.entity.Tag;
 import org.knpkid.kms.model.ArticleResponse;
 import org.knpkid.kms.model.CreateArticleRequest;
+import org.knpkid.kms.model.OnlyArticleResponse;
 import org.knpkid.kms.model.UpdateArticleRequest;
 import org.knpkid.kms.repository.ArticleImageRepository;
 import org.knpkid.kms.repository.ArticleRepository;
 import org.knpkid.kms.repository.TagRepository;
 import org.knpkid.kms.service.ArticleService;
 import org.knpkid.kms.service.ValidationService;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -99,6 +105,39 @@ public class ArticleServiceImpl implements ArticleService {
         articleRepository.delete(article);
     }
 
+    @Transactional(readOnly = true)
+    @Override
+    public Page<OnlyArticleResponse> getAll(Integer page, Integer size) {
+        return articleRepository.findAll(PageRequest.of(page, size, Sort.by(Sort.Order.desc("createdAt"))))
+                .map(this::toOnlyArticleResponse);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Page<OnlyArticleResponse> search(String keyword, Integer page, Integer size) {
+        final var specification = (Specification<Article>) (root, query, builder) -> {
+            final var trimmedKeyword = keyword.trim();
+            return query.where(builder.or(
+                    builder.like(root.get("title"), "%" + trimmedKeyword + "%"),
+                    builder.like(root.get("teaser"), "%" + trimmedKeyword + "%"),
+                    builder.like(
+                            root.join("tags").get("id"),
+                            "%" + trimmedKeyword.replace(' ', '-') + "%"
+                    )
+            )).getRestriction();
+        };
+
+        final var pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("createdAt")));
+
+        final var articlesPage = articleRepository.findAll(specification, pageable);
+
+        final var onlyArticleResponses = articlesPage.getContent().stream()
+                .map(this::toOnlyArticleResponse)
+                .toList();
+
+        return new PageImpl<>(onlyArticleResponses, pageable, articlesPage.getTotalElements());
+    }
+
     private ArticleResponse toArticleResponse(Article article) {
         return new ArticleResponse(
                 article.getId(),
@@ -111,6 +150,18 @@ public class ArticleServiceImpl implements ArticleService {
                 article.getAdmin(),
                 article.getCoverImage(),
                 article.getImages()
+        );
+    }
+
+    private OnlyArticleResponse toOnlyArticleResponse(Article article) {
+        return new OnlyArticleResponse(
+                article.getId(),
+                article.getTitle(),
+                article.getCreatedAt(),
+                article.getUpdatedAt(),
+                article.getBody(),
+                article.getTeaser(),
+                article.getCoverImage()
         );
     }
 

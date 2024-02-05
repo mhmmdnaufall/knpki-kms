@@ -2,14 +2,13 @@ package org.knpkid.kms.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.knpkid.kms.entity.Admin;
-import org.knpkid.kms.model.ArticleResponse;
-import org.knpkid.kms.model.CreateArticleRequest;
-import org.knpkid.kms.model.UpdateArticleRequest;
-import org.knpkid.kms.model.WebResponse;
+import org.knpkid.kms.model.*;
 import org.knpkid.kms.service.ArticleService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -53,6 +52,30 @@ public class ArticleController {
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     public void delete(@PathVariable("articleId") String articleId, Admin admin) {
         articleService.delete(articleId, admin);
+    }
+
+    @GetMapping(
+            path = "/api/articles",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public WebResponse<List<OnlyArticleResponse>> getAllOrSearchArticle(
+            @RequestParam(name = "search", required = false) String keyword,
+            @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+            @RequestParam(name = "size", required = false, defaultValue = "12") Integer size
+    ) {
+
+        final var onlyArticleResponsePage = keyword == null ?
+                articleService.getAll(page, size) : articleService.search(keyword, page, size);
+
+        return new WebResponse<>(
+                onlyArticleResponsePage.getContent(), null,
+                new PagingResponse(
+                        onlyArticleResponsePage.getNumber(),
+                        onlyArticleResponsePage.getTotalPages(),
+                        onlyArticleResponsePage.getSize()
+                )
+        );
+
     }
 
 
