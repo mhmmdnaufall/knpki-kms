@@ -7,6 +7,7 @@ import org.knpkid.kms.entity.Article;
 import org.knpkid.kms.entity.ArticleImage;
 import org.knpkid.kms.entity.Tag;
 import org.knpkid.kms.model.CreateArticleRequest;
+import org.knpkid.kms.model.UpdateArticleRequest;
 import org.knpkid.kms.repository.ArticleImageRepository;
 import org.knpkid.kms.repository.ArticleRepository;
 import org.knpkid.kms.repository.TagRepository;
@@ -156,6 +157,95 @@ class ArticleServiceImplTest {
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
         assertEquals("article with id `not exist` is not found", exception.getReason());
 
+
+    }
+
+    @Test
+    void update() throws IOException {
+        final var multipartFile = mock(MultipartFile.class);
+        when(multipartFile.getBytes()).thenReturn("image".getBytes());
+
+        var tags = Set.of("tag1", "tag2", "tag3");
+        var images = List.of(multipartFile, multipartFile, multipartFile);
+        var coverImage = multipartFile;
+
+        final var request = new UpdateArticleRequest(
+                "title", coverImage, "body", "teaser",
+                tags, images
+        );
+
+        final var article = new Article();
+        final var admin = new Admin();
+        admin.setUsername("admin");
+
+        article.setAdmin(admin);
+        article.setId("articleId");
+
+        // success update
+        {
+            when(articleRepository.findById("articleId")).thenReturn(Optional.of(article));
+            when(tagRepository.saveAll(any())).thenReturn(List.of(new Tag()));
+            when(articleRepository.save(any())).thenReturn(new Article());
+            when(articleImageRepository.saveAll(any())).thenReturn(List.of(new ArticleImage()));
+            doNothing().when(validationService).validate(request);
+        }
+
+        var articleResponse = assertDoesNotThrow(() -> articleService.update("articleId", request, admin));
+        assertNotNull(articleResponse.getTags());
+        assertNotNull(articleResponse.getImages());
+        assertEquals("title", articleResponse.getTitle());
+        assertEquals("body", articleResponse.getBody());
+        assertEquals("teaser", articleResponse.getTeaser());
+        assertSame(coverImage.getBytes(), articleResponse.getCoverImage());
+
+        {
+            verify(validationService).validate(request);
+            verify(tagRepository).saveAll(any());
+            verify(articleImageRepository).saveAll(any());
+        }
+
+        // use another account to update another article
+        final var anotherAdmin = new Admin();
+        anotherAdmin.setUsername("another admin");
+
+        var responseStatusException = assertThrows(
+                ResponseStatusException.class,
+                () -> articleService.update("articleId", request, anotherAdmin)
+        );
+        assertEquals(HttpStatus.FORBIDDEN, responseStatusException.getStatusCode());
+        assertEquals("this article belongs to someone else", responseStatusException.getReason());
+
+        // article not found
+        {
+            when(articleRepository.findById("not found")).thenReturn(Optional.empty());
+        }
+        responseStatusException = assertThrows(
+                ResponseStatusException.class,
+                () -> articleService.update("not found", request, admin)
+        );
+
+        assertEquals(HttpStatus.NOT_FOUND, responseStatusException.getStatusCode());
+        assertEquals("article with id `not found` is not found", responseStatusException.getReason());
+
+        // MultipartFile.getBytes() error
+        {
+            when(multipartFile.getBytes()).thenThrow(new IOException());
+        }
+        final var errorResponseException = assertThrows(
+                ErrorResponseException.class,
+                () -> articleService.update("articleId", request, admin)
+        );
+        assertEquals(HttpStatus.BAD_REQUEST, errorResponseException.getStatusCode());
+
+        // null coverImage
+        reset(multipartFile);
+        coverImage = null;
+        final var nullCoverImageRequest = new UpdateArticleRequest(
+                "title", coverImage, "body", "teaser",
+                tags, images
+        );
+        articleResponse = assertDoesNotThrow(() -> articleService.update("articleId", nullCoverImageRequest, admin));
+        assertNull(articleResponse.getCoverImage());
 
     }
 }

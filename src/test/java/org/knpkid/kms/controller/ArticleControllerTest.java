@@ -7,6 +7,7 @@ import org.knpkid.kms.entity.ArticleImage;
 import org.knpkid.kms.entity.Tag;
 import org.knpkid.kms.model.ArticleResponse;
 import org.knpkid.kms.model.CreateArticleRequest;
+import org.knpkid.kms.model.UpdateArticleRequest;
 import org.knpkid.kms.service.ArticleService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -97,5 +98,37 @@ class ArticleControllerTest {
         assertEquals(tags, webResponse.data().getTags());
         assertEquals(images, webResponse.data().getImages());
 
+    }
+
+    @Test
+    void update() throws IOException {
+        final var multipartFile = mock(MultipartFile.class);
+
+        final var request = new UpdateArticleRequest(
+                "title",
+                multipartFile,
+                "body",
+                "teaser",
+                null,
+                null
+        );
+        final var response = new ArticleResponse(
+                "id",
+                request.title(),
+                LocalDateTime.now(),
+                LocalDateTime.now(),
+                request.body(),
+                request.teaser(),
+                null, request.coverImage().getBytes(), null
+        );
+        final var admin = new Admin();
+        admin.setUsername("admin");
+        when(articleService.update("articleId", request, admin)).thenReturn(response);
+
+        final var webResponse = articleController.update("articleId", request, admin);
+        verify(articleService).update("articleId", request, admin);
+
+        assertNull(webResponse.errors());
+        assertEquals(response, webResponse.data());
     }
 }
