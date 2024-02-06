@@ -1,17 +1,18 @@
 package org.knpkid.kms.controller;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.knpkid.kms.entity.Admin;
 import org.knpkid.kms.entity.ArticleImage;
 import org.knpkid.kms.entity.Tag;
-import org.knpkid.kms.model.ArticleResponse;
-import org.knpkid.kms.model.CreateArticleRequest;
-import org.knpkid.kms.model.UpdateArticleRequest;
+import org.knpkid.kms.model.*;
 import org.knpkid.kms.service.ArticleService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -135,5 +136,75 @@ class ArticleControllerTest {
         doNothing().when(articleService).delete("articleId", admin);
         articleController.delete("articleId", admin);
         verify(articleService).delete("articleId", admin);
+    }
+
+    @DisplayName("getAllOrSearchArticle() - getAll")
+    @Test
+    void getAllOrSearchArticle_getAll() {
+        final var onlyArticleResponses = List.of(
+                new OnlyArticleResponse(
+                        "id", "title",
+                        LocalDateTime.now(), LocalDateTime.now(),
+                        "body", "teaser", "coverImage".getBytes()
+                )
+        );
+
+        {
+            when(articleService.getAll(0, 12))
+                    .thenReturn(
+                            new PageImpl<>(
+                                    onlyArticleResponses,
+                                    PageRequest.of(0, 12),
+                                    onlyArticleResponses.size()
+                            )
+                    );
+        }
+
+        final var webResponse = articleController.getAllOrSearchArticle(null, 0, 12);
+
+        {
+            verify(articleService, times(0)).search(anyString(), anyInt(), anyInt());
+            verify(articleService).getAll(0, 12);
+        }
+
+        assertEquals(onlyArticleResponses, webResponse.data());
+        assertNull(webResponse.errors());
+        assertEquals(new PagingResponse(0, 1, 12), webResponse.paging());
+
+    }
+
+    @DisplayName("getAllOrSearchArticle() - search")
+    @Test
+    void getAllOrSearchArticle_search() {
+        final var onlyArticleResponses = List.of(
+                new OnlyArticleResponse(
+                        "id", "search title",
+                        LocalDateTime.now(), LocalDateTime.now(),
+                        "body", "search teaser", "coverImage".getBytes()
+                )
+        );
+
+        {
+            when(articleService.search("search", 0, 12))
+                    .thenReturn(
+                            new PageImpl<>(
+                                    onlyArticleResponses,
+                                    PageRequest.of(0, 12),
+                                    onlyArticleResponses.size()
+                            )
+                    );
+        }
+
+        final var webResponse = articleController.getAllOrSearchArticle("search", 0, 12);
+
+        {
+            verify(articleService).search(anyString(), anyInt(), anyInt());
+            verify(articleService, times(0)).getAll(anyInt(), anyInt());
+        }
+
+        assertEquals(onlyArticleResponses, webResponse.data());
+        assertNull(webResponse.errors());
+        assertEquals(new PagingResponse(0, 1, 12), webResponse.paging());
+
     }
 }
