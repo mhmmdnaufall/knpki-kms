@@ -544,4 +544,40 @@ class ArticleServiceImplTest {
         assertEquals(article.getTeaser(), onlyArticleResponsePage.getContent().get(0).getTeaser());
 
     }
+
+    @Test
+    void getArticlesByTag() {
+
+        final var article = new Article();
+        article.setId("id");
+        article.setTitle("title");
+        article.setTeaser("teaser");
+
+        final var articles = List.of(article);
+
+        final var pageable = PageRequest.of(0, 12, Sort.by(Sort.Order.desc("createdAt")));
+
+        {
+            when(articleRepository.findByTagsId("tagId", pageable))
+                    .thenReturn(
+                            new PageImpl<>(
+                                    articles,
+                                    PageRequest.of(0, 12),
+                                    articles.size()
+                            )
+                    );
+        }
+
+        final var onlyArticleResponsePage = articleService.getArticlesByTag("tagId", 0, 12);
+
+        {
+            verify(articleRepository).findByTagsId("tagId", pageable);
+        }
+
+        assertEquals(articles.size(), onlyArticleResponsePage.getContent().size());
+        assertEquals(article.getId(), onlyArticleResponsePage.getContent().get(0).getId());
+        assertEquals(article.getTitle(), onlyArticleResponsePage.getContent().get(0).getTitle());
+        assertEquals(article.getTeaser(), onlyArticleResponsePage.getContent().get(0).getTeaser());
+
+    }
 }
