@@ -43,6 +43,8 @@ public class ArticleServiceImpl implements ArticleService {
 
     private final ValidationService validationService;
 
+    private static final String CREATED_AT = "createdAt";
+
     @Transactional
     @SneakyThrows
     @Override
@@ -62,6 +64,7 @@ public class ArticleServiceImpl implements ArticleService {
         return article.getId();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public ArticleResponse get(String articleId) {
         return toArticleResponse(getArticleById(articleId));
@@ -105,7 +108,7 @@ public class ArticleServiceImpl implements ArticleService {
     @Transactional(readOnly = true)
     @Override
     public Page<OnlyArticleResponse> getAll(Integer page, Integer size) {
-        return articleRepository.findAll(PageRequest.of(page, size, Sort.by(Sort.Order.desc("createdAt"))))
+        return articleRepository.findAll(PageRequest.of(page, size, Sort.by(Sort.Order.desc(CREATED_AT))))
                 .map(this::toOnlyArticleResponse);
     }
 
@@ -124,7 +127,7 @@ public class ArticleServiceImpl implements ArticleService {
             )).getRestriction();
         };
 
-        final var pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("createdAt")));
+        final var pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc(CREATED_AT)));
 
         final var articlesPage = articleRepository.findAll(specification, pageable);
 
@@ -138,7 +141,7 @@ public class ArticleServiceImpl implements ArticleService {
     @Transactional(readOnly = true)
     @Override
     public Page<OnlyArticleResponse> getArticlesByTag(String tagId, Integer page, Integer size) {
-        final var pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("createdAt")));
+        final var pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc(CREATED_AT)));
         final var articlesPage = articleRepository.findByTagsId(tagId, pageable);
         final var onlyArticleResponses = articlesPage.getContent().stream()
                 .map(this::toOnlyArticleResponse)
