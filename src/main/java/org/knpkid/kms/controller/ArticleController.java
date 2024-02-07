@@ -78,5 +78,27 @@ public class ArticleController {
 
     }
 
+    @GetMapping(
+            path = "/api/tags/{tagId}/articles",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public WebResponse<List<OnlyArticleResponse>> getArticlesByTag(
+            @PathVariable("tagId") String tagId,
+            @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+            @RequestParam(name = "size", required = false, defaultValue = "12") Integer size
+    ) {
+
+        final var onlyArticleResponsePage = articleService.getArticlesByTag(tagId, page, size);
+
+        return new WebResponse<>(
+                onlyArticleResponsePage.getContent(), null,
+                new PagingResponse(
+                        onlyArticleResponsePage.getNumber(),
+                        onlyArticleResponsePage.getTotalPages(),
+                        onlyArticleResponsePage.getSize()
+                )
+        );
+
+    }
 
 }

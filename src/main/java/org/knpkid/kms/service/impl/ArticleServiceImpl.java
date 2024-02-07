@@ -3,7 +3,7 @@ package org.knpkid.kms.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
+import org.springframework.data.domain.*;
 import org.knpkid.kms.entity.Admin;
 import org.knpkid.kms.entity.Article;
 import org.knpkid.kms.entity.ArticleImage;
@@ -17,9 +17,6 @@ import org.knpkid.kms.repository.ArticleRepository;
 import org.knpkid.kms.repository.TagRepository;
 import org.knpkid.kms.service.ArticleService;
 import org.knpkid.kms.service.ValidationService;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -135,6 +132,17 @@ public class ArticleServiceImpl implements ArticleService {
                 .map(this::toOnlyArticleResponse)
                 .toList();
 
+        return new PageImpl<>(onlyArticleResponses, pageable, articlesPage.getTotalElements());
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Page<OnlyArticleResponse> getArticlesByTag(String tagId, Integer page, Integer size) {
+        final var pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("createdAt")));
+        final var articlesPage = articleRepository.findByTagsId(tagId, pageable);
+        final var onlyArticleResponses = articlesPage.getContent().stream()
+                .map(this::toOnlyArticleResponse)
+                .toList();
         return new PageImpl<>(onlyArticleResponses, pageable, articlesPage.getTotalElements());
     }
 
