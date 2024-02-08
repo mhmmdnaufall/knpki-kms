@@ -9,8 +9,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,8 +22,8 @@ public class JwtTokenUtils {
     @Value("${app.jwt.secret}")
     private String jwtSecret;
 
-    @Value("${app.jwt.expirationDays}")
-    private long jwtExpirationDays;
+    @Value("${app.jwt.expirationMs}")
+    private long jwtExpirationMs;
 
     public String getUsernameFromToken(String token) {
         return getClaimFromToken(token, Claims::getSubject);
@@ -58,9 +56,7 @@ public class JwtTokenUtils {
                 .claims(claims)
                 .subject(subject)
                 .issuedAt(new Date())
-                .expiration(new Date(
-                        Instant.now().plus(jwtExpirationDays, ChronoUnit.DAYS).toEpochMilli())
-                )
+                .expiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
                 .signWith(Keys.hmacShaKeyFor(jwtSecret.getBytes()), Jwts.SIG.HS512)
                 .compact();
     }

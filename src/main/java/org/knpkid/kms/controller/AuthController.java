@@ -1,16 +1,15 @@
 package org.knpkid.kms.controller;
 
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.knpkid.kms.model.LoginAdminRequest;
+import org.knpkid.kms.model.TokenResponse;
 import org.knpkid.kms.model.WebResponse;
 import org.knpkid.kms.service.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.WebUtils;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,28 +22,22 @@ public class AuthController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public WebResponse<String> login(@RequestBody LoginAdminRequest request, HttpServletResponse response) {
+    public WebResponse<TokenResponse> login(@RequestBody LoginAdminRequest request) {
         final var jwtToken = authService.getLoginToken(request);
-        final var cookie = new Cookie("token", jwtToken);
-        response.addCookie(cookie);
-
-        return new WebResponse<>("OK", null, null);
+        return new WebResponse<>(new TokenResponse(jwtToken), null, null);
     }
 
-    @DeleteMapping(
-            path = "/api/auth/logout",
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
-    @ResponseStatus(code = HttpStatus.NO_CONTENT)
-    public WebResponse<String> logout(HttpServletRequest request, HttpServletResponse response) {
-        final var cookie = WebUtils.getCookie(request, "token");
+    @DeleteMapping("/api/auth/logout")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void logout() {
 
-        if (cookie != null) {
-            cookie.setMaxAge(0);
-            response.addCookie(cookie);
-        }
+        SecurityContextHolder.clearContext();
 
-        return new WebResponse<>("OK", null, null);
+    }
+
+    @GetMapping("/api/auth/csrf")
+    public WebResponse<CsrfToken> getCsrfToken(CsrfToken token) {
+        return new WebResponse<>(token, null, null);
     }
 
 

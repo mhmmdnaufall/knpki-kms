@@ -1,7 +1,9 @@
 package org.knpkid.kms.security;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -19,6 +21,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import java.io.IOException;
 
 import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class JwtRequestFilterTest {
@@ -72,5 +75,34 @@ class JwtRequestFilterTest {
         jwtRequestFilter.doFilterInternal(request, response, filterChain);
 
         verify(filterChain).doFilter(request, response);
+    }
+
+    @Test
+    void doFilterInternal_CatchError() {
+
+        final var request = new MockHttpServletRequest();
+        request.addHeader("Authorization", "Bearer token");
+
+        final var response = new MockHttpServletResponse();
+        final var filterChain = mock(FilterChain.class);
+
+        try (final var securityContextHolderMockStatic = mockStatic(SecurityContextHolder.class)) {
+
+            {
+                when(jwtTokenUtils.getUsernameFromToken(anyString())).thenReturn("admintest");
+                when(adminService.loadUserByUsername("admintest")).thenReturn(new Admin());
+                when(jwtTokenUtils.validateToken(anyString(), any())).thenThrow(ExpiredJwtException.class);
+
+                final var securityContext = mock(SecurityContext.class);
+                securityContextHolderMockStatic.when(SecurityContextHolder::getContext).thenReturn(securityContext);
+                when(securityContext.getAuthentication()).thenReturn(null);
+            }
+
+            assertDoesNotThrow(() -> jwtRequestFilter.doFilterInternal(request, response, filterChain));
+            securityContextHolderMockStatic.verify(SecurityContextHolder::clearContext);
+        }
+
+
+
     }
 }

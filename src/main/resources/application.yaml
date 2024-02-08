@@ -19,4 +19,4 @@ spring:
 app:
   jwt:
     secret: SkripsiKmsKnpkiIbuEuisSunartiPakIrmanHermadiMuhammadNaufalATiarIswantiSkripsiKmsKnpkiIbuEuisSunartiPakIrmanHermadiMuhammadNaufalATiarIswanti
-    expirationDays: 7
+    expirationMs: 3600000

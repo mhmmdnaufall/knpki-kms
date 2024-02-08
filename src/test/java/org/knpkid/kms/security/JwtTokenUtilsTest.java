@@ -16,7 +16,7 @@ class JwtTokenUtilsTest {
 
     private final JwtTokenUtils jwtTokenUtils = new JwtTokenUtils(
             "TestJWTSecretKeyTestJWTSecretKeyTestJWTSecretKeyTestJWTSecretKeyTestJWTSecretKeyTestJWTSecretKey",
-            30
+            60_000
     );
 
     @Test
@@ -39,7 +39,7 @@ class JwtTokenUtilsTest {
         final var expirationDate = jwtTokenUtils.getExpirationDateFromToken(getJwtToken());
         final var expirationLocalDate = LocalDate.ofInstant(expirationDate.toInstant(), ZoneId.systemDefault());
         final var expectedExpired = LocalDate.ofInstant(
-                Instant.now().plus(30, ChronoUnit.DAYS), ZoneId.systemDefault()
+                Instant.now().plus(60_000, ChronoUnit.MILLIS), ZoneId.systemDefault()
         );
         assertEquals(expectedExpired, expirationLocalDate);
     }

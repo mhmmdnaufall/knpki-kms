@@ -5,11 +5,9 @@ import org.knpkid.kms.entity.Admin;
 import org.knpkid.kms.model.AdminResponse;
 import org.knpkid.kms.repository.AdminRepository;
 import org.knpkid.kms.service.AdminService;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 @AllArgsConstructor
 @Service
@@ -20,7 +18,7 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return adminRepository.findById(username)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized"));
+                .orElseThrow(() -> new UsernameNotFoundException("admin not found with username = '" + username + "'"));
     }
 
     @Override

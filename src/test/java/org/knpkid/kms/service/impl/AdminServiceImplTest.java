@@ -7,8 +7,7 @@ import org.knpkid.kms.repository.AdminRepository;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.Optional;
 
@@ -34,11 +33,10 @@ class AdminServiceImplTest {
         // admin not exist
         when(adminRepository.findById("username")).thenReturn(Optional.empty());
          final var exception = assertThrows(
-                 ResponseStatusException.class,
+                 UsernameNotFoundException.class,
                  () -> adminService.loadUserByUsername("username")
          );
-         assertEquals("Unauthorized", exception.getReason());
-         assertEquals(HttpStatus.UNAUTHORIZED, exception.getStatusCode());
+         assertEquals("admin not found with username = 'username'", exception.getMessage());
     }
 
     @Test
