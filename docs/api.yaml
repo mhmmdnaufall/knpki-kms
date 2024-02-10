@@ -12,7 +12,7 @@ servers:
     description: KNPKI Server
 tags:
   - name: Auth
-    description: For Login and Logout Admin
+    description: For authentication matters
 
 
 paths:
@@ -22,6 +22,8 @@ paths:
       summary: Get Current Admin Account
       tags:
         - Admin
+      security:
+        - BearerToken: []
       responses:
         200:
           description: Success get Current Admin Account
@@ -33,12 +35,11 @@ paths:
                 data:
                   username: mhmmdnaufal
                   name: Naufal
-                  image: jfvnrhofhishvf3fi1rf31y4rt9wurofurjqi]igtgi-2jgu4
+                  image: jfvnrhofhishvf3fi1rf31y4rt9wurofurjqi]igtgi-2jgu4...
                 errors: null
                 paging: null
         401:
           $ref: "#/components/responses/401"
-
 
   /api/auth/login:
     post:
@@ -59,15 +60,10 @@ paths:
               schema:
                 $ref: "#/components/schemas/WebResponse"
               example:
-                data: OK
+                data:
+                  token: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTcwNzQ3NzEwMCwiZXhwIjoxNzA3NDgwNzAwfQ.I9imemHoNVQiGYAeN8C5_-_1ETTFXOtu_Vg-tAbkkudEi1HiFMqxNOwmt1Ax3ke7rCqiTgh2v96AOaHfRvnzdw
                 errors: null
                 paging: null
-          headers:
-            Set-Cookie:
-              description: Cookie header
-              schema:
-                type: string
-                example: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ...
 
         400:
           description: Wrong Format
@@ -130,111 +126,163 @@ paths:
       tags:
         - Auth
       security:
-        - Auth: [ ]
+        - BearerToken: []
       responses:
-        200:
+        204:
           description: Success logout admin
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/WebResponse"
-              example:
-                data: OK
-                errors: null
-                paging: null
         401:
-          description: User Token Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/WebResponse"
-              example:
-                data: null
-                errors: Unauthorized
-                paging: null
+          $ref: "#/components/responses/401"
 
-  /api/articles:
+  /api/auth/csrf:
     get:
-      summary: Get All Existing Article
+      summary: Get CSRF token
       tags:
-        - Article
+        - Auth
+      security:
+        - BearerToken: []
       responses:
         200:
-          description: Success get all existing Article
+          description: Success get CSRF Token
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/WebResponse"
               example:
                 data:
-                  - id: 5c020359-a6db-42ba-9285-772e739f2620
-                    title: Ini Judul
-                    createdAt: 2024-03-01 15:00:00
-                    updatedAt: 2024-03-01 15:00:00
-                    coverImage: fyecy2ry43ycr3n9hfrhn9vnaofhafafp3]ptr432u9v8qq
-                    body: Article merupakan karya tulis lengkap, misalnya laporan berita atau esai dalam majalah, surat kabar dan sebagainya
-                    teaser: Artikel ini membicarakan definisi artikel
-                    tags:
-                      - Article
-                      - Artikel
-                      - Definition
-                      - Karya Tulis
-                    admin:
-                      username: mhmmdnaufal
-                      name: Muhammad Naufal
+                  parameterName: _csrf
+                  token: AFrfI_NNzqELpggF6jjV2x5voCvXkDyKQlzaK2zsO1b1VZfeYmK8G8srqsAmw2kwiRXh6ioMjUmy9QyncWXpHlTUDGGRY_W6
+                  headerName: X-CSRF-TOKEN
+                errors: null
+                paging: null
 
-                  - id: 87309aad-f262-4f93-a9c2-34df51c8291a
-                    title: Ini Judul
-                    createdAt: 2024-03-01 15:00:00
-                    updatedAt: 2024-03-01 15:00:00
-                    coverImage: fyecy2ry43ycr3n9hfrhn9vnaofhafafp3]ptr432u9v8qq
-                    body: Article merupakan karya tulis lengkap, misalnya laporan berita atau esai dalam majalah, surat kabar dan sebagainya
-                    teaser: Artikel ini membicarakan definisi artikel
-                    tags:
-                      - Article
-                      - Artikel
-                      - Definition
-                      - Karya Tulis
-                    admin:
-                      username: mhmmdnaufal
-                      name: Muhammad Naufal
+        401:
+          $ref: "#/components/responses/401"
 
-                  - id: de29de94-2f1e-4691-a985-e692326d29dc
-                    title: Ini Judul
-                    createdAt: 2024-03-01 15:00:00
-                    updatedAt: 2024-03-01 15:00:00
-                    coverImage: fyecy2ry43ycr3n9hfrhn9vnaofhafafp3]ptr432u9v8qq
-                    body: Article merupakan karya tulis lengkap, misalnya laporan berita atau esai dalam majalah, surat kabar dan sebagainya
-                    teaser: Artikel ini membicarakan definisi artikel
-                    tags:
-                      - Article
-                      - Artikel
-                      - Definition
-                      - Karya Tulis
-                    admin:
-                      username: mhmmdnaufal
-                      name: Muhammad Naufal
 
-                  - id: 5169b372-fd53-43cb-8f90-94db9e0c84b7
+
+  /api/articles:
+    get:
+      summary: Get All Existing Article OR Search Article
+      tags:
+        - Article
+      parameters:
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 12
+      responses:
+        200:
+          description: Success get all existing Article
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebResponseListOnlyArticleResponse"
+              example:
+                data:
+                  - id: 1f24face-9475-44b4-965a-5b811e997252
+                    title: Pengaruh BBM Naik 100% kepada Keluarga
+                    createdAt: '2024-02-07 16:23:16'
+                    updatedAt: '2024-02-07 16:23:16'
+                    body: Ini merupakan tubuh dari tulisan artikel
+                    teaser: Kerangka Artikel
+                    coverImage: null
+                  - id: 607e7f00-84df-4433-b598-6ce8c5d943bd
+                    title: Pengaruh BBM Naik 100% kepada Keluarga
+                    createdAt: '2024-02-06 23:55:52'
+                    updatedAt: '2024-02-06 23:55:52'
+                    body: Ini merupakan tubuh dari tulisan artikel
+                    teaser: Kerangka Artikel
+                    coverImage: null
+                  - id: 8c751e8c-fca5-43f5-bc9a-970b611f8e4f
+                    title: this is judul
+                    createdAt: '2024-02-06 23:27:56'
+                    updatedAt: '2024-02-06 23:27:56'
+                    body: body
+                    teaser: teaser baru ini
+                    coverImage:
+                  - id: 6c153e83-5e7b-41fc-a8e5-9d2bb4259d0a
                     title: Ini Judul
-                    createdAt: 2024-03-01 15:00:00
-                    updatedAt: 2024-03-01 15:00:00
-                    coverImage: fyecy2ry43ycr3n9hfrhn9vnaofhafafp3]ptr432u9v8qq
-                    body: Article merupakan karya tulis lengkap, misalnya laporan berita atau esai dalam majalah, surat kabar dan sebagainya
-                    teaser: Artikel ini membicarakan definisi artikel
-                    tags:
-                      - Article
-                      - Artikel
-                      - Definition
-                      - Karya Tulis
-                    admin:
-                      username: mhmmdnaufal
-                      name: Muhammad Naufal
+                    createdAt: '2024-02-06 01:41:39'
+                    updatedAt: '2024-02-06 01:41:39'
+                    body: Ini merupakan tubuh dari tulisan artikel
+                    teaser: Kerangka Artikel
+                    coverImage: "/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEoHBw7nZhZY0cKA..."
+                  - id: 2140456f-e0ad-4b7f-83aa-8a448e20d6b1
+                    title: Ini Judul
+                    createdAt: '2024-02-06 01:40:32'
+                    updatedAt: '2024-02-06 01:40:32'
+                    body: Ini merupakan tubuh dari tulisan artikel
+                    teaser: Kerangka Artikel
+                    coverImage: null
+                  - id: 42e918b5-130e-4434-9ddb-385e1f96923c
+                    title: Ini Judul
+                    createdAt: '2024-02-06 01:40:31'
+                    updatedAt: '2024-02-06 01:40:31'
+                    body: Ini merupakan tubuh dari tulisan artikel
+                    teaser: Kerangka Artikel
+                    coverImage: null
+                  - id: 8eda744b-cb15-445d-b711-9484be66f53a
+                    title: Ini Judul
+                    createdAt: '2024-02-06 01:40:30'
+                    updatedAt: '2024-02-06 01:40:30'
+                    body: Ini merupakan tubuh dari tulisan artikel
+                    teaser: Kerangka Artikel
+                    coverImage: null
+                  - id: f769e575-29a9-4e51-975b-52af1472bdd6
+                    title: Ini Judul
+                    createdAt: '2024-02-06 01:40:29'
+                    updatedAt: '2024-02-06 01:40:29'
+                    body: Ini merupakan tubuh dari tulisan artikel
+                    teaser: Kerangka Artikel
+                    coverImage: null
+                  - id: 95a0c12e-e787-4393-9b55-6ea8b56405a6
+                    title: Ini Judul
+                    createdAt: '2024-02-06 01:40:28'
+                    updatedAt: '2024-02-06 01:40:28'
+                    body: Ini merupakan tubuh dari tulisan artikel
+                    teaser: Kerangka Artikel
+                    coverImage: null
+                  - id: 6170a8a6-62eb-490e-a3c8-cded3f2b6242
+                    title: Ini Judul
+                    createdAt: '2024-02-06 01:40:26'
+                    updatedAt: '2024-02-06 01:40:26'
+                    body: Ini merupakan tubuh dari tulisan artikel
+                    teaser: Kerangka Artikel
+                    coverImage: null
+                  - id: 6da739a0-3294-422a-8cce-83238858b7e5
+                    title: Ini Judul
+                    createdAt: '2024-02-06 01:40:25'
+                    updatedAt: '2024-02-06 01:40:25'
+                    body: Ini merupakan tubuh dari tulisan artikel
+                    teaser: Kerangka Artikel
+                    coverImage: null
+                  - id: c44702ba-e47d-426d-91c5-62b0d8f0c5e6
+                    title: Ini Judul
+                    createdAt: '2024-02-06 01:40:24'
+                    updatedAt: '2024-02-06 01:40:24'
+                    body: Ini merupakan tubuh dari tulisan artikel
+                    teaser: Kerangka Artikel
+                    coverImage: null
                 errors: null
                 paging:
                   currentPage: 0
-                  totalPage: 2
-                  size: 24
+                  totalPage: 5
+                  size: 12
 
     post:
       summary: Create Article
@@ -242,43 +290,30 @@ paths:
       tags:
         - Article
       security:
-        - Auth: []
+        - BearerToken: []
+        - CsrfToken: []
       requestBody:
         required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
               $ref: "#/components/schemas/CreateArticleRequest"
       responses:
-        200:
+        201:
           description: Success create new Article
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/WebResponse"
+                $ref: "#/components/schemas/WebResponseString"
               example:
-                data:
-                  id: 5c020359-a6db-42ba-9285-772e739f2620
-                  title: Ini Judul
-                  createdAt: 2024-03-01 15:00:00
-                  updatedAt: 2024-03-01 15:00:00
-                  coverImage: fyecy2ry43ycr3n9hfrhn9vnaofhafafp3]ptr432u9v8qq
-                  body: Article merupakan karya tulis lengkap, misalnya laporan berita atau esai dalam majalah, surat kabar dan sebagainya
-                  teaser: Artikel ini membicarakan definisi artikel
-                  tags:
-                    - Article
-                    - Artikel
-                    - Definition
-                    - Karya Tulis
-                  images:
-                    - ufrun994832unr9asfjajfvjpjbpjf[jf]FFK0[fbk0aifpoi9-rinbt
-                    - aisodjoijnvur0-vUAVHFNH4392upfjFEJNP[RJPFEJSRa5ybqhww
-                    - ohjnf08u4n0t4u30rajfvapjevjeqjtqjbatq4t632tq4wt4tn
-                    - 5923ybn9yahbtoghosdhgoabjtogj502ajvfjojnbjj09ut
+                data: article created with id `02904f4b-6260-44ad-91a0-caa3d792d245`
                 errors: null
                 paging: null
         401:
           $ref: "#/components/responses/401"
+
+        403:
+          $ref: "#/components/responses/403"
 
   /api/articles/{articleId}:
     get:
@@ -299,29 +334,34 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/WebResponse"
+                $ref: "#/components/schemas/WebResponseArticleResponse"
               example:
                 data:
-                  id: 5c020359-a6db-42ba-9285-772e739f2620
-                  title: Ini Judul
+                  id: f9467a1b-bc25-45f5-85a1-0b3cdb5f60b1
+                  title: Pengaruh BBM Naik 100% kepada Keluarga
                   createdAt: 2024-03-01 15:00:00
                   updatedAt: 2024-03-01 15:00:00
-                  coverImage: fyecy2ry43ycr3n9hfrhn9vnaofhafafp3]ptr432u9v8qq
-                  body: Article merupakan karya tulis lengkap, misalnya laporan berita atau esai dalam majalah, surat kabar dan sebagainya
+                  body: Ini merupakan tubuh dari tulisan artikel
                   teaser: Artikel ini membicarakan definisi artikel
                   tags:
-                    - Article
-                    - Artikel
-                    - Definition
-                    - Karya Tulis
-                  images:
-                    - ufrun994832unr9asfjajfvjpjbpjf[jf]FFK0[fbk0aifpoi9-rinbt
-                    - aisodjoijnvur0-vUAVHFNH4392upfjFEJNP[RJPFEJSRa5ybqhww
-                    - ohjnf08u4n0t4u30rajfvapjevjeqjtqjbatq4t632tq4wt4tn
-                    - 5923ybn9yahbtoghosdhgoabjtogj502ajvfjojnbjj09ut
+                    - id: bbm-naik
+                      name: bbm naik
+                    - id: pengaruh-bbm
+                      name: pengaruh bbm
+                    - id: bbm
+                      name: bbm
                   admin:
-                    username: mhmmdnaufal
-                    name: Muhammad Naufal
+                    username: admin
+                    name: Admin
+                    image: fyecy2ry43ycr3n9hfrhn9vnaofhafafp3]ptr432u9v8qq...
+                  coverImage: sdfh2349ny49fynt9348yw9crfhohvfn2hopitghno...
+                  images:
+                    - id: 26f7b011-11be-49c1-aa23-b96f914a2fd8
+                      image: aiosdoiasowq90-nu0fuhrfn0-u[paotjvpw...
+                    - id: c67f3d86-67b9-4936-9556-aa2d53eaab89
+                      image: saodihy924hryahnsbflhnt3b1n[h02937380hgdj...
+                    - id: f18b1840-0be5-40bb-9364-b067cda5c5ea
+                      image: z;ufv3496thvobhneqiohgn9qnhgobhohnzj...
                 errors: null
                 paging: null
 
@@ -341,7 +381,8 @@ paths:
       tags:
         - Article
       security:
-        - Auth: []
+        - BearerToken: []
+        - CsrfToken: []
       parameters:
         - name: articleId
           in: path
@@ -353,7 +394,7 @@ paths:
       requestBody:
         required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
               $ref: "#/components/schemas/UpdateArticleRequest"
       responses:
@@ -387,15 +428,14 @@ paths:
         401:
           $ref: "#/components/responses/401"
 
-
-
     delete:
       summary: Delete Article
       description: For deleting article. only for logged-in account (admin)
       tags:
         - Article
       security:
-        - Auth: []
+        - BearerToken: []
+        - CsrfToken: []
       parameters:
         - name: articleId
           in: path
@@ -405,18 +445,14 @@ paths:
           description: Put the `id` of the article you want to delete
           example: 5c020359-a6db-42ba-9285-772e739f2620
       responses:
-        200:
+        204:
           description: Success Delete Article
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/WebResponse"
-              example:
-                data: OK
-                errors: null
-                paging: null
+
         401:
           $ref: "#/components/responses/401"
+
+        403:
+          $ref: "#/components/responses/403"
 
         404:
           description: Article is not found
@@ -426,14 +462,14 @@ paths:
                 $ref: "#/components/schemas/WebResponse"
               example:
                 data: null
-                errors: Article is not found
+                errors: Article with id `5c020359-a6db-42ba-9285-772e739f2620` is not found
                 paging: null
 
-  /api/tags/{tagId}:
+  /api/tags/{tagId}/articles:
     get:
       summary: Get all related article with given tag
       tags:
-        - Tag
+        - Article
       parameters:
         - name: tagId
           in: path
@@ -441,7 +477,21 @@ paths:
           schema:
             type: string
           description: Put the tags id you want to search
-          example: orang-tua
+          example: bbm-naik
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 12
 
       responses:
         200:
@@ -452,94 +502,95 @@ paths:
                 $ref: "#/components/schemas/WebResponse"
               example:
                 data:
-                  - id: 5c020359-a6db-42ba-9285-772e739f2620
+                  - id: 1f24face-9475-44b4-965a-5b811e997252
+                    title: Pengaruh BBM Naik 100% kepada Keluarga
+                    createdAt: '2024-02-07 16:23:16'
+                    updatedAt: '2024-02-07 16:23:16'
+                    body: Ini merupakan tubuh dari tulisan artikel
+                    teaser: Kerangka Artikel
+                    coverImage: null
+                  - id: 607e7f00-84df-4433-b598-6ce8c5d943bd
+                    title: Pengaruh BBM Naik 100% kepada Keluarga
+                    createdAt: '2024-02-06 23:55:52'
+                    updatedAt: '2024-02-06 23:55:52'
+                    body: Ini merupakan tubuh dari tulisan artikel
+                    teaser: Kerangka Artikel
+                    coverImage: null
+                  - id: 8c751e8c-fca5-43f5-bc9a-970b611f8e4f
+                    title: this is judul
+                    createdAt: '2024-02-06 23:27:56'
+                    updatedAt: '2024-02-06 23:27:56'
+                    body: body
+                    teaser: teaser baru ini
+                    coverImage:
+                  - id: 6c153e83-5e7b-41fc-a8e5-9d2bb4259d0a
                     title: Ini Judul
-                    createdAt: 2024-03-01 15:00:00
-                    updatedAt: 2024-03-01 15:00:00
-                    coverImage: fyecy2ry43ycr3n9hfrhn9vnaofhafafp3]ptr432u9v8qq
-                    body: Article merupakan karya tulis lengkap, misalnya laporan berita atau esai dalam majalah, surat kabar dan sebagainya
-                    teaser: Artikel ini membicarakan definisi artikel
-                    tags:
-                      - Article
-                      - Artikel
-                      - Definition
-                      - Orang Tua
-                    images:
-                      - ufrun994832unr9asfjajfvjpjbpjf[jf]FFK0[fbk0aifpoi9-rinbt
-                      - aisodjoijnvur0-vUAVHFNH4392upfjFEJNP[RJPFEJSRa5ybqhww
-                      - ohjnf08u4n0t4u30rajfvapjevjeqjtqjbatq4t632tq4wt4tn
-                      - 5923ybn9yahbtoghosdhgoabjtogj502ajvfjojnbjj09ut
-                    admin:
-                      username: mhmmdnaufal
-                      name: Muhammad Naufal
-
-                  - id: 87309aad-f262-4f93-a9c2-34df51c8291a
+                    createdAt: '2024-02-06 01:41:39'
+                    updatedAt: '2024-02-06 01:41:39'
+                    body: Ini merupakan tubuh dari tulisan artikel
+                    teaser: Kerangka Artikel
+                    coverImage: "/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEoHBw7nZhZY0cKA..."
+                  - id: 2140456f-e0ad-4b7f-83aa-8a448e20d6b1
                     title: Ini Judul
-                    createdAt: 2024-03-01 15:00:00
-                    updatedAt: 2024-03-01 15:00:00
-                    coverImage: fyecy2ry43ycr3n9hfrhn9vnaofhafafp3]ptr432u9v8qq
-                    body: Article merupakan karya tulis lengkap, misalnya laporan berita atau esai dalam majalah, surat kabar dan sebagainya
-                    teaser: Artikel ini membicarakan definisi artikel
-                    tags:
-                      - Article
-                      - Artikel
-                      - Orang Tua
-                      - Karya Tulis
-                    images:
-                      - ufrun994832unr9asfjajfvjpjbpjf[jf]FFK0[fbk0aifpoi9-rinbt
-                      - aisodjoijnvur0-vUAVHFNH4392upfjFEJNP[RJPFEJSRa5ybqhww
-                      - ohjnf08u4n0t4u30rajfvapjevjeqjtqjbatq4t632tq4wt4tn
-                      - 5923ybn9yahbtoghosdhgoabjtogj502ajvfjojnbjj09ut
-                    admin:
-                      username: mhmmdnaufal
-                      name: Muhammad Naufal
-
-                  - id: de29de94-2f1e-4691-a985-e692326d29dc
+                    createdAt: '2024-02-06 01:40:32'
+                    updatedAt: '2024-02-06 01:40:32'
+                    body: Ini merupakan tubuh dari tulisan artikel
+                    teaser: Kerangka Artikel
+                    coverImage: null
+                  - id: 42e918b5-130e-4434-9ddb-385e1f96923c
                     title: Ini Judul
-                    createdAt: 2024-03-01 15:00:00
-                    updatedAt: 2024-03-01 15:00:00
-                    coverImage: fyecy2ry43ycr3n9hfrhn9vnaofhafafp3]ptr432u9v8qq
-                    body: Article merupakan karya tulis lengkap, misalnya laporan berita atau esai dalam majalah, surat kabar dan sebagainya
-                    teaser: Artikel ini membicarakan definisi artikel
-                    tags:
-                      - Article
-                      - Orang Tua
-                      - Definition
-                      - Karya Tulis
-                    images:
-                      - ufrun994832unr9asfjajfvjpjbpjf[jf]FFK0[fbk0aifpoi9-rinbt
-                      - aisodjoijnvur0-vUAVHFNH4392upfjFEJNP[RJPFEJSRa5ybqhww
-                      - ohjnf08u4n0t4u30rajfvapjevjeqjtqjbatq4t632tq4wt4tn
-                      - 5923ybn9yahbtoghosdhgoabjtogj502ajvfjojnbjj09ut
-                    admin:
-                      username: mhmmdnaufal
-                      name: Muhammad Naufal
-
-                  - id: 5169b372-fd53-43cb-8f90-94db9e0c84b7
+                    createdAt: '2024-02-06 01:40:31'
+                    updatedAt: '2024-02-06 01:40:31'
+                    body: Ini merupakan tubuh dari tulisan artikel
+                    teaser: Kerangka Artikel
+                    coverImage: null
+                  - id: 8eda744b-cb15-445d-b711-9484be66f53a
                     title: Ini Judul
-                    createdAt: 2024-03-01 15:00:00
-                    updatedAt: 2024-03-01 15:00:00
-                    coverImage: fyecy2ry43ycr3n9hfrhn9vnaofhafafp3]ptr432u9v8qq
-                    body: Article merupakan karya tulis lengkap, misalnya laporan berita atau esai dalam majalah, surat kabar dan sebagainya
-                    teaser: Artikel ini membicarakan definisi artikel
-                    tags:
-                      - Orang Tua
-                      - Artikel
-                      - Definition
-                      - Karya Tulis
-                    images:
-                      - ufrun994832unr9asfjajfvjpjbpjf[jf]FFK0[fbk0aifpoi9-rinbt
-                      - aisodjoijnvur0-vUAVHFNH4392upfjFEJNP[RJPFEJSRa5ybqhww
-                      - ohjnf08u4n0t4u30rajfvapjevjeqjtqjbatq4t632tq4wt4tn
-                      - 5923ybn9yahbtoghosdhgoabjtogj502ajvfjojnbjj09ut
-                    admin:
-                      username: mhmmdnaufal
-                      name: Muhammad Naufal
+                    createdAt: '2024-02-06 01:40:30'
+                    updatedAt: '2024-02-06 01:40:30'
+                    body: Ini merupakan tubuh dari tulisan artikel
+                    teaser: Kerangka Artikel
+                    coverImage: null
+                  - id: f769e575-29a9-4e51-975b-52af1472bdd6
+                    title: Ini Judul
+                    createdAt: '2024-02-06 01:40:29'
+                    updatedAt: '2024-02-06 01:40:29'
+                    body: Ini merupakan tubuh dari tulisan artikel
+                    teaser: Kerangka Artikel
+                    coverImage: null
+                  - id: 95a0c12e-e787-4393-9b55-6ea8b56405a6
+                    title: Ini Judul
+                    createdAt: '2024-02-06 01:40:28'
+                    updatedAt: '2024-02-06 01:40:28'
+                    body: Ini merupakan tubuh dari tulisan artikel
+                    teaser: Kerangka Artikel
+                    coverImage: null
+                  - id: 6170a8a6-62eb-490e-a3c8-cded3f2b6242
+                    title: Ini Judul
+                    createdAt: '2024-02-06 01:40:26'
+                    updatedAt: '2024-02-06 01:40:26'
+                    body: Ini merupakan tubuh dari tulisan artikel
+                    teaser: Kerangka Artikel
+                    coverImage: null
+                  - id: 6da739a0-3294-422a-8cce-83238858b7e5
+                    title: Ini Judul
+                    createdAt: '2024-02-06 01:40:25'
+                    updatedAt: '2024-02-06 01:40:25'
+                    body: Ini merupakan tubuh dari tulisan artikel
+                    teaser: Kerangka Artikel
+                    coverImage: null
+                  - id: c44702ba-e47d-426d-91c5-62b0d8f0c5e6
+                    title: Ini Judul
+                    createdAt: '2024-02-06 01:40:24'
+                    updatedAt: '2024-02-06 01:40:24'
+                    body: Ini merupakan tubuh dari tulisan artikel
+                    teaser: Kerangka Artikel
+                    coverImage: null
                 errors: null
                 paging:
                   currentPage: 0
-                  totalPage: 2
-                  size: 24
+                  totalPage: 5
+                  size: 12
 
         404:
           description: Article with specified tag is not found
@@ -552,136 +603,20 @@ paths:
                 errors: Article with tag 'orang-tua' is not found
                 paging: null
 
-  /api/search:
-    get:
-      summary: Searching related article with a certain keyword
-      tags:
-        - Search
-      parameters:
-        - name: keyword
-          in: query
-          required: true
-          schema:
-            type: string
-          description: Put the keyword for searching related article
-          example: pengaruh orang tua terhadap pertumbuhan anak
-      responses:
-        200:
-          description: Success get related article with given tags
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/WebResponse"
-              example:
-                data:
-                  - id: 5c020359-a6db-42ba-9285-772e739f2620
-                    title: Pengaruh Orang Tua Terhadap Pertumbuhan Anak
-                    createdAt: 2024-03-01 15:00:00
-                    updatedAt: 2024-03-01 15:00:00
-                    coverImage: fyecy2ry43ycr3n9hfrhn9vnaofhafafp3]ptr432u9v8qq
-                    body: Article merupakan karya tulis lengkap, misalnya laporan berita atau esai dalam majalah, surat kabar dan sebagainya. Pengaruh orang tua terhadap pertumbuhan anak
-                    teaser: Artikel ini membicarakan definisi artikel
-                    tags:
-                      - Article
-                      - Artikel
-                      - Definition
-                      - Orang Tua
-                    images:
-                      - ufrun994832unr9asfjajfvjpjbpjf[jf]FFK0[fbk0aifpoi9-rinbt
-                      - aisodjoijnvur0-vUAVHFNH4392upfjFEJNP[RJPFEJSRa5ybqhww
-                      - ohjnf08u4n0t4u30rajfvapjevjeqjtqjbatq4t632tq4wt4tn
-                      - 5923ybn9yahbtoghosdhgoabjtogj502ajvfjojnbjj09ut
-                    admin:
-                      username: mhmmdnaufal
-                      name: Muhammad Naufal
-
-                  - id: 87309aad-f262-4f93-a9c2-34df51c8291a
-                    title: Ini Judul
-                    createdAt: 2024-03-01 15:00:00
-                    updatedAt: 2024-03-01 15:00:00
-                    coverImage: fyecy2ry43ycr3n9hfrhn9vnaofhafafp3]ptr432u9v8qq
-                    body: Pengaruh orang tua terhadap pertumbuhan anak. Article merupakan karya tulis lengkap, misalnya laporan berita atau esai dalam majalah, surat kabar dan sebagainya
-                    teaser: Artikel ini membicarakan definisi artikel
-                    tags:
-                      - Article
-                      - Artikel
-                      - Orang Tua
-                      - Karya Tulis
-                    images:
-                      - ufrun994832unr9asfjajfvjpjbpjf[jf]FFK0[fbk0aifpoi9-rinbt
-                      - aisodjoijnvur0-vUAVHFNH4392upfjFEJNP[RJPFEJSRa5ybqhww
-                      - ohjnf08u4n0t4u30rajfvapjevjeqjtqjbatq4t632tq4wt4tn
-                      - 5923ybn9yahbtoghosdhgoabjtogj502ajvfjojnbjj09ut
-                    admin:
-                      username: mhmmdnaufal
-                      name: Muhammad Naufal
-
-                  - id: de29de94-2f1e-4691-a985-e692326d29dc
-                    title: Ini Judul
-                    createdAt: 2024-03-01 15:00:00
-                    updatedAt: 2024-03-01 15:00:00
-                    coverImage: fyecy2ry43ycr3n9hfrhn9vnaofhafafp3]ptr432u9v8qq
-                    body: Article merupakan karya tulis lengkap, pengaruh orang tua terhadap pertumbuhan anak, misalnya laporan berita atau esai dalam majalah, surat kabar dan sebagainya
-                    teaser: Artikel ini membicarakan definisi artikel
-                    tags:
-                      - Article
-                      - Orang Tua
-                      - Definition
-                      - Karya Tulis
-                    images:
-                      - ufrun994832unr9asfjajfvjpjbpjf[jf]FFK0[fbk0aifpoi9-rinbt
-                      - aisodjoijnvur0-vUAVHFNH4392upfjFEJNP[RJPFEJSRa5ybqhww
-                      - ohjnf08u4n0t4u30rajfvapjevjeqjtqjbatq4t632tq4wt4tn
-                      - 5923ybn9yahbtoghosdhgoabjtogj502ajvfjojnbjj09ut
-                    admin:
-                      username: mhmmdnaufal
-                      name: Muhammad Naufal
-
-                  - id: 5169b372-fd53-43cb-8f90-94db9e0c84b7
-                    title: Ini Judul
-                    createdAt: 2024-03-01 15:00:00
-                    updatedAt: 2024-03-01 15:00:00
-                    coverImage: fyecy2ry43ycr3n9hfrhn9vnaofhafafp3]ptr432u9v8qq
-                    body: Article merupakan karya tulis lengkap, misalnya laporan berita atau esai dalam majalah, pengaruh orang tua terhadap pertumbuhan anak, surat kabar dan sebagainya
-                    teaser: Artikel ini membicarakan definisi artikel
-                    tags:
-                      - Orang Tua
-                      - Artikel
-                      - Definition
-                      - Karya Tulis
-                    images:
-                      - ufrun994832unr9asfjajfvjpjbpjf[jf]FFK0[fbk0aifpoi9-rinbt
-                      - aisodjoijnvur0-vUAVHFNH4392upfjFEJNP[RJPFEJSRa5ybqhww
-                      - ohjnf08u4n0t4u30rajfvapjevjeqjtqjbatq4t632tq4wt4tn
-                      - 5923ybn9yahbtoghosdhgoabjtogj502ajvfjojnbjj09ut
-                    admin:
-                      username: mhmmdnaufal
-                      name: Muhammad Naufal
-                errors: null
-                paging:
-                  currentPage: 0
-                  totalPage: 2
-                  size: 24
-        404:
-          description: Keyword didn't found in any article
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/WebResponse"
-              example:
-                data: null
-                errors: Article is not found
-                paging: null
-
-
 components:
 
   securitySchemes:
-    Auth:
+    BearerToken:
       description: Put JWT Token with format "Bearer `token`"
       type: apiKey
       in: header
       name: Authorization
+
+    CsrfToken:
+      description: Put CSRF Token
+      type: apiKey
+      in: header
+      name: X-CSRF-TOKEN
 
   responses:
     401:
@@ -694,8 +629,143 @@ components:
             data: null
             errors: Unauthorized
             paging: null
+    403:
+      description: CSRF Token not valid
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              timestamp:
+                type: string
+                example: 2024-02-09T13:10:51.107+00:00
+              status:
+                type: integer
+                example: 403
+              error:
+                type: string
+                example: Forbidden
+              path:
+                type: string
+                example: /api/articles
 
   schemas:
+
+    LoginAdminRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          required: true
+          nullable: false
+          example: mhmmdnaufal
+        password:
+          type: string
+          required: true
+          nullable: false
+          example: rahasia
+
+    CreateArticleRequest:
+      required:
+        - body
+        - title
+      type: object
+      properties:
+        title:
+          maxLength: 100
+          minLength: 0
+          type: string
+        coverImage:
+          type: string
+          format: binary
+        body:
+          maxLength: 65535
+          minLength: 0
+          type: string
+        teaser:
+          maxLength: 200
+          minLength: 0
+          type: string
+        tags:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        images:
+          type: array
+          items:
+            type: string
+            format: binary
+
+    UpdateArticleRequest:
+      type: object
+      required:
+        - body
+        - title
+      properties:
+        title:
+          maxLength: 100
+          minLength: 0
+          type: string
+          example: Ini Judul
+        coverImage:
+          type: string
+          format: binary
+          example: fyecy2ry43ycr3n9hfrhn9vnaofhafafp3]ptr432u9v8qq
+        body:
+          maxLength: 65535
+          minLength: 0
+          type: string
+          example: Article merupakan karya tulis lengkap, misalnya laporan berita atau esai dalam majalah, surat kabar dan sebagainya
+        teaser:
+          maxLength: 200
+          minLength: 0
+          type: string
+          example: Artikel ini membicarakan definisi artikel
+        tags:
+          type: array
+          uniqueItems: true
+          items:
+            type: string
+          example:
+            - Article
+            - Artikel
+            - Definition
+            - Karya Tulis
+        images:
+          type: array
+          items:
+            type: string
+            format: binary
+          example:
+            - ufrun994832unr9asfjajfvjpjbpjf[jf]FFK0[fbk0aifpoi9-rinbt
+            - aisodjoijnvur0-vUAVHFNH4392upfjFEJNP[RJPFEJSRa5ybqhww
+            - ohjnf08u4n0t4u30rajfvapjevjeqjtqjbatq4t632tq4wt4tn
+            - 5923ybn9yahbtoghosdhgoabjtogj502ajvfjojnbjj09ut
+
+    OnlyArticleResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        body:
+          type: string
+        teaser:
+          type: string
+        coverImage:
+          type: array
+          items:
+            type: string
+            format: byte
+
     WebResponse:
       type: object
       properties:
@@ -722,88 +792,88 @@ components:
           type: integer
           format: int32
 
-    LoginAdminRequest:
+    WebResponseListOnlyArticleResponse:
       type: object
       properties:
-        username:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/OnlyArticleResponse"
+        errors:
           type: string
-          required: true
-          nullable: false
-          example: mhmmdnaufal
-        password:
-          type: string
-          required: true
-          nullable: false
-          example: rahasia
+        paging:
+          $ref: "#/components/schemas/PagingResponse"
 
-    CreateArticleRequest:
+    WebResponseString:
       type: object
       properties:
-        title:
+        data:
           type: string
-          example: Ini Judul
-        coverImage:
+        errors:
           type: string
-          format: binary
-          example: fyecy2ry43ycr3n9hfrhn9vnaofhafafp3]ptr432u9v8qq
-        body:
-          type: string
-          example: Article merupakan karya tulis lengkap, misalnya laporan berita atau esai dalam majalah, surat kabar dan sebagainya
-        teaser:
-          type: string
-          example: Artikel ini membicarakan definisi artikel
-        tags:
-          type: array
-          items:
-            type: string
-          example:
-            - Article
-            - Artikel
-            - Definition
-            - Karya Tulis
-        images:
-          type: array
-          items:
-            type: string
-            format: binary
-          example:
-            - ufrun994832unr9asfjajfvjpjbpjf[jf]FFK0[fbk0aifpoi9-rinbt
-            - aisodjoijnvur0-vUAVHFNH4392upfjFEJNP[RJPFEJSRa5ybqhww
-            - ohjnf08u4n0t4u30rajfvapjevjeqjtqjbatq4t632tq4wt4tn
-            - 5923ybn9yahbtoghosdhgoabjtogj502ajvfjojnbjj09ut
+        paging:
+          $ref: '#/components/schemas/PagingResponse'
 
-    UpdateArticleRequest:
+    WebResponseArticleResponse:
       type: object
       properties:
-        title:
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+            title:
+              type: string
+            createdAt:
+              type: string
+              format: date-time
+            updatedAt:
+              type: string
+              format: date-time
+            body:
+              type: string
+            teaser:
+              type: string
+            tags:
+              uniqueItems: true
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  name:
+                    type: string
+            admin:
+              type: object
+              properties:
+                username:
+                  type: string
+                name:
+                  type: string
+                image:
+                  type: array
+                  items:
+                    type: string
+                    format: byte
+            coverImage:
+              type: array
+              items:
+                type: string
+                format: byte
+            images:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  image:
+                    type: array
+                    items:
+                      type: string
+                      format: byte
+        errors:
           type: string
-          example: Ini Judul
-        coverImage:
-          type: string
-          format: binary
-          example: fyecy2ry43ycr3n9hfrhn9vnaofhafafp3]ptr432u9v8qq
-        body:
-          type: string
-          example: Article merupakan karya tulis lengkap, misalnya laporan berita atau esai dalam majalah, surat kabar dan sebagainya
-        teaser:
-          type: string
-          example: Artikel ini membicarakan definisi artikel
-        tags:
-          type: array
-          items:
-            type: string
-          example:
-            - Article
-            - Artikel
-            - Definition
-            - Karya Tulis
-        images:
-          type: array
-          items:
-            type: string
-            format: binary
-          example:
-            - ufrun994832unr9asfjajfvjpjbpjf[jf]FFK0[fbk0aifpoi9-rinbt
-            - aisodjoijnvur0-vUAVHFNH4392upfjFEJNP[RJPFEJSRa5ybqhww
-            - ohjnf08u4n0t4u30rajfvapjevjeqjtqjbatq4t632tq4wt4tn
-            - 5923ybn9yahbtoghosdhgoabjtogj502ajvfjojnbjj09ut
+        paging:
+          $ref: '#/components/schemas/PagingResponse'
