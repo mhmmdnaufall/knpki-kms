@@ -61,6 +61,8 @@ public class ArticleServiceImpl implements ArticleService {
         articleRepository.save(article);
         article.setImages(extractAndSaveArticleImages(request.images(), article));
 
+        log.info("article created with id = '{}'", article.getId());
+
         return article.getId();
     }
 
@@ -74,10 +76,7 @@ public class ArticleServiceImpl implements ArticleService {
     @SneakyThrows
     @Override
     public ArticleResponse update(String articleId, UpdateArticleRequest request, Admin admin) {
-        final var article = articleRepository.findById(articleId)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "article with id `" + articleId + "` is not found")
-                );
+        final var article = getArticleById(articleId);
 
         checkArticleAuthor(article, admin);
         validationService.validate(request);
@@ -92,6 +91,7 @@ public class ArticleServiceImpl implements ArticleService {
         article.setImages(extractAndSaveArticleImages(request.images(), article));
         articleRepository.save(article);
 
+        log.info("article with id '{}' has been updated", articleId);
 
         return toArticleResponse(article);
     }
@@ -103,6 +103,8 @@ public class ArticleServiceImpl implements ArticleService {
         checkArticleAuthor(article, admin);
         articleImageRepository.deleteAllByArticle(article);
         articleRepository.delete(article);
+
+        log.info("article with id '{}' has been deleted", article.getId());
     }
 
     @Transactional(readOnly = true)
@@ -185,6 +187,7 @@ public class ArticleServiceImpl implements ArticleService {
 
     private void checkArticleAuthor(Article article, Admin admin) {
         if (!admin.equals(article.getAdmin())) {
+            log.warn("'{}' tries to modify '{}' article", admin.getUsername(), article.getAdmin().getUsername());
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "this article belongs to someone else");
         }
     }
