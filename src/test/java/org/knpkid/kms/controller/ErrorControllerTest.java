@@ -30,7 +30,9 @@ class ErrorControllerTest {
         final var constraintViolationException = mock(ConstraintViolationException.class);
         when(constraintViolationException.getMessage()).thenReturn("constraintViolationException message");
 
-        final var responseEntity = errorController.constraintViolationException(constraintViolationException);
+        final var webResponse = errorController.constraintViolationException(constraintViolationException);
+
+        final var responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(webResponse);
 
         assertErrorResponse(responseEntity, HttpStatus.BAD_REQUEST, "constraintViolationException message");
     }

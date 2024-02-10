@@ -5,6 +5,7 @@ import org.knpkid.kms.model.WebResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -18,9 +19,9 @@ public class ErrorController {
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<WebResponse<Object>> constraintViolationException(ConstraintViolationException exception) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new WebResponse<>(null, exception.getMessage(), null));
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public WebResponse<Object> constraintViolationException(ConstraintViolationException exception) {
+        return new WebResponse<>(null, exception.getMessage(), null);
     }
 
 }
