@@ -181,7 +181,7 @@ public class ArticleServiceImpl implements ArticleService {
     private Article getArticleById(String articleId) {
         return articleRepository.findById(articleId)
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "article with id `" + articleId + "` is not found")
+                        HttpStatus.NOT_FOUND, "article with id '" + articleId + "' is not found")
                 );
     }
 
