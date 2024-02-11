@@ -3,17 +3,29 @@ package org.knpkid.kms.service.impl;
 import lombok.AllArgsConstructor;
 import org.knpkid.kms.entity.Admin;
 import org.knpkid.kms.model.AdminResponse;
+import org.knpkid.kms.model.RegisterAdminRequest;
 import org.knpkid.kms.repository.AdminRepository;
 import org.knpkid.kms.service.AdminService;
+import org.knpkid.kms.service.ValidationService;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.ErrorResponseException;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.io.IOException;
 
 @AllArgsConstructor
 @Service
 public class AdminServiceImpl implements AdminService {
 
     private final AdminRepository adminRepository;
+
+    private final ValidationService validationService;
+
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -24,5 +36,26 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public AdminResponse get(Admin admin) {
         return new AdminResponse(admin.getUsername(), admin.getName(), admin.getImage());
+    }
+
+    @Override
+    public void register(RegisterAdminRequest request) {
+        validationService.validate(request);
+
+        if (adminRepository.existsById(request.username())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "username already registered");
+        }
+
+        final var admin = new Admin();
+        admin.setUsername(request.username());
+        admin.setPassword(passwordEncoder.encode(request.password()));
+        admin.setName(request.name());
+        try {
+            admin.setImage(request.image().getBytes());
+        } catch (IOException e) {
+             throw new ErrorResponseException(HttpStatus.BAD_REQUEST);
+        }
+
+        adminRepository.save(admin);
     }
 }

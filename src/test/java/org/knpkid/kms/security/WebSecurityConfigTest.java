@@ -36,13 +36,6 @@ class WebSecurityConfigTest {
     private HttpSecurity httpSecurity;
 
     @Test
-    void passwordEncoder() {
-        final var passwordEncoder = webSecurityConfig.passwordEncoder();
-        assertNotNull(passwordEncoder);
-        assertTrue(passwordEncoder instanceof BCryptPasswordEncoder);
-    }
-
-    @Test
     void authenticationManager() throws Exception {
         webSecurityConfig.authenticationManager(authConfig);
         verify(authConfig).getAuthenticationManager();
