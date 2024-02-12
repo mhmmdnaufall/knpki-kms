@@ -75,7 +75,7 @@ public class ArticleServiceImpl implements ArticleService {
     @Transactional
     @SneakyThrows
     @Override
-    public ArticleResponse update(String articleId, UpdateArticleRequest request, Admin admin) {
+    public void update(String articleId, UpdateArticleRequest request, Admin admin) {
         final var article = getArticleById(articleId);
 
         checkArticleAuthor(article, admin);
@@ -92,8 +92,6 @@ public class ArticleServiceImpl implements ArticleService {
         articleRepository.save(article);
 
         log.info("article with id '{}' has been updated", articleId);
-
-        return toArticleResponse(article);
     }
 
     @Transactional

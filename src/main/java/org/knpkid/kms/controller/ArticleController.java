@@ -41,11 +41,12 @@ public class ArticleController {
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public WebResponse<ArticleResponse> update(@PathVariable("articleId") String articleId,
-                                               @ModelAttribute UpdateArticleRequest request,
-                                               Admin admin) {
-        final var articleResponse = articleService.update(articleId, request, admin);
-        return new WebResponse<>(articleResponse, null, null);
+    public WebResponse<String> update(@PathVariable("articleId") String articleId,
+                                      @ModelAttribute UpdateArticleRequest request,
+                                      Admin admin) {
+
+        articleService.update(articleId, request, admin);
+        return new WebResponse<>("article with id '" + articleId + "' has been updated", null, null);
     }
 
     @DeleteMapping("/api/articles/{articleId}")

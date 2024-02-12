@@ -221,13 +221,7 @@ class ArticleServiceImplTest {
             doNothing().when(validationService).validate(request);
         }
 
-        var articleResponse = assertDoesNotThrow(() -> articleService.update("articleId", request, admin));
-        assertNotNull(articleResponse.getTags());
-        assertNotNull(articleResponse.getImages());
-        assertEquals("title", articleResponse.getTitle());
-        assertEquals("body", articleResponse.getBody());
-        assertEquals("teaser", articleResponse.getTeaser());
-        assertSame(multipartFile.getBytes(), articleResponse.getCoverImage());
+        assertDoesNotThrow(() -> articleService.update("articleId", request, admin));
 
         {
             verify(validationService).validate(request);
@@ -329,8 +323,7 @@ class ArticleServiceImplTest {
             when(articleRepository.findById("articleId")).thenReturn(Optional.of(article));
         }
 
-        final var articleResponse = assertDoesNotThrow(() -> articleService.update("articleId", request, admin));
-        assertNull(articleResponse.getCoverImage());
+        assertDoesNotThrow(() -> articleService.update("articleId", request, admin));
     }
 
     @DisplayName("update() - MultipartFile.getBytes() error")
@@ -384,9 +377,7 @@ class ArticleServiceImplTest {
 
         when(articleRepository.findById("articleId")).thenReturn(Optional.of(article));
 
-        final var articleResponse = assertDoesNotThrow(() -> articleService.update("articleId", request, admin));
-        assertTrue(articleResponse.getImages().isEmpty());
-        assertTrue(articleResponse.getTags().isEmpty());
+        assertDoesNotThrow(() -> articleService.update("articleId", request, admin));
     }
 
     @DisplayName("delete() - success")

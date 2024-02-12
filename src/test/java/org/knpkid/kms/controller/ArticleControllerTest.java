@@ -15,7 +15,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
@@ -95,7 +94,7 @@ class ArticleControllerTest {
     }
 
     @Test
-    void update() throws IOException {
+    void update() {
         final var multipartFile = mock(MultipartFile.class);
 
         final var request = new UpdateArticleRequest(
@@ -110,24 +109,14 @@ class ArticleControllerTest {
         final var admin = new Admin();
         admin.setUsername("admin");
 
-        final var response = new ArticleResponse(
-                "id",
-                request.title(),
-                LocalDateTime.now(),
-                LocalDateTime.now(),
-                request.body(),
-                request.teaser(),
-                null, admin, request.coverImage().getBytes(), null
-        );
-
-        when(articleService.update("articleId", request, admin)).thenReturn(response);
+        doNothing().when(articleService).update("articleId", request, admin);
 
         final var webResponse = articleController.update("articleId", request, admin);
         verify(articleService).update("articleId", request, admin);
 
         assertNull(webResponse.errors());
         assertNull(webResponse.paging());
-        assertEquals(response, webResponse.data());
+        assertEquals("article with id 'articleId' has been updated", webResponse.data());
     }
 
     @Test
