@@ -1,6 +1,7 @@
 package org.knpkid.kms.service.impl;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.knpkid.kms.entity.Admin;
 import org.knpkid.kms.model.AdminResponse;
 import org.knpkid.kms.model.RegisterAdminRequest;
@@ -17,6 +18,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 
+@Slf4j
 @AllArgsConstructor
 @Service
 public class AdminServiceImpl implements AdminService {
@@ -57,5 +59,7 @@ public class AdminServiceImpl implements AdminService {
         }
 
         adminRepository.save(admin);
+
+        log.info("new admin created with username = '{}'", admin.getUsername());
     }
 }
