@@ -41,11 +41,46 @@ paths:
         401:
           $ref: "#/components/responses/401"
 
+    post:
+      summary: Register Admin
+      tags:
+        - Admin
+      security:
+        - CsrfToken: []
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/RegisterAdminRequest"
+      responses:
+        200:
+          description: Success create admin account
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebResponseString"
+              example:
+                data: OK
+                errors: null
+                paging: null
+
+        400:
+          description: Wrong format
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebResponse"
+
+        403:
+          $ref: "#/components/responses/403"
+
   /api/auth/login:
     post:
       summary: Admin login
       tags:
         - Auth
+      security:
+        - CsrfToken: []
       requestBody:
         required: true
         content:
@@ -127,6 +162,7 @@ paths:
         - Auth
       security:
         - BearerToken: []
+        - CsrfToken: []
       responses:
         204:
           description: Success logout admin
@@ -138,8 +174,6 @@ paths:
       summary: Get CSRF token
       tags:
         - Auth
-      security:
-        - BearerToken: []
       responses:
         200:
           description: Success get CSRF Token
@@ -311,6 +345,9 @@ paths:
                 paging: null
         401:
           $ref: "#/components/responses/401"
+
+        400:
+          description:
 
         403:
           $ref: "#/components/responses/403"
@@ -765,6 +802,29 @@ components:
           items:
             type: string
             format: byte
+
+    RegisterAdminRequest:
+      type: object
+      required:
+        - username
+        - password
+        - name
+      properties:
+        username:
+          maxLength: 20
+          minLength: 1
+          type: string
+        password:
+          maxLength: 50
+          minLength: 8
+          type: string
+        name:
+          maxLength: 100
+          minLength: 1
+          type: string
+        image:
+          type: string
+          format: binary
 
     WebResponse:
       type: object
