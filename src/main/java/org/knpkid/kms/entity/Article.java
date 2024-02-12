@@ -38,7 +38,7 @@ public class Article {
 
     private String teaser;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "username", referencedColumnName = "username")
     private Admin admin;
 
