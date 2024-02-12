@@ -347,7 +347,19 @@ paths:
           $ref: "#/components/responses/401"
 
         400:
-          description:
+          description: Wrong format
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebResponse"
+              examples:
+                blank title:
+                  description: "title can't be blank"
+                  value:
+                    data: "title: must not be blank"
+                    errors: null
+                    paging: null
+
 
         403:
           $ref: "#/components/responses/403"
@@ -465,6 +477,21 @@ paths:
         401:
           $ref: "#/components/responses/401"
 
+        403:
+          $ref: "#/components/responses/403"
+
+        403a:
+          description: admin trying to update article on another admins article
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebResponse"
+              example:
+                data: null
+                errors: this article belongs to someone else
+                paging: null
+
+
     delete:
       summary: Delete Article
       description: For deleting article. only for logged-in account (admin)
@@ -491,6 +518,17 @@ paths:
         403:
           $ref: "#/components/responses/403"
 
+        403a:
+          description: admin trying to delete article on another admins article
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebResponse"
+              example:
+                data: null
+                errors: this article belongs to someone else
+                paging: null
+
         404:
           description: Article is not found
           content:
@@ -501,6 +539,8 @@ paths:
                 data: null
                 errors: Article with id `5c020359-a6db-42ba-9285-772e739f2620` is not found
                 paging: null
+
+
 
   /api/tags/{tagId}/articles:
     get:
