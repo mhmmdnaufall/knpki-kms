@@ -9,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.DefaultSecurityFilterChain;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,6 +29,9 @@ class WebSecurityConfigTest {
 
     @Mock
     private JwtRequestFilter jwtRequestFilter;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     @Mock
     private AuthenticationConfiguration authConfig;
