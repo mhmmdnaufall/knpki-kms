@@ -187,7 +187,7 @@ class ArticleServiceImplTest {
 
         final var exception = assertThrows(ResponseStatusException.class, () -> articleService.get("not exist"));
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
-        assertEquals("article with id `not exist` is not found", exception.getReason());
+        assertEquals("article with id 'not exist' is not found", exception.getReason());
 
 
     }
@@ -301,7 +301,7 @@ class ArticleServiceImplTest {
         );
 
         assertEquals(HttpStatus.NOT_FOUND, responseStatusException.getStatusCode());
-        assertEquals("article with id `not found` is not found", responseStatusException.getReason());
+        assertEquals("article with id 'not found' is not found", responseStatusException.getReason());
     }
 
     @DisplayName("update() - null coverImage")
@@ -422,7 +422,7 @@ class ArticleServiceImplTest {
                 () -> articleService.delete("not found", admin)
         );
         assertEquals(HttpStatus.NOT_FOUND, responseStatusException.getStatusCode());
-        assertEquals("article with id `not found` is not found", responseStatusException.getReason());
+        assertEquals("article with id 'not found' is not found", responseStatusException.getReason());
     }
 
     @DisplayName("delete() - use another account forbidden")

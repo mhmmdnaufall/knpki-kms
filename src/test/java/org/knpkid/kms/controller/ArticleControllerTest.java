@@ -52,7 +52,7 @@ class ArticleControllerTest {
 
         assertNull(webResponse.errors());
         assertNull(webResponse.paging());
-        assertEquals("article created with id `articleId`", webResponse.data());
+        assertEquals("article created with id 'articleId'", webResponse.data());
     }
 
     @Test
