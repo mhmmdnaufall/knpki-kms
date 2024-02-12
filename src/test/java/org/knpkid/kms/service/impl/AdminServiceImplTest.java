@@ -97,6 +97,15 @@ class AdminServiceImplTest {
         assertDoesNotThrow(() -> adminService.register(request));
         verify(adminRepository).save(any());
 
+        // null image
+        reset(adminRepository);
+        final var nullImageRequest = new RegisterAdminRequest(
+                "username", "password", "name", null
+        );
+
+        assertDoesNotThrow(() -> adminService.register(nullImageRequest));
+        verify(adminRepository).save(any());
+
     }
 
     @Test

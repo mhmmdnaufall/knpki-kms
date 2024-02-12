@@ -17,6 +17,7 @@ import org.springframework.web.ErrorResponseException;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
+import java.util.Objects;
 
 @Slf4j
 @AllArgsConstructor
@@ -53,7 +54,7 @@ public class AdminServiceImpl implements AdminService {
         admin.setPassword(passwordEncoder.encode(request.password()));
         admin.setName(request.name());
         try {
-            admin.setImage(request.image().getBytes());
+            admin.setImage(Objects.nonNull(request.image()) ? request.image().getBytes() : null);
         } catch (IOException e) {
              throw new ErrorResponseException(HttpStatus.BAD_REQUEST);
         }
