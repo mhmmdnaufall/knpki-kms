@@ -571,4 +571,44 @@ class ArticleServiceImplTest {
         assertEquals(article.getTeaser(), onlyArticleResponsePage.getContent().get(0).getTeaser());
 
     }
+
+    @Test
+    void getArticlesByAdmin() {
+
+        final var article = new Article();
+        article.setId("id");
+        article.setTitle("title");
+        article.setTeaser("teaser");
+
+        final var admin = new Admin();
+        admin.setUsername("username");
+        article.setAdmin(admin);
+
+        final var articles = List.of(article);
+
+        final var pageable = PageRequest.of(0, 12, Sort.by(Sort.Order.desc("createdAt")));
+
+        {
+            when(articleRepository.findByAdmin_Username("username", pageable))
+                    .thenReturn(
+                            new PageImpl<>(
+                                    articles,
+                                    PageRequest.of(0, 12),
+                                    articles.size()
+                            )
+                    );
+        }
+
+        final var onlyArticleResponsePage = articleService.getArticlesByAdmin("username", 0, 12);
+
+        {
+            verify(articleRepository).findByAdmin_Username("username", pageable);
+        }
+
+        assertEquals(articles.size(), onlyArticleResponsePage.getContent().size());
+        assertEquals(article.getId(), onlyArticleResponsePage.getContent().get(0).getId());
+        assertEquals(article.getTitle(), onlyArticleResponsePage.getContent().get(0).getTitle());
+        assertEquals(article.getTeaser(), onlyArticleResponsePage.getContent().get(0).getTeaser());
+
+    }
 }

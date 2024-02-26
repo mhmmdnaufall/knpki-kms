@@ -226,4 +226,34 @@ class ArticleControllerTest {
         assertEquals(new PagingResponse(0, 1, 12), webResponse.paging());
 
     }
+
+    @Test
+    void getArticlesByUsername() {
+
+        final var onlyArticleResponses = List.of(
+                new OnlyArticleResponse(
+                        "tagId", "search title",
+                        LocalDateTime.now(), LocalDateTime.now(),
+                        "body", "search teaser", "coverImage".getBytes()
+                )
+        );
+
+        {
+            when(articleService.getArticlesByAdmin("username", 0, 12))
+                    .thenReturn(
+                            new PageImpl<>(
+                                    onlyArticleResponses,
+                                    PageRequest.of(0, 12),
+                                    onlyArticleResponses.size()
+                            )
+                    );
+        }
+
+        final var webResponse = articleController.getAdminArticle("username", 0, 12);
+
+        assertEquals(onlyArticleResponses, webResponse.data());
+        assertNull(webResponse.errors());
+        assertEquals(new PagingResponse(0, 1, 12), webResponse.paging());
+
+    }
 }

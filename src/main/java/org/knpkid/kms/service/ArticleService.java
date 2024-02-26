@@ -22,4 +22,7 @@ public interface ArticleService {
     Page<OnlyArticleResponse> search(String keyword, Integer page, Integer size);
 
     Page<OnlyArticleResponse> getArticlesByTag(String tagId, Integer page, Integer size);
+
+    Page<OnlyArticleResponse> getArticlesByAdmin(String username, Integer page, Integer size);
+
 }

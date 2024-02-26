@@ -12,4 +12,6 @@ public interface ArticleRepository extends JpaRepository<Article, String>, JpaSp
 
     Page<Article> findByTagsId(String tagId, Pageable pageable);
 
+    Page<Article> findByAdmin_Username(String username, Pageable pageable);
+
 }

@@ -149,6 +149,17 @@ public class ArticleServiceImpl implements ArticleService {
         return new PageImpl<>(onlyArticleResponses, pageable, articlesPage.getTotalElements());
     }
 
+    @Transactional(readOnly = true)
+    @Override
+    public Page<OnlyArticleResponse> getArticlesByAdmin(String username, Integer page, Integer size) {
+        final var pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc(CREATED_AT)));
+        final var articlesPage = articleRepository.findByAdmin_Username(username, pageable);
+        final var onlyArticleResponses = articlesPage.getContent().stream()
+                .map(this::toOnlyArticleResponse)
+                .toList();
+        return new PageImpl<>(onlyArticleResponses, pageable, articlesPage.getTotalElements());
+    }
+
     private ArticleResponse toArticleResponse(Article article) {
         return new ArticleResponse(
                 article.getId(),

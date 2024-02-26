@@ -102,4 +102,25 @@ public class ArticleController {
 
     }
 
+    @GetMapping(
+            path = "/api/admin/{username}/articles",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public WebResponse<List<OnlyArticleResponse>> getAdminArticle(
+            @PathVariable("username") String username,
+            @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+            @RequestParam(name = "size", required = false, defaultValue = "12") Integer size
+    ) {
+        final var onlyArticleResponsePage = articleService.getArticlesByAdmin(username, page, size);
+        return new WebResponse<>(
+                onlyArticleResponsePage.getContent(), null,
+                new PagingResponse(
+                        onlyArticleResponsePage.getNumber(),
+                        onlyArticleResponsePage.getTotalPages(),
+                        onlyArticleResponsePage.getSize()
+                )
+        );
+
+    }
+
 }
