@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class TagJob {
 
-    public final TagRepository tagRepository;
+    private final TagRepository tagRepository;
 
     @Scheduled(cron = "0 0 0 * * *") // every 00:00
     @Transactional
