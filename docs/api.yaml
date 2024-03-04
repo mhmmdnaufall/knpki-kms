@@ -17,7 +17,7 @@ tags:
 
 paths:
 
-  /api/admin:
+  /api/admin/current:
     get:
       summary: Get Current Admin Account
       tags:
@@ -41,6 +41,7 @@ paths:
         401:
           $ref: "#/components/responses/401"
 
+  /api/admin:
     post:
       summary: Register Admin
       tags:
@@ -188,9 +189,6 @@ paths:
                   headerName: X-CSRF-TOKEN
                 errors: null
                 paging: null
-
-        401:
-          $ref: "#/components/responses/401"
 
 
 
@@ -679,6 +677,117 @@ paths:
                 data: null
                 errors: Article with tag 'orang-tua' is not found
                 paging: null
+
+  /api/admin/{username}/articles:
+    get:
+      summary: Get all admin's article by username
+      tags:
+        - Article
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Put username admin you want to search
+      responses:
+        200:
+          description: Success get article by admin
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebResponse"
+              example:
+                data:
+                  - id: 1f24face-9475-44b4-965a-5b811e997252
+                    title: Pengaruh BBM Naik 100% kepada Keluarga
+                    createdAt: '2024-02-07 16:23:16'
+                    updatedAt: '2024-02-07 16:23:16'
+                    body: Ini merupakan tubuh dari tulisan artikel
+                    teaser: Kerangka Artikel
+                    coverImage: null
+                  - id: 607e7f00-84df-4433-b598-6ce8c5d943bd
+                    title: Pengaruh BBM Naik 100% kepada Keluarga
+                    createdAt: '2024-02-06 23:55:52'
+                    updatedAt: '2024-02-06 23:55:52'
+                    body: Ini merupakan tubuh dari tulisan artikel
+                    teaser: Kerangka Artikel
+                    coverImage: null
+                  - id: 8c751e8c-fca5-43f5-bc9a-970b611f8e4f
+                    title: this is judul
+                    createdAt: '2024-02-06 23:27:56'
+                    updatedAt: '2024-02-06 23:27:56'
+                    body: body
+                    teaser: teaser baru ini
+                    coverImage:
+                  - id: 6c153e83-5e7b-41fc-a8e5-9d2bb4259d0a
+                    title: Ini Judul
+                    createdAt: '2024-02-06 01:41:39'
+                    updatedAt: '2024-02-06 01:41:39'
+                    body: Ini merupakan tubuh dari tulisan artikel
+                    teaser: Kerangka Artikel
+                    coverImage: "/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEoHBw7nZhZY0cKA..."
+                  - id: 2140456f-e0ad-4b7f-83aa-8a448e20d6b1
+                    title: Ini Judul
+                    createdAt: '2024-02-06 01:40:32'
+                    updatedAt: '2024-02-06 01:40:32'
+                    body: Ini merupakan tubuh dari tulisan artikel
+                    teaser: Kerangka Artikel
+                    coverImage: null
+                  - id: 42e918b5-130e-4434-9ddb-385e1f96923c
+                    title: Ini Judul
+                    createdAt: '2024-02-06 01:40:31'
+                    updatedAt: '2024-02-06 01:40:31'
+                    body: Ini merupakan tubuh dari tulisan artikel
+                    teaser: Kerangka Artikel
+                    coverImage: null
+                  - id: 8eda744b-cb15-445d-b711-9484be66f53a
+                    title: Ini Judul
+                    createdAt: '2024-02-06 01:40:30'
+                    updatedAt: '2024-02-06 01:40:30'
+                    body: Ini merupakan tubuh dari tulisan artikel
+                    teaser: Kerangka Artikel
+                    coverImage: null
+                  - id: f769e575-29a9-4e51-975b-52af1472bdd6
+                    title: Ini Judul
+                    createdAt: '2024-02-06 01:40:29'
+                    updatedAt: '2024-02-06 01:40:29'
+                    body: Ini merupakan tubuh dari tulisan artikel
+                    teaser: Kerangka Artikel
+                    coverImage: null
+                  - id: 95a0c12e-e787-4393-9b55-6ea8b56405a6
+                    title: Ini Judul
+                    createdAt: '2024-02-06 01:40:28'
+                    updatedAt: '2024-02-06 01:40:28'
+                    body: Ini merupakan tubuh dari tulisan artikel
+                    teaser: Kerangka Artikel
+                    coverImage: null
+                  - id: 6170a8a6-62eb-490e-a3c8-cded3f2b6242
+                    title: Ini Judul
+                    createdAt: '2024-02-06 01:40:26'
+                    updatedAt: '2024-02-06 01:40:26'
+                    body: Ini merupakan tubuh dari tulisan artikel
+                    teaser: Kerangka Artikel
+                    coverImage: null
+                  - id: 6da739a0-3294-422a-8cce-83238858b7e5
+                    title: Ini Judul
+                    createdAt: '2024-02-06 01:40:25'
+                    updatedAt: '2024-02-06 01:40:25'
+                    body: Ini merupakan tubuh dari tulisan artikel
+                    teaser: Kerangka Artikel
+                    coverImage: null
+                  - id: c44702ba-e47d-426d-91c5-62b0d8f0c5e6
+                    title: Ini Judul
+                    createdAt: '2024-02-06 01:40:24'
+                    updatedAt: '2024-02-06 01:40:24'
+                    body: Ini merupakan tubuh dari tulisan artikel
+                    teaser: Kerangka Artikel
+                    coverImage: null
+                errors: null
+                paging:
+                  currentPage: 0
+                  totalPage: 5
+                  size: 12
 
 components:
 
