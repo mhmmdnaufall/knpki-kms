@@ -48,7 +48,7 @@ class AuthControllerTest {
     void getCsrfToken() {
         final var csrfTokenMock = mock(CsrfToken.class);
         final var webResponse = authController.getCsrfToken(csrfTokenMock);
-        assertEquals(csrfTokenMock, webResponse.data());
+        assertEquals(csrfTokenMock.getToken(), webResponse.data().token());
         assertNull(webResponse.errors());
         assertNull(webResponse.paging());
     }

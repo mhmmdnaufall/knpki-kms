@@ -94,7 +94,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/WebResponse"
+                $ref: "#/components/schemas/WebResponseTokenResponse"
               example:
                 data:
                   token: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTcwNzQ3NzEwMCwiZXhwIjoxNzA3NDgwNzAwfQ.I9imemHoNVQiGYAeN8C5_-_1ETTFXOtu_Vg-tAbkkudEi1HiFMqxNOwmt1Ax3ke7rCqiTgh2v96AOaHfRvnzdw
@@ -181,12 +181,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/WebResponse"
+                $ref: "#/components/schemas/WebResponseTokenResponse"
               example:
                 data:
-                  parameterName: _csrf
                   token: AFrfI_NNzqELpggF6jjV2x5voCvXkDyKQlzaK2zsO1b1VZfeYmK8G8srqsAmw2kwiRXh6ioMjUmy9QyncWXpHlTUDGGRY_W6
-                  headerName: X-CSRF-TOKEN
                 errors: null
                 paging: null
 
@@ -975,6 +973,14 @@ components:
           type: string
           format: binary
 
+    TokenResponse:
+      type: object
+      required:
+        - token
+      properties:
+        token:
+          type: string
+
     WebResponse:
       type: object
       properties:
@@ -1018,6 +1024,16 @@ components:
       properties:
         data:
           type: string
+        errors:
+          type: string
+        paging:
+          $ref: '#/components/schemas/PagingResponse'
+
+    WebResponseTokenResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/TokenResponse'
         errors:
           type: string
         paging:

@@ -36,8 +36,8 @@ public class AuthController {
     }
 
     @GetMapping("/api/auth/csrf")
-    public WebResponse<CsrfToken> getCsrfToken(CsrfToken token) {
-        return new WebResponse<>(token, null, null);
+    public WebResponse<TokenResponse> getCsrfToken(CsrfToken token) {
+        return new WebResponse<>(new TokenResponse(token.getToken()), null, null);
     }
 
 
