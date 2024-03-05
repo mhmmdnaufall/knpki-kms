@@ -55,17 +55,24 @@ class WebSecurityConfigTest {
     void filterChain() throws Exception {
 
         {
+            when(httpSecurity.cors(any())).thenReturn(httpSecurity);
             when(httpSecurity.csrf(any())).thenReturn(httpSecurity);
             when(httpSecurity.authorizeHttpRequests(any())).thenReturn(httpSecurity);
             when(httpSecurity.authenticationProvider(any())).thenReturn(httpSecurity);
             when(httpSecurity.exceptionHandling(any())).thenReturn(httpSecurity);
             when(httpSecurity.sessionManagement(any())).thenReturn(httpSecurity);
             when(httpSecurity.addFilterBefore(any(), any())).thenReturn(httpSecurity);
-            when(httpSecurity.authenticationProvider(any())).thenReturn(httpSecurity);
             when(httpSecurity.build()).thenReturn(new DefaultSecurityFilterChain(any()));
         }
 
         final var securityFilterChain = webSecurityConfig.filterChain(httpSecurity);
         assertNotNull(securityFilterChain);
+
+    }
+
+    @Test
+    void corsConfigurationSource() {
+        final var corsConfigurationSource = webSecurityConfig.corsConfigurationSource();
+        assertNotNull(corsConfigurationSource);
     }
 }

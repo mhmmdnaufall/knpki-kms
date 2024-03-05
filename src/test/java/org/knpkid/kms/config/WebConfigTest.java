@@ -27,49 +27,4 @@ class WebConfigTest {
         verify(listSpy).add(adminArgumentResolver);
     }
 
-    @Test
-    void addCorsMappings() {
-        final var corsRegistryMock = mock(CorsRegistry.class);
-        final var corsRegistrationMock = mock(CorsRegistration.class);
-
-        {
-            when(corsRegistryMock.addMapping("/**")).thenReturn(corsRegistrationMock);
-            when(corsRegistrationMock.allowedOriginPatterns("https://*.knpkid.org/")).thenReturn(corsRegistrationMock);
-            when(corsRegistrationMock.allowedMethods(
-                    HttpMethod.GET.name(),
-                    HttpMethod.POST.name(),
-                    HttpMethod.PUT.name(),
-                    HttpMethod.DELETE.name()
-            )).thenReturn(corsRegistrationMock);
-            when(corsRegistrationMock.allowedHeaders(
-                    HttpHeaders.AUTHORIZATION,
-                    HttpHeaders.CONTENT_TYPE,
-                    HttpHeaders.ACCEPT,
-                    "X-CSRF-TOKEN")
-            ).thenReturn(corsRegistrationMock);
-
-        }
-
-        webConfig.addCorsMappings(corsRegistryMock);
-
-        {
-            verify(corsRegistryMock).addMapping("/**");
-            verify(corsRegistrationMock).allowedOriginPatterns("https://*.knpkid.org/");
-            verify(corsRegistrationMock)
-                    .allowedMethods(
-                            HttpMethod.GET.name(),
-                            HttpMethod.POST.name(),
-                            HttpMethod.PUT.name(),
-                            HttpMethod.DELETE.name()
-                    );
-            verify(corsRegistrationMock)
-                    .allowedHeaders(
-                            HttpHeaders.AUTHORIZATION,
-                            HttpHeaders.CONTENT_TYPE,
-                            HttpHeaders.ACCEPT,
-                            "X-CSRF-TOKEN"
-                    );
-        }
-
-    }
 }
