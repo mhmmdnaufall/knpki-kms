@@ -5,10 +5,11 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import lombok.Value;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Value
-public class OnlyArticleResponse {
+public class OnlyArticleResponse implements Serializable {
 
     String id;
 
