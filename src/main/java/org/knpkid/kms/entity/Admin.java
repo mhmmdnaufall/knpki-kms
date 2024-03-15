@@ -21,11 +21,12 @@ public class Admin implements UserDetails {
 
     private String name;
 
-    @Lob
-    private byte[] image;
+    @OneToOne
+    @JoinColumn(name = "image", referencedColumnName = "id")
+    private Image image;
 
     @OneToMany(mappedBy = "admin")
-    private transient List<Article> articles;
+    private List<Article> articles;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

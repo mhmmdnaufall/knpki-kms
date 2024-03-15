@@ -30,9 +30,9 @@ public class Article {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @Lob
-    @Column(name = "cover_image")
-    private byte[] coverImage;
+    @OneToOne
+    @JoinColumn(name = "cover_image", referencedColumnName = "id")
+    private Image coverImage;
 
     private String body;
 
@@ -50,7 +50,12 @@ public class Article {
     )
     private Set<Tag> tags;
 
-    @OneToMany(mappedBy = "article")
-    private List<ArticleImage> images;
+    @OneToMany
+    @JoinTable(
+            name = "article_image_gallery",
+            joinColumns = @JoinColumn(name = "article_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "image_id", referencedColumnName = "id")
+    )
+    private List<Image> imageGallery;
 
 }
