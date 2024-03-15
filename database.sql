@@ -122,3 +122,51 @@ ALTER TABLE article_images
 DESC articles;
 
 DESC article_images;
+
+CREATE TABLE images
+(
+    id     VARCHAR(100)                NOT NULL,
+    format ENUM ('JPG', 'JPEG', 'PNG') NOT NULL,
+    PRIMARY KEY (id)
+) ENGINE = InnoDB;
+
+DROP TABLE article_images;
+
+SHOW TABLES;
+
+DESC admin;
+
+ALTER TABLE admin
+    MODIFY COLUMN image VARCHAR(100);
+
+ALTER TABLE admin
+    ADD CONSTRAINT fk_admin_images FOREIGN KEY (image) REFERENCES images (id);
+
+ALTER TABLE admin
+    ADD CONSTRAINT image_unique UNIQUE (image);
+
+DESC articles;
+
+ALTER TABLE articles
+    MODIFY COLUMN cover_image VARCHAR(100);
+
+ALTER TABLE articles
+    ADD CONSTRAINT fk_articles_images FOREIGN KEY (cover_image) REFERENCES images (id);
+
+ALTER TABLE articles
+    ADD CONSTRAINT cover_image_unique UNIQUE (cover_image);
+
+
+CREATE TABLE article_image_gallery
+(
+    article_id VARCHAR(100) NOT NULL,
+    image_id   VARCHAR(100) NOT NULL,
+    CONSTRAINT fk_gallery_articles
+        FOREIGN KEY (article_id) REFERENCES articles (id),
+    CONSTRAINT fk_gallery_images
+        FOREIGN KEY (image_id) REFERENCES images (id),
+    UNIQUE KEY image_unique (image_id),
+    PRIMARY KEY (article_id, image_id)
+) ENGINE = InnoDB;
+
+DESC article_image_gallery;
