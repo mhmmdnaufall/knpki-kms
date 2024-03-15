@@ -7,17 +7,14 @@ import org.knpkid.kms.model.AdminResponse;
 import org.knpkid.kms.model.RegisterAdminRequest;
 import org.knpkid.kms.repository.AdminRepository;
 import org.knpkid.kms.service.AdminService;
+import org.knpkid.kms.service.ImageService;
 import org.knpkid.kms.service.ValidationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.ErrorResponseException;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.io.IOException;
-import java.util.Objects;
 
 @Slf4j
 @AllArgsConstructor
@@ -27,6 +24,8 @@ public class AdminServiceImpl implements AdminService {
     private final AdminRepository adminRepository;
 
     private final ValidationService validationService;
+
+    private final ImageService imageService;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -53,11 +52,10 @@ public class AdminServiceImpl implements AdminService {
         admin.setUsername(request.username());
         admin.setPassword(passwordEncoder.encode(request.password()));
         admin.setName(request.name());
-        try {
-            admin.setImage(Objects.nonNull(request.image()) ? request.image().getBytes() : null);
-        } catch (IOException e) {
-             throw new ErrorResponseException(HttpStatus.BAD_REQUEST);
-        }
+
+        if (request.image() != null)
+            admin.setImage(imageService.save(request.image()));
+
 
         adminRepository.save(admin);
 

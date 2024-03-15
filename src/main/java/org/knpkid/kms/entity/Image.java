@@ -14,4 +14,12 @@ public class Image {
     @Enumerated(EnumType.STRING)
     private ImageFormat format;
 
+    /**
+     * @return image file name
+     */
+    @Override
+    public String toString() {
+        return "%s.%s".formatted(id, format.name().toLowerCase());
+    }
+
 }

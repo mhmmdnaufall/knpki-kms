@@ -3,9 +3,10 @@ package org.knpkid.kms.controller;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.knpkid.kms.entity.Admin;
+import org.knpkid.kms.entity.Image;
+import org.knpkid.kms.entity.ImageFormat;
 import org.knpkid.kms.model.AdminResponse;
 import org.knpkid.kms.model.RegisterAdminRequest;
-import org.knpkid.kms.model.WebResponse;
 import org.knpkid.kms.service.AdminService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -26,17 +27,22 @@ class AdminControllerTest {
 
     @Test
     void get() {
+        final var image = new Image();
+        image.setId("imageId");
+        image.setFormat(ImageFormat.PNG);
+
         final var admin = new Admin();
         admin.setName("Admin Test");
         admin.setUsername("admin");
+        admin.setImage(image);
 
         when(adminService.get(admin))
                 .thenReturn(new AdminResponse(admin.getUsername(), admin.getName(), admin.getImage()));
 
         final var webResponse = adminController.get(admin);
-        assertEquals(admin.getName(), webResponse.data().getName());
-        assertEquals(admin.getUsername(), webResponse.data().getUsername());
-        assertEquals(admin.getImage(), webResponse.data().getImage());
+        assertEquals(admin.getName(), webResponse.data().name());
+        assertEquals(admin.getUsername(), webResponse.data().username());
+        assertEquals(admin.getImage(), webResponse.data().image());
         assertNull(webResponse.errors());
         assertNull(webResponse.paging());
     }

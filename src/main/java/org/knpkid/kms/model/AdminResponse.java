@@ -1,14 +1,5 @@
 package org.knpkid.kms.model;
 
-import lombok.Value;
+import org.knpkid.kms.entity.Image;
 
-@Value
-public class AdminResponse{
-
-    String username;
-
-    String name;
-
-    byte[] image;
-
-}
+public record AdminResponse(String username, String name, Image image){ }

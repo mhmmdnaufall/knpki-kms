@@ -1,47 +1,28 @@
 package org.knpkid.kms.model;
 
 import org.junit.jupiter.api.Test;
+import org.knpkid.kms.entity.Image;
 
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class AdminResponseTest {
-
-    private final AdminResponse response = new AdminResponse("username", "name", "image".getBytes());
+    private final AdminResponse response = new AdminResponse("username", "name", null);
 
     @Test
-    void getUsername() {
-        assertEquals("username", response.getUsername());
+    void username() {
+        assertEquals("username", response.username());
     }
 
     @Test
-    void getName() {
-        assertEquals("name", response.getName());
+    void name() {
+        assertEquals("name", response.name());
     }
 
     @Test
-    void getImage() {
-        assertArrayEquals("image".getBytes(), response.getImage());
+    void imageId() {
+        assertNull(response.image());
     }
 
-    @Test
-    void testEquals() {
-        final var responseEqual = new AdminResponse("username", "name", "image".getBytes());
-        assertEquals(responseEqual, response);
-
-        final var responseNotEqual = new AdminResponse("", "", "".getBytes());
-        assertNotEquals(responseNotEqual, response);
-    }
-
-    @Test
-    void testHashCode() {
-        assertEquals(-1202354132, response.hashCode());
-    }
-
-    @Test
-    void testToString() {
-        final var responseString = "AdminResponse(username=username, name=name, image=" + Arrays.toString("image".getBytes()) + ")";
-        assertEquals(responseString, response.toString());
-    }
 }
