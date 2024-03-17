@@ -108,12 +108,17 @@ class AdminTest {
 
     @Test
     void testHashCode() {
+        final var image = new Image();
+        image.setId("imageId");
+        image.setFormat(ImageFormat.PNG);
+
         final var admin = new Admin();
         admin.setUsername("username");
         admin.setPassword("password");
         admin.setName("name");
+        admin.setImage(image);
         admin.setArticles(Collections.emptyList());
-        assertEquals(-523470833, admin.hashCode());
+        assertEquals(1555711085, admin.hashCode());
     }
 
     @Test
