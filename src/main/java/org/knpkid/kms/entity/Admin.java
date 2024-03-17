@@ -23,10 +23,10 @@ public class Admin implements UserDetails {
 
     @OneToOne
     @JoinColumn(name = "image", referencedColumnName = "id")
-    private Image image;
+    private transient Image image;
 
     @OneToMany(mappedBy = "admin")
-    private List<Article> articles;
+    private transient List<Article> articles;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
