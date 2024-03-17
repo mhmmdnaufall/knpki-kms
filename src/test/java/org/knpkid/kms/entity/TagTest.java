@@ -58,7 +58,7 @@ class TagTest {
         tag.setId("id");
         tag.setName("name");
         tag.setArticles(articleList);
-        assertEquals(-2098909008, tag.hashCode());
+        assertEquals(-1910584368, tag.hashCode());
         System.out.println(tag.hashCode());
     }
 
@@ -69,7 +69,7 @@ class TagTest {
         tag.setName("name");
         tag.setArticles(articleList);
 
-        final var tagString = "Tag(id=id, name=name, articles=[Article(id=null, title=null, createdAt=null, updatedAt=null, coverImage=null, body=null, teaser=null, admin=null, tags=null, images=null), Article(id=null, title=null, createdAt=null, updatedAt=null, coverImage=null, body=null, teaser=null, admin=null, tags=null, images=null)])";
+        final var tagString = "Tag(id=id, name=name, articles=[Article(id=null, title=null, createdAt=null, updatedAt=null, coverImage=null, body=null, teaser=null, admin=null, tags=null, imageGallery=null), Article(id=null, title=null, createdAt=null, updatedAt=null, coverImage=null, body=null, teaser=null, admin=null, tags=null, imageGallery=null)])";
         assertEquals(tagString, tag.toString());
     }
 }
