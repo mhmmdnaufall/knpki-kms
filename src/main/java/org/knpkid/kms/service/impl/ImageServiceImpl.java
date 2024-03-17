@@ -2,6 +2,7 @@ package org.knpkid.kms.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.knpkid.kms.entity.Image;
 import org.knpkid.kms.entity.ImageFormat;
 import org.knpkid.kms.repository.ImageRepository;
@@ -16,9 +17,12 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ImageServiceImpl implements ImageService {
 
     private final ImageRepository imageRepository;
+
+    private static final Path IMAGE_PATH_DIRECTORY = Path.of("image");
 
     @Override
     @SneakyThrows
@@ -29,15 +33,37 @@ public class ImageServiceImpl implements ImageService {
         image.setId(UUID.randomUUID().toString());
         image.setFormat(ImageFormat.valueOf(imageFormat.toUpperCase()));
 
-        final var imagePath = Path.of("image/%s.%s".formatted(image.getId(), image.getFormat().name().toLowerCase()));
+        final var imagePath = IMAGE_PATH_DIRECTORY.resolve(image.toString());
 
-        if (!Files.exists(imagePath.getParent()))
-            Files.createDirectory(imagePath.getParent());
+        if (!Files.exists(IMAGE_PATH_DIRECTORY))
+            Files.createDirectory(IMAGE_PATH_DIRECTORY);
 
         imageFile.transferTo(imagePath);
 
         return imageRepository.save(image);
 
+    }
+
+    @Override
+    @SneakyThrows
+    public void delete(Image image) {
+        imageRepository.delete(image);
+        final var imagePath = IMAGE_PATH_DIRECTORY.resolve(image.toString());
+        if (!Files.deleteIfExists(imagePath)) {
+            log.warn("image with id '{}' was missing before deletion", image.getId());
+        }
+    }
+
+    @Override
+    @SneakyThrows
+    public void deleteAll(Iterable<Image> images) {
+        imageRepository.deleteAll(images);
+        for (var image : images) {
+            final var imagePath = IMAGE_PATH_DIRECTORY.resolve(image.toString());
+            if (!Files.deleteIfExists(imagePath)) {
+                log.warn("image with id '{}' was missing before deletion", image.getId());
+            }
+        }
     }
 
 }
