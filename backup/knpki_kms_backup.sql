@@ -25,9 +25,11 @@ DROP TABLE IF EXISTS `admin`;
 CREATE TABLE `admin` (
                          `username` varchar(20) NOT NULL,
                          `password` varchar(100) NOT NULL,
-                         `image` mediumblob,
+                         `image` varchar(100) DEFAULT NULL,
                          `name` varchar(100) NOT NULL,
-                         PRIMARY KEY (`username`)
+                         PRIMARY KEY (`username`),
+                         UNIQUE KEY `image_unique` (`image`),
+                         CONSTRAINT `fk_admin_images` FOREIGN KEY (`image`) REFERENCES `images` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -41,29 +43,29 @@ LOCK TABLES `admin` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `article_images`
+-- Table structure for table `article_image_gallery`
 --
 
-DROP TABLE IF EXISTS `article_images`;
+DROP TABLE IF EXISTS `article_image_gallery`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `article_images` (
-                                  `id` varchar(100) NOT NULL,
-                                  `image` mediumblob NOT NULL,
-                                  `article_id` varchar(100) NOT NULL,
-                                  PRIMARY KEY (`id`),
-                                  KEY `fk_article_images` (`article_id`),
-                                  CONSTRAINT `fk_article_images` FOREIGN KEY (`article_id`) REFERENCES `articles` (`id`)
+CREATE TABLE `article_image_gallery` (
+                                         `article_id` varchar(100) NOT NULL,
+                                         `image_id` varchar(100) NOT NULL,
+                                         PRIMARY KEY (`article_id`,`image_id`),
+                                         UNIQUE KEY `image_unique` (`image_id`),
+                                         CONSTRAINT `fk_gallery_articles` FOREIGN KEY (`article_id`) REFERENCES `articles` (`id`),
+                                         CONSTRAINT `fk_gallery_images` FOREIGN KEY (`image_id`) REFERENCES `images` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `article_images`
+-- Dumping data for table `article_image_gallery`
 --
 
-LOCK TABLES `article_images` WRITE;
-/*!40000 ALTER TABLE `article_images` DISABLE KEYS */;
-/*!40000 ALTER TABLE `article_images` ENABLE KEYS */;
+LOCK TABLES `article_image_gallery` WRITE;
+/*!40000 ALTER TABLE `article_image_gallery` DISABLE KEYS */;
+/*!40000 ALTER TABLE `article_image_gallery` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -78,13 +80,15 @@ CREATE TABLE `articles` (
                             `title` varchar(100) NOT NULL,
                             `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
                             `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                            `cover_image` mediumblob,
+                            `cover_image` varchar(100) DEFAULT NULL,
                             `body` text NOT NULL,
                             `teaser` varchar(200) DEFAULT NULL,
                             `username` varchar(20) NOT NULL,
                             PRIMARY KEY (`id`),
+                            UNIQUE KEY `cover_image_unique` (`cover_image`),
                             KEY `fk_articles_admin` (`username`),
-                            CONSTRAINT `fk_articles_admin` FOREIGN KEY (`username`) REFERENCES `admin` (`username`)
+                            CONSTRAINT `fk_articles_admin` FOREIGN KEY (`username`) REFERENCES `admin` (`username`),
+                            CONSTRAINT `fk_articles_images` FOREIGN KEY (`cover_image`) REFERENCES `images` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -124,6 +128,29 @@ LOCK TABLES `articles_tags` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `images`
+--
+
+DROP TABLE IF EXISTS `images`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `images` (
+                          `id` varchar(100) NOT NULL,
+                          `format` enum('JPG','JPEG','PNG') NOT NULL,
+                          PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `images`
+--
+
+LOCK TABLES `images` WRITE;
+/*!40000 ALTER TABLE `images` DISABLE KEYS */;
+/*!40000 ALTER TABLE `images` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `tags`
 --
 
@@ -155,4 +182,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-03-04 13:36:47
+-- Dump completed on 2024-03-17 10:55:43
