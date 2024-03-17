@@ -4,7 +4,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.knpkid.kms.entity.Admin;
-import org.knpkid.kms.entity.ArticleImage;
+import org.knpkid.kms.entity.Image;
+import org.knpkid.kms.entity.ImageFormat;
 import org.knpkid.kms.entity.Tag;
 import org.knpkid.kms.model.*;
 import org.knpkid.kms.service.ArticleService;
@@ -13,7 +14,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -33,6 +33,11 @@ class ArticleControllerTest {
 
     @Test
     void create() {
+        final var now = LocalDateTime.now();
+
+        final var admin = new Admin();
+        admin.setUsername("admin");
+
         final var request = new CreateArticleRequest(
                 "title",
                 null,
@@ -42,81 +47,103 @@ class ArticleControllerTest {
                 null
         );
 
-        final var admin = new Admin();
-        admin.setUsername("admin");
-        when(articleService.create(request, admin)).thenReturn("articleId");
+        final var response = new ArticleResponse(
+                "articleId", "title", now, now, "body", "teaser",
+                null, admin, null, null
+        );
+
+        when(articleService.create(request, admin)).thenReturn(response);
 
         final var webResponse = articleController.create(request, admin);
         verify(articleService).create(request, admin);
 
         assertNull(webResponse.errors());
         assertNull(webResponse.paging());
-        assertEquals("article created with id 'articleId'", webResponse.data());
+        assertEquals(request.title(), webResponse.data().title());
+        assertNull(webResponse.data().coverImage());
+        assertEquals(request.body(), webResponse.data().body());
+        assertEquals(request.teaser(), webResponse.data().teaser());
+        assertNull(webResponse.data().tags());
+        assertNull(webResponse.data().images());
+        assertEquals(now, webResponse.data().createdAt());
+        assertEquals(now, webResponse.data().updatedAt());
+        assertEquals(admin, webResponse.data().admin());
     }
 
     @Test
     void get() {
-        final var articleId = "articleId";
-        final var title = "title";
+        final var image = new Image();
+        image.setId("imageId");
+        image.setFormat(ImageFormat.PNG);
+
         final var now = LocalDateTime.now();
-        final var body = "body";
-        final var teaser = "teaser";
-        final var coverImage = "coverImage".getBytes();
         final var tags = Set.of(new Tag());
-        final var images = List.of(new ArticleImage());
         final var admin = new Admin();
 
-        when(articleService.get(anyString())).thenReturn(
+        when(articleService.get("articleId")).thenReturn(
                 new ArticleResponse(
-                        articleId, title, now,
-                        now, body, teaser,
-                        tags, admin, coverImage, images
+                        "articleId", "title", now, now, "body", "teaser",
+                        tags, admin, image, List.of(image)
                 )
         );
 
-        final var webResponse = articleController.get(articleId);
+        final var webResponse = articleController.get("articleId");
 
-        verify(articleService).get(articleId);
+        verify(articleService).get("articleId");
 
         assertNotNull(webResponse);
-        assertEquals(articleId, webResponse.data().getId());
-        assertEquals(title, webResponse.data().getTitle());
-        assertEquals(now, webResponse.data().getCreatedAt());
-        assertEquals(now, webResponse.data().getUpdatedAt());
-        assertEquals(body, webResponse.data().getBody());
-        assertEquals(teaser, webResponse.data().getTeaser());
-        assertEquals(coverImage, webResponse.data().getCoverImage());
-        assertEquals(tags, webResponse.data().getTags());
-        assertEquals(images, webResponse.data().getImages());
         assertNull(webResponse.errors());
         assertNull(webResponse.paging());
+        assertEquals("articleId", webResponse.data().id());
+        assertEquals("title", webResponse.data().title());
+        assertEquals(now, webResponse.data().createdAt());
+        assertEquals(now, webResponse.data().updatedAt());
+        assertEquals("body", webResponse.data().body());
+        assertEquals("teaser", webResponse.data().teaser());
+        assertEquals(image, webResponse.data().coverImage());
+        assertEquals(tags, webResponse.data().tags());
+        assertEquals(List.of(image), webResponse.data().images());
+        assertEquals(admin, webResponse.data().admin());
 
     }
 
     @Test
     void update() {
-        final var multipartFile = mock(MultipartFile.class);
+        final var now = LocalDateTime.now();
+
+        final var admin = new Admin();
+        admin.setUsername("admin");
 
         final var request = new UpdateArticleRequest(
                 "title",
-                multipartFile,
+                null,
                 "body",
                 "teaser",
                 null,
                 null
         );
 
-        final var admin = new Admin();
-        admin.setUsername("admin");
+        final var response = new ArticleResponse(
+                "articleId", "title", now, now, "body", "teaser",
+                null, admin, null, null
+        );
 
-        doNothing().when(articleService).update("articleId", request, admin);
+        when(articleService.update("articleId", request, admin)).thenReturn(response);
 
         final var webResponse = articleController.update("articleId", request, admin);
         verify(articleService).update("articleId", request, admin);
 
         assertNull(webResponse.errors());
         assertNull(webResponse.paging());
-        assertEquals("article with id 'articleId' has been updated", webResponse.data());
+        assertEquals(request.title(), webResponse.data().title());
+        assertNull(webResponse.data().coverImage());
+        assertEquals(request.body(), webResponse.data().body());
+        assertEquals(request.teaser(), webResponse.data().teaser());
+        assertNull(webResponse.data().tags());
+        assertNull(webResponse.data().images());
+        assertEquals(now, webResponse.data().createdAt());
+        assertEquals(now, webResponse.data().updatedAt());
+        assertEquals(admin, webResponse.data().admin());
     }
 
     @Test
@@ -130,11 +157,15 @@ class ArticleControllerTest {
     @DisplayName("getAllOrSearchArticle() - getAll")
     @Test
     void getAllOrSearchArticle_getAll() {
+        final var image = new Image();
+        image.setId("articleId");
+        image.setFormat(ImageFormat.PNG);
+
         final var onlyArticleResponses = List.of(
                 new OnlyArticleResponse(
                         "id", "title",
                         LocalDateTime.now(), LocalDateTime.now(),
-                        "body", "teaser", "coverImage".getBytes()
+                        "body", "teaser", image
                 )
         );
 
@@ -165,11 +196,15 @@ class ArticleControllerTest {
     @DisplayName("getAllOrSearchArticle() - search")
     @Test
     void getAllOrSearchArticle_search() {
+        final var image = new Image();
+        image.setId("articleId");
+        image.setFormat(ImageFormat.PNG);
+
         final var onlyArticleResponses = List.of(
                 new OnlyArticleResponse(
                         "id", "search title",
                         LocalDateTime.now(), LocalDateTime.now(),
-                        "body", "search teaser", "coverImage".getBytes()
+                        "body", "search teaser", image
                 )
         );
 
@@ -199,12 +234,15 @@ class ArticleControllerTest {
 
     @Test
     void getArticlesByTag() {
+        final var image = new Image();
+        image.setId("articleId");
+        image.setFormat(ImageFormat.PNG);
 
         final var onlyArticleResponses = List.of(
                 new OnlyArticleResponse(
                         "tagId", "search title",
                         LocalDateTime.now(), LocalDateTime.now(),
-                        "body", "search teaser", "coverImage".getBytes()
+                        "body", "search teaser", image
                 )
         );
 
@@ -229,12 +267,15 @@ class ArticleControllerTest {
 
     @Test
     void getArticlesByUsername() {
+        final var image = new Image();
+        image.setId("articleId");
+        image.setFormat(ImageFormat.PNG);
 
         final var onlyArticleResponses = List.of(
                 new OnlyArticleResponse(
                         "tagId", "search title",
                         LocalDateTime.now(), LocalDateTime.now(),
-                        "body", "search teaser", "coverImage".getBytes()
+                        "body", "search teaser", image
                 )
         );
 

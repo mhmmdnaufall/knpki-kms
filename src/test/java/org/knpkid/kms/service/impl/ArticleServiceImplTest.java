@@ -4,15 +4,12 @@ import jakarta.persistence.criteria.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.knpkid.kms.entity.Admin;
-import org.knpkid.kms.entity.Article;
-import org.knpkid.kms.entity.ArticleImage;
-import org.knpkid.kms.entity.Tag;
+import org.knpkid.kms.entity.*;
 import org.knpkid.kms.model.CreateArticleRequest;
 import org.knpkid.kms.model.UpdateArticleRequest;
-import org.knpkid.kms.repository.ArticleImageRepository;
 import org.knpkid.kms.repository.ArticleRepository;
 import org.knpkid.kms.repository.TagRepository;
+import org.knpkid.kms.service.ImageService;
 import org.knpkid.kms.service.ValidationService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -20,12 +17,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.ErrorResponseException;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -43,33 +40,59 @@ class ArticleServiceImplTest {
     private TagRepository tagRepository;
 
     @Mock
-    private ArticleImageRepository articleImageRepository;
+    private ImageService imageService;
 
     @Mock
     private ValidationService validationService;
 
     @DisplayName("create() - success")
     @Test
-    void create() throws IOException {
+    void create() {
 
         final var multipartFile = mock(MultipartFile.class);
-        final var imageBytes = "image".getBytes();
-        when(multipartFile.getBytes()).thenReturn(imageBytes);
+        final var image = new Image();
+        image.setId("imageId");
+        image.setFormat(ImageFormat.PNG);
 
-        final var tags = Set.of("tag1", "tag2", "tag3");
-        final var images = List.of(multipartFile, multipartFile, multipartFile);
+        final var tagsString = Set.of("tag 1", "tag 2", "tag 3");
+        final var images = List.of(multipartFile);
 
         final var request = new CreateArticleRequest(
-                "title", multipartFile, "body",
-                "teaser", tags, images
+                "title", multipartFile, "body", "teaser", tagsString, images
         );
-
         final var admin = new Admin();
         admin.setUsername("admin");
 
+        final var now = LocalDateTime.now();
+
         {
             doNothing().when(validationService).validate(request);
-            when(tagRepository.saveAll(any())).thenReturn(List.of(new Tag()));
+            when(imageService.save(any())).thenReturn(image);
+            when(tagRepository.saveAll(any())).then(invocation -> {
+                final var tags = (Set<Tag>) invocation.getArgument(0);
+
+                final var cleanTagNameSet = tagsString.stream()
+                        .map(tag -> tag.replaceAll("[^a-zA-Z0-9 ]", "").trim().toLowerCase())
+                        .collect(Collectors.toSet());
+
+                final var tagIdSet = cleanTagNameSet.stream()
+                        .map(tag -> tag.replace(' ', '-'))
+                        .collect(Collectors.toSet());
+
+                {
+                    assertEquals(3, tags.size());
+
+                    tags.forEach(tag -> {
+                        assertTrue(tagIdSet.contains(tag.getId()));
+                        assertFalse(tagIdSet.contains(tag.getName()));
+                        assertTrue(cleanTagNameSet.contains(tag.getName()));
+                        assertFalse(cleanTagNameSet.contains(tag.getId()));
+                    });
+                }
+
+                return tags.stream().toList();
+            });
+
             when(articleRepository.save(any())).then(invocation -> {
                 final var article = (Article) invocation.getArgument(0);
                 {
@@ -77,40 +100,47 @@ class ArticleServiceImplTest {
                     assertEquals("body", article.getBody());
                     assertEquals("teaser", article.getTeaser());
                     assertEquals(admin, article.getAdmin());
-                    assertSame(imageBytes, article.getCoverImage());
+                    assertEquals("imageId", article.getCoverImage().getId());
+                    assertEquals(ImageFormat.PNG, article.getCoverImage().getFormat());
+                    assertEquals(1, article.getImageGallery().size());
+                    assertEquals("imageId", article.getImageGallery().get(0).getId());
+                    assertEquals(ImageFormat.PNG, article.getImageGallery().get(0).getFormat());
                     assertTrue(
                             article.getTags().stream()
-                                    .allMatch(tag -> tags.contains(tag.getName()))
+                                    .allMatch(tag -> tagsString.contains(tag.getName()))
                     );
                 }
                 article.setId("articleId");
+                article.setCreatedAt(now);
+                article.setUpdatedAt(now);
                 return article;
             });
-
-            when(articleImageRepository.saveAll(any())).then(invocation -> {
-                final var articleImages = (List<ArticleImage>) invocation.getArgument(0);
-                assertNotNull(articleImages);
-                assertFalse(articleImages.isEmpty());
-                return articleImages;
-            });
         }
 
-        final var articleId = articleService.create(request, admin);
+        final var response = articleService.create(request, admin);
 
         {
-            verify(validationService).validate(any());
-            verify(tagRepository).saveAll(any());
-            verify(articleRepository).save(any());
-            verify(articleImageRepository).saveAll(any());
+            assertEquals("articleId", response.id());
+            assertEquals("title", response.title());
+            assertTrue(
+                    response.tags().stream()
+                            .allMatch(tag -> tagsString.contains(tag.getName()))
+            );
+            assertEquals(admin, response.admin());
+            assertEquals("imageId", response.coverImage().getId());
+            assertEquals(ImageFormat.PNG, response.coverImage().getFormat());
+            assertEquals(1, response.images().size());
+            assertEquals(now, response.createdAt());
+            assertEquals(now, response.updatedAt());
         }
-
-        assertEquals("articleId", articleId);
 
     }
 
     @DisplayName("create() - null tags, images & coverImage")
     @Test
     void create_nullTagsImagesCoverImage() {
+        final var now = LocalDateTime.now();
+
         final var request = new CreateArticleRequest(
                 "title", null, "body",
                 "teaser", null, null
@@ -127,64 +157,47 @@ class ArticleServiceImplTest {
                     assertEquals("body", article.getBody());
                     assertEquals("teaser", article.getTeaser());
                     assertEquals(admin, article.getAdmin());
-                    assertSame(null, article.getCoverImage());
-                    assertEquals(Collections.emptySet(), article.getTags());
+                    assertNull(article.getCoverImage());
+                    assertTrue(article.getTags().isEmpty());
+                    assertTrue(article.getImageGallery().isEmpty());
                 }
                 article.setId("articleId");
+                article.setCreatedAt(now);
+                article.setUpdatedAt(now);
                 return article;
             });
         }
 
-        final var articleId = articleService.create(request, admin);
+        final var response = articleService.create(request, admin);
 
         {
-            verify(validationService).validate(any());
+            verify(imageService, times(0)).save(any());
             verify(tagRepository, times(0)).saveAll(any());
-            verify(articleRepository).save(any());
-            verify(articleImageRepository, times(0)).saveAll(any());
+            assertEquals("title", response.title());
+            assertEquals("body", response.body());
+            assertEquals("teaser", response.teaser());
+            assertNull(response.coverImage());
+            assertEquals(Collections.emptyList(), response.images());
+            assertEquals(Collections.emptySet(), response.tags());
         }
 
-        assertEquals("articleId", articleId);
-
-    }
-
-    @DisplayName("create() - MultipartFile.getBytes() error")
-    @Test
-    void create_MultipartGetBytesError() throws IOException {
-        final var multipartFile = mock(MultipartFile.class);
-        when(multipartFile.getBytes()).thenThrow(new IOException());
-
-        var tags = Set.of("tag1", "tag2", "tag3");
-        var images = List.of(multipartFile, multipartFile, multipartFile);
-
-        final var request = new CreateArticleRequest(
-                "title", null, "body",
-                "teaser", tags, images
-        );
-
-        final var admin = new Admin();
-
-        final var errorResponseException = assertThrows(
-                ErrorResponseException.class,
-                () -> articleService.create(request, admin)
-        );
-
-        assertEquals(HttpStatus.BAD_REQUEST, errorResponseException.getStatusCode());
     }
 
     @Test
     void get() {
         final var article = new Article();
         article.setId("exist");
+
         {
             when(articleRepository.findById("exist")).thenReturn(Optional.of(article));
             when(articleRepository.findById("not exist")).thenReturn(Optional.empty());
         }
 
+        // exist
         var articleResponse = assertDoesNotThrow(() -> articleService.get("exist"));
-        assertEquals(article.getId(), articleResponse.getId());
+        assertEquals(article.getId(), articleResponse.id());
 
-
+        // not exist
         final var exception = assertThrows(ResponseStatusException.class, () -> articleService.get("not exist"));
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
         assertEquals("article with id 'not exist' is not found", exception.getReason());
@@ -194,208 +207,283 @@ class ArticleServiceImplTest {
 
     @DisplayName("update() - success")
     @Test
-    void update() throws IOException {
-        final var multipartFile = mock(MultipartFile.class);
-        when(multipartFile.getBytes()).thenReturn("image".getBytes());
+    void update() {
+        final var now = LocalDateTime.now();
 
-        var tags = Set.of("tag1", "tag2", "tag3");
-        var images = List.of(multipartFile, multipartFile, multipartFile);
+        final var multipartFile = mock(MultipartFile.class);
+
+        final var image = new Image();
+        image.setId("imageId");
+        image.setFormat(ImageFormat.PNG);
+
+        final var oldImage = new Image();
+        oldImage.setId("oldImageId");
+        oldImage.setFormat(ImageFormat.PNG);
+
+        final var oldImageGallery = List.of(oldImage);
+
+        final var tagsString = Set.of("tag 1", "tag 2", "tag 3");
+        final var images = List.of(multipartFile);
 
         final var request = new UpdateArticleRequest(
                 "title", multipartFile, "body", "teaser",
-                tags, images
+                tagsString, images
         );
 
-        final var article = new Article();
         final var admin = new Admin();
         admin.setUsername("admin");
 
+        final var article = new Article();
         article.setAdmin(admin);
-        article.setId("articleId");
+        article.setCoverImage(oldImage);
+        article.setImageGallery(oldImageGallery);
 
         {
             when(articleRepository.findById("articleId")).thenReturn(Optional.of(article));
-            when(tagRepository.saveAll(any())).thenReturn(List.of(new Tag()));
-            when(articleRepository.save(any())).thenReturn(new Article());
-            when(articleImageRepository.saveAll(any())).thenReturn(List.of(new ArticleImage()));
-            doNothing().when(validationService).validate(request);
+            doNothing().when(validationService).validate(any());
+            when(imageService.save(any())).thenReturn(image);
+            doNothing().when(imageService).delete(any());
+            doNothing().when(imageService).deleteAll(any());
+            when(tagRepository.saveAll(any())).then(invocation -> {
+                final var tags = (Set<Tag>) invocation.getArgument(0);
+
+                final var cleanTagNameSet = tagsString.stream()
+                        .map(tag -> tag.replaceAll("[^a-zA-Z0-9 ]", "").trim().toLowerCase())
+                        .collect(Collectors.toSet());
+
+                final var tagIdSet = cleanTagNameSet.stream()
+                        .map(tag -> tag.replace(' ', '-'))
+                        .collect(Collectors.toSet());
+                {
+                    assertEquals(3, tags.size());
+
+                    tags.forEach(tag -> {
+                        assertTrue(tagIdSet.contains(tag.getId()));
+                        assertFalse(tagIdSet.contains(tag.getName()));
+                        assertTrue(cleanTagNameSet.contains(tag.getName()));
+                        assertFalse(cleanTagNameSet.contains(tag.getId()));
+                    });
+                }
+
+                return tags.stream().toList();
+            });
+            when(articleRepository.save(article)).then(invocation -> {
+                final var articleUpdate = (Article) invocation.getArgument(0);
+
+                {
+                    assertEquals("title", articleUpdate.getTitle());
+                    assertEquals("body", articleUpdate.getBody());
+                    assertEquals("teaser", articleUpdate.getTeaser());
+                    assertTrue(
+                            articleUpdate.getTags().stream()
+                                    .allMatch(tag -> tagsString.contains(tag.getName()))
+                    );
+                }
+
+                articleUpdate.setId("articleId");
+                articleUpdate.setCreatedAt(now);
+                articleUpdate.setUpdatedAt(now);
+
+                return articleUpdate;
+            });
         }
 
-        assertDoesNotThrow(() -> articleService.update("articleId", request, admin));
+        final var response = assertDoesNotThrow(() ->  articleService.update("articleId", request, admin));
 
         {
-            verify(validationService).validate(request);
             verify(tagRepository).saveAll(any());
-            verify(articleImageRepository).saveAll(any());
+            verify(imageService).delete(any());
+            verify(imageService).deleteAll(any());
+            assertEquals("articleId", response.id());
+            assertEquals("title", response.title());
+            assertTrue(
+                    response.tags().stream()
+                            .allMatch(tag -> tagsString.contains(tag.getName()))
+            );
+            assertEquals(admin, response.admin());
+            assertEquals("imageId", response.coverImage().getId());
+            assertEquals(ImageFormat.PNG, response.coverImage().getFormat());
+            assertEquals(1, response.images().size());
+            assertEquals(now, response.createdAt());
+            assertEquals(now, response.updatedAt());
         }
 
+    }
+
+    @DisplayName("update() - null tags, images & coverImage")
+    @Test
+    void update_nullTagsImagesCoverImage() {
+        final var now = LocalDateTime.now();
+
+        final var image = new Image();
+        image.setId("imageId");
+        image.setFormat(ImageFormat.PNG);
+
+        final var request = new UpdateArticleRequest(
+                "title", null, "body",
+                "teaser", null, null
+        );
+
+        final var admin = new Admin();
+        admin.setUsername("admin");
+
+        final var article = new Article();
+        article.setAdmin(admin);
+
+        {
+            when(articleRepository.findById("articleId")).thenReturn(Optional.of(article));
+            doNothing().when(validationService).validate(any());
+            when(articleRepository.save(article)).then(invocation -> {
+                final var articleUpdate = (Article) invocation.getArgument(0);
+
+                {
+                    assertEquals("title", articleUpdate.getTitle());
+                    assertEquals("body", articleUpdate.getBody());
+                    assertEquals("teaser", articleUpdate.getTeaser());
+                    assertNull(articleUpdate.getCoverImage());
+                    assertTrue(articleUpdate.getImageGallery().isEmpty());
+                    assertTrue(articleUpdate.getTags().isEmpty());
+                }
+
+                articleUpdate.setId("articleId");
+                articleUpdate.setCreatedAt(now);
+                articleUpdate.setUpdatedAt(now);
+
+                return articleUpdate;
+            });
+        }
+
+        final var response = assertDoesNotThrow(() ->  articleService.update("articleId", request, admin));
+
+        {
+            verify(imageService, times(0)).save(any());
+            verify(imageService, times(0)).delete(any());
+            verify(imageService, times(0)).deleteAll(any());
+            verify(tagRepository, times(0)).saveAll(any());
+            assertEquals("articleId", response.id());
+            assertEquals("title", response.title());
+            assertEquals(admin, response.admin());
+            assertNull(response.coverImage());
+            assertTrue(response.images().isEmpty());
+            assertTrue(response.tags().isEmpty());
+            assertEquals(now, response.createdAt());
+            assertEquals(now, response.updatedAt());
+        }
     }
 
     @DisplayName("update() - use Another Account forbidden")
     @Test
     void update_useAnotherAccount() {
-        final var multipartFile = mock(MultipartFile.class);
-
-        var tags = Set.of("tag1", "tag2", "tag3");
-        var images = List.of(multipartFile, multipartFile, multipartFile);
-
         final var request = new UpdateArticleRequest(
-                "title", multipartFile, "body", "teaser",
-                tags, images
+                "title", null, "body",
+                "teaser", null, null
         );
 
-        final var article = new Article();
         final var admin = new Admin();
         admin.setUsername("admin");
 
+        final var article = new Article();
         article.setAdmin(admin);
-        article.setId("articleId");
 
-        final var anotherAdmin = new Admin();
-        anotherAdmin.setUsername("another admin");
+        final var diffAdmin = new Admin();
+        diffAdmin.setUsername("differentAdmin");
 
         {
             when(articleRepository.findById("articleId")).thenReturn(Optional.of(article));
         }
 
-        final var responseStatusException = assertThrows(
+        final var exception = assertThrows(
                 ResponseStatusException.class,
-                () -> articleService.update("articleId", request, anotherAdmin)
+                () -> articleService.update("articleId", request, diffAdmin)
         );
-        assertEquals(HttpStatus.FORBIDDEN, responseStatusException.getStatusCode());
-        assertEquals("this article belongs to someone else", responseStatusException.getReason());
+
+        {
+            assertEquals(HttpStatus.FORBIDDEN, exception.getStatusCode());
+            assertEquals("this article belongs to someone else", exception.getReason());
+        }
     }
 
     @DisplayName("update() - article not found")
     @Test
     void update_articleNotFound() {
-        final var multipartFile = mock(MultipartFile.class);
-
-        var tags = Set.of("tag1", "tag2", "tag3");
-        var images = List.of(multipartFile, multipartFile, multipartFile);
-
         final var request = new UpdateArticleRequest(
-                "title", multipartFile, "body", "teaser",
-                tags, images
+                "title", null, "body",
+                "teaser", null, null
         );
 
-        final var article = new Article();
         final var admin = new Admin();
-        admin.setUsername("admin");
-
-        article.setAdmin(admin);
-        article.setId("articleId");
 
         {
-            when(articleRepository.findById("not found")).thenReturn(Optional.empty());
+            when(articleRepository.findById("articleId")).thenReturn(Optional.empty());
         }
-        final var responseStatusException = assertThrows(
+
+        final var exception = assertThrows(
                 ResponseStatusException.class,
-                () -> articleService.update("not found", request, admin)
-        );
-
-        assertEquals(HttpStatus.NOT_FOUND, responseStatusException.getStatusCode());
-        assertEquals("article with id 'not found' is not found", responseStatusException.getReason());
-    }
-
-    @DisplayName("update() - null coverImage")
-    @Test
-    void update_nullCoverImage() throws IOException {
-        final var multipartFile = mock(MultipartFile.class);
-
-        var tags = Set.of("tag1", "tag2", "tag3");
-        var images = List.of(multipartFile, multipartFile, multipartFile);
-
-        final var request = new UpdateArticleRequest(
-                "title", null, "body", "teaser",
-                tags, images
-        );
-
-        final var article = new Article();
-        final var admin = new Admin();
-        admin.setUsername("admin");
-
-        article.setAdmin(admin);
-        article.setId("articleId");
-
-        {
-            when(multipartFile.getBytes()).thenReturn("image".getBytes());
-            when(articleRepository.findById("articleId")).thenReturn(Optional.of(article));
-        }
-
-        assertDoesNotThrow(() -> articleService.update("articleId", request, admin));
-    }
-
-    @DisplayName("update() - MultipartFile.getBytes() error")
-    @Test
-    void update_MultipartGetBytesError() throws IOException {
-
-        final var multipartFile = mock(MultipartFile.class);
-
-        var tags = Set.of("tag1", "tag2", "tag3");
-        var images = List.of(multipartFile, multipartFile, multipartFile);
-
-        final var request = new UpdateArticleRequest(
-                "title", null, "body", "teaser",
-                tags, images
-        );
-
-        final var article = new Article();
-        final var admin = new Admin();
-        admin.setUsername("admin");
-
-        article.setAdmin(admin);
-        article.setId("articleId");
-
-        {
-            when(multipartFile.getBytes()).thenThrow(new IOException());
-            when(articleRepository.findById("articleId")).thenReturn(Optional.of(article));
-        }
-
-        final var errorResponseException = assertThrows(
-                ErrorResponseException.class,
                 () -> articleService.update("articleId", request, admin)
         );
-        assertEquals(HttpStatus.BAD_REQUEST, errorResponseException.getStatusCode());
 
-    }
-
-    @DisplayName("update() - null tags and images")
-    @Test
-    void update_nullTagImage() {
-        final var request = new UpdateArticleRequest(
-                "title", null, "body", "teaser",
-                null, null
-        );
-
-        final var article = new Article();
-        final var admin = new Admin();
-        admin.setUsername("admin");
-
-        article.setAdmin(admin);
-        article.setId("articleId");
-
-        when(articleRepository.findById("articleId")).thenReturn(Optional.of(article));
-
-        assertDoesNotThrow(() -> articleService.update("articleId", request, admin));
+        {
+            assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+            assertEquals("article with id 'articleId' is not found", exception.getReason());
+        }
     }
 
     @DisplayName("delete() - success")
     @Test
     void delete() {
+
+        final var image = new Image();
+        image.setId("imageId");
+        image.setFormat(ImageFormat.PNG);
+
         final var admin = new Admin();
+        admin.setUsername("admin");
+
         final var article = new Article();
         article.setAdmin(admin);
+        article.setCoverImage(image);
+        article.setImageGallery(List.of(image));
+
         {
             when(articleRepository.findById("articleId")).thenReturn(Optional.of(article));
-            doNothing().when(articleImageRepository).deleteAllByArticle(article);
+            doNothing().when(articleRepository).delete(article);
+            doNothing().when(imageService).delete(any());
+            doNothing().when(imageService).deleteAll(any());
+        }
+
+        assertDoesNotThrow(() -> articleService.delete("articleId", admin));
+
+        {
+            verify(articleRepository).delete(article);
+            verify(imageService).delete(any());
+            verify(imageService).deleteAll(any());
+        }
+
+    }
+
+    @DisplayName("delete() - null image & images")
+    @Test
+    void delete_nullImageAndImages() {
+
+        final var admin = new Admin();
+        admin.setUsername("admin");
+
+        final var article = new Article();
+        article.setAdmin(admin);
+
+        {
+            when(articleRepository.findById("articleId")).thenReturn(Optional.of(article));
             doNothing().when(articleRepository).delete(article);
         }
+
         assertDoesNotThrow(() -> articleService.delete("articleId", admin));
+
         {
-            verify(articleImageRepository).deleteAllByArticle(article);
             verify(articleRepository).delete(article);
+            verify(imageService, times(0)).delete(any());
+            verify(imageService, times(0)).deleteAll(any());
         }
+
     }
 
     @DisplayName("delete() - article not found")
@@ -405,15 +493,22 @@ class ArticleServiceImplTest {
         final var admin = new Admin();
 
         {
-            when(articleRepository.findById("not found")).thenReturn(Optional.empty());
+            when(articleRepository.findById("notFoundId")).thenReturn(Optional.empty());
         }
 
-        final var responseStatusException = assertThrows(
+        final var exception = assertThrows(
                 ResponseStatusException.class,
-                () -> articleService.delete("not found", admin)
+                () -> articleService.delete("notFoundId", admin)
         );
-        assertEquals(HttpStatus.NOT_FOUND, responseStatusException.getStatusCode());
-        assertEquals("article with id 'not found' is not found", responseStatusException.getReason());
+
+        {
+            verify(articleRepository, times(0)).delete(any(Article.class));
+            verify(imageService, times(0)).delete(any());
+            verify(imageService, times(0)).deleteAll(any());
+            assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+            assertEquals("article with id 'notFoundId' is not found", exception.getReason());
+        }
+
     }
 
     @DisplayName("delete() - use another account forbidden")
@@ -426,19 +521,26 @@ class ArticleServiceImplTest {
         final var article = new Article();
         article.setAdmin(admin);
 
+        final var diffAdmin = new Admin();
+        diffAdmin.setUsername("different_admin");
+
         {
             when(articleRepository.findById("articleId")).thenReturn(Optional.of(article));
         }
 
-        final var anotherAdmin = new Admin();
-        admin.setUsername("another_admin");
-
-        final var responseStatusException = assertThrows(
+        final var exception = assertThrows(
                 ResponseStatusException.class,
-                () -> articleService.delete("articleId", anotherAdmin)
+                () -> articleService.delete("articleId", diffAdmin)
         );
-        assertEquals(HttpStatus.FORBIDDEN, responseStatusException.getStatusCode());
-        assertEquals("this article belongs to someone else", responseStatusException.getReason());
+
+        {
+            verify(articleRepository, times(0)).delete(any(Article.class));
+            verify(imageService, times(0)).delete(any());
+            verify(imageService, times(0)).deleteAll(any());
+            assertEquals(HttpStatus.FORBIDDEN, exception.getStatusCode());
+            assertEquals("this article belongs to someone else", exception.getReason());
+        }
+
     }
 
     @Test
@@ -450,7 +552,7 @@ class ArticleServiceImplTest {
 
         final var articles = List.of(article);
 
-        final var pageable = PageRequest.of(0, 12, Sort.by(Sort.Order.desc("createdAt")));
+        final var pageable = PageRequest.of(0, 12, Sort.by(Sort.Order.desc("updatedAt")));
 
         {
             when(articleRepository.findAll(pageable))
@@ -470,9 +572,9 @@ class ArticleServiceImplTest {
         }
 
         assertEquals(articles.size(), onlyArticleResponsePage.getContent().size());
-        assertEquals(article.getId(), onlyArticleResponsePage.getContent().get(0).getId());
-        assertEquals(article.getTitle(), onlyArticleResponsePage.getContent().get(0).getTitle());
-        assertEquals(article.getTeaser(), onlyArticleResponsePage.getContent().get(0).getTeaser());
+        assertEquals(article.getId(), onlyArticleResponsePage.getContent().get(0).id());
+        assertEquals(article.getTitle(), onlyArticleResponsePage.getContent().get(0).title());
+        assertEquals(article.getTeaser(), onlyArticleResponsePage.getContent().get(0).teaser());
     }
 
     @Test
@@ -491,13 +593,12 @@ class ArticleServiceImplTest {
                         final var root = mock(Root.class);
                         final var query = mock(CriteriaQuery.class);
                         final var builder = mock(CriteriaBuilder.class);
-
                         final var join = mock(Join.class);
                         final var predicate = mock(Predicate.class);
 
                         {
                             when(builder.or(any(), any(), any())).thenReturn(predicate);
-                            when(root.join(anyString())).thenReturn(join);
+                            when(root.join("tags", JoinType.LEFT)).thenReturn(join);
                             when(query.where(any(Predicate.class))).thenReturn(query);
                             when(query.getRestriction()).thenReturn(predicate);
                         }
@@ -510,7 +611,7 @@ class ArticleServiceImplTest {
                             verify(builder).or(any(), any(), any());
                             verify(builder, times(3)).like(any(), anyString());
                             verify(root, times(2)).get(anyString());
-                            verify(root).join(anyString());
+                            verify(root).join("tags", JoinType.LEFT);
                             verify(join).get(anyString());
 
                         }
@@ -530,9 +631,9 @@ class ArticleServiceImplTest {
         }
 
         assertEquals(articles.size(), onlyArticleResponsePage.getContent().size());
-        assertEquals(article.getId(), onlyArticleResponsePage.getContent().get(0).getId());
-        assertEquals(article.getTitle(), onlyArticleResponsePage.getContent().get(0).getTitle());
-        assertEquals(article.getTeaser(), onlyArticleResponsePage.getContent().get(0).getTeaser());
+        assertEquals(article.getId(), onlyArticleResponsePage.getContent().get(0).id());
+        assertEquals(article.getTitle(), onlyArticleResponsePage.getContent().get(0).title());
+        assertEquals(article.getTeaser(), onlyArticleResponsePage.getContent().get(0).teaser());
 
     }
 
@@ -546,7 +647,7 @@ class ArticleServiceImplTest {
 
         final var articles = List.of(article);
 
-        final var pageable = PageRequest.of(0, 12, Sort.by(Sort.Order.desc("createdAt")));
+        final var pageable = PageRequest.of(0, 12, Sort.by(Sort.Order.desc("updatedAt")));
 
         {
             when(articleRepository.findByTagsId("tagId", pageable))
@@ -566,9 +667,9 @@ class ArticleServiceImplTest {
         }
 
         assertEquals(articles.size(), onlyArticleResponsePage.getContent().size());
-        assertEquals(article.getId(), onlyArticleResponsePage.getContent().get(0).getId());
-        assertEquals(article.getTitle(), onlyArticleResponsePage.getContent().get(0).getTitle());
-        assertEquals(article.getTeaser(), onlyArticleResponsePage.getContent().get(0).getTeaser());
+        assertEquals(article.getId(), onlyArticleResponsePage.getContent().get(0).id());
+        assertEquals(article.getTitle(), onlyArticleResponsePage.getContent().get(0).title());
+        assertEquals(article.getTeaser(), onlyArticleResponsePage.getContent().get(0).teaser());
 
     }
 
@@ -586,7 +687,7 @@ class ArticleServiceImplTest {
 
         final var articles = List.of(article);
 
-        final var pageable = PageRequest.of(0, 12, Sort.by(Sort.Order.desc("createdAt")));
+        final var pageable = PageRequest.of(0, 12, Sort.by(Sort.Order.desc("updatedAt")));
 
         {
             when(articleRepository.findByAdmin_Username("username", pageable))
@@ -606,9 +707,9 @@ class ArticleServiceImplTest {
         }
 
         assertEquals(articles.size(), onlyArticleResponsePage.getContent().size());
-        assertEquals(article.getId(), onlyArticleResponsePage.getContent().get(0).getId());
-        assertEquals(article.getTitle(), onlyArticleResponsePage.getContent().get(0).getTitle());
-        assertEquals(article.getTeaser(), onlyArticleResponsePage.getContent().get(0).getTeaser());
+        assertEquals(article.getId(), onlyArticleResponsePage.getContent().get(0).id());
+        assertEquals(article.getTitle(), onlyArticleResponsePage.getContent().get(0).title());
+        assertEquals(article.getTeaser(), onlyArticleResponsePage.getContent().get(0).teaser());
 
     }
 }
