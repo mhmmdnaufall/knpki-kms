@@ -9,11 +9,11 @@ import org.springframework.data.domain.Page;
 
 public interface ArticleService {
 
-    String create(CreateArticleRequest request, Admin admin);
+    ArticleResponse create(CreateArticleRequest request, Admin admin);
 
     ArticleResponse get(String articleId);
 
-    void update(String articleId, UpdateArticleRequest request, Admin admin);
+    ArticleResponse update(String articleId, UpdateArticleRequest request, Admin admin);
 
     void delete(String articleId, Admin admin);
 

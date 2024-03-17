@@ -4,8 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.knpkid.kms.entity.Admin;
 import org.knpkid.kms.model.*;
 import org.knpkid.kms.service.ArticleService;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -24,10 +22,9 @@ public class ArticleController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @ResponseStatus(code = HttpStatus.CREATED)
-    @CacheEvict(cacheNames = "articles_page", allEntries = true)
-    public WebResponse<String> create(@ModelAttribute CreateArticleRequest request, Admin admin) {
-        final var articleId = articleService.create(request, admin);
-        return new WebResponse<>("article created with id '" + articleId + "'", null, null);
+    public WebResponse<ArticleResponse> create(@ModelAttribute CreateArticleRequest request, Admin admin) {
+        final var articleResponse = articleService.create(request, admin);
+        return new WebResponse<>(articleResponse, null, null);
     }
 
     @GetMapping(
@@ -44,13 +41,12 @@ public class ArticleController {
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    @CacheEvict(cacheNames = "articles_page", allEntries = true)
-    public WebResponse<String> update(@PathVariable("articleId") String articleId,
+    public WebResponse<ArticleResponse> update(@PathVariable("articleId") String articleId,
                                       @ModelAttribute UpdateArticleRequest request,
                                       Admin admin) {
 
-        articleService.update(articleId, request, admin);
-        return new WebResponse<>("article with id '" + articleId + "' has been updated", null, null);
+        final var articleResponse = articleService.update(articleId, request, admin);
+        return new WebResponse<>(articleResponse, null, null);
     }
 
     @DeleteMapping("/api/articles/{articleId}")
@@ -59,7 +55,6 @@ public class ArticleController {
         articleService.delete(articleId, admin);
     }
 
-    @Cacheable(cacheNames = "articles_page", key = "#page + '.' + #size", condition = "#keyword == null")
     @GetMapping(
             path = "/api/articles",
             produces = MediaType.APPLICATION_JSON_VALUE

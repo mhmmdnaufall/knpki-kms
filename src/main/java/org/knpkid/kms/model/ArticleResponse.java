@@ -5,44 +5,42 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import lombok.Value;
 import org.knpkid.kms.entity.Admin;
-import org.knpkid.kms.entity.ArticleImage;
+import org.knpkid.kms.entity.Image;
 import org.knpkid.kms.entity.Tag;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
-@Value
-public class ArticleResponse {
+public record ArticleResponse (
 
-        String id;
+        String id,
 
-        String title;
-
-        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-        @JsonSerialize(using = LocalDateTimeSerializer.class)
-        LocalDateTime createdAt;
+        String title,
 
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
         @JsonSerialize(using = LocalDateTimeSerializer.class)
-        LocalDateTime updatedAt;
+        LocalDateTime createdAt,
 
-        String body;
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+        @JsonSerialize(using = LocalDateTimeSerializer.class)
+        LocalDateTime updatedAt,
 
-        String teaser;
+        String body,
+
+        String teaser,
 
         @JsonIgnoreProperties("articles")
-        Set<Tag> tags;
+        Set<Tag> tags,
 
         @JsonIncludeProperties({"username", "name", "image"})
-        Admin admin;
+        Admin admin,
 
-        byte[] coverImage;
+        Image coverImage,
 
         @JsonIgnoreProperties("article")
-        List<ArticleImage> images;
+        List<Image> images
 
 
-}
+) { }

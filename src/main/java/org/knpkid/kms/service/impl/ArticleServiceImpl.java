@@ -1,18 +1,18 @@
 package org.knpkid.kms.service.impl;
 
+import jakarta.persistence.criteria.JoinType;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.knpkid.kms.entity.Image;
+import org.knpkid.kms.service.ImageService;
 import org.springframework.data.domain.*;
 import org.knpkid.kms.entity.Admin;
 import org.knpkid.kms.entity.Article;
-import org.knpkid.kms.entity.ArticleImage;
 import org.knpkid.kms.entity.Tag;
 import org.knpkid.kms.model.ArticleResponse;
 import org.knpkid.kms.model.CreateArticleRequest;
 import org.knpkid.kms.model.OnlyArticleResponse;
 import org.knpkid.kms.model.UpdateArticleRequest;
-import org.knpkid.kms.repository.ArticleImageRepository;
 import org.knpkid.kms.repository.ArticleRepository;
 import org.knpkid.kms.repository.TagRepository;
 import org.knpkid.kms.service.ArticleService;
@@ -21,11 +21,9 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.ErrorResponseException;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -39,31 +37,30 @@ public class ArticleServiceImpl implements ArticleService {
 
     private final TagRepository tagRepository;
 
-    private final ArticleImageRepository articleImageRepository;
+    private final ImageService imageService;
 
     private final ValidationService validationService;
 
-    private static final String CREATED_AT = "createdAt";
+    private static final String UPDATED_AT = "updatedAt";
 
     @Transactional
-    @SneakyThrows
     @Override
-    public String create(CreateArticleRequest request, Admin admin) {
+    public ArticleResponse create(CreateArticleRequest request, Admin admin) {
         validationService.validate(request);
 
         final var article = new Article();
         article.setTitle(request.title());
         article.setBody(request.body());
         article.setTeaser(request.teaser());
-        article.setCoverImage(Objects.nonNull(request.coverImage()) ? request.coverImage().getBytes() : null);
         article.setAdmin(admin);
         article.setTags(extractAndSaveTags(request.tags()));
+        setArticleCoverImageAndGallery(article, request.coverImage(), request.images());
+
         articleRepository.save(article);
-        article.setImages(extractAndSaveArticleImages(request.images(), article));
 
         log.info("article created with id = '{}'", article.getId());
 
-        return article.getId();
+        return toArticleResponse(article);
     }
 
     @Transactional(readOnly = true)
@@ -73,25 +70,30 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Transactional
-    @SneakyThrows
     @Override
-    public void update(String articleId, UpdateArticleRequest request, Admin admin) {
+    public ArticleResponse update(String articleId, UpdateArticleRequest request, Admin admin) {
         final var article = getArticleById(articleId);
 
         checkArticleAuthor(article, admin);
         validationService.validate(request);
-        articleImageRepository.deleteAllByArticle(article);
+
+        final var oldCoverImage = article.getCoverImage();
+        final var oldArticleImageGallery = article.getImageGallery();
 
         article.setTitle(request.title());
         article.setBody(request.body());
         article.setTeaser(request.teaser());
         article.setUpdatedAt(LocalDateTime.now());
         article.setTags(extractAndSaveTags(request.tags()));
-        article.setCoverImage(Objects.nonNull(request.coverImage()) ? request.coverImage().getBytes() : null);
-        article.setImages(extractAndSaveArticleImages(request.images(), article));
+        setArticleCoverImageAndGallery(article, request.coverImage(), request.images());
+
         articleRepository.save(article);
 
+        deleteArticleCoverImageAndGallery(oldCoverImage, oldArticleImageGallery);
+
         log.info("article with id '{}' has been updated", articleId);
+
+        return toArticleResponse(article);
     }
 
     @Transactional
@@ -99,8 +101,10 @@ public class ArticleServiceImpl implements ArticleService {
     public void delete(String articleId, Admin admin) {
         final var article = getArticleById(articleId);
         checkArticleAuthor(article, admin);
-        articleImageRepository.deleteAllByArticle(article);
+
         articleRepository.delete(article);
+
+        deleteArticleCoverImageAndGallery(article.getCoverImage(), article.getImageGallery());
 
         log.info("article with id '{}' has been deleted", article.getId());
     }
@@ -108,7 +112,7 @@ public class ArticleServiceImpl implements ArticleService {
     @Transactional(readOnly = true)
     @Override
     public Page<OnlyArticleResponse> getAll(Integer page, Integer size) {
-        return articleRepository.findAll(PageRequest.of(page, size, Sort.by(Sort.Order.desc(CREATED_AT))))
+        return articleRepository.findAll(PageRequest.of(page, size, Sort.by(Sort.Order.desc(UPDATED_AT))))
                 .map(this::toOnlyArticleResponse);
     }
 
@@ -121,13 +125,13 @@ public class ArticleServiceImpl implements ArticleService {
                     builder.like(root.get("title"), "%" + trimmedKeyword + "%"),
                     builder.like(root.get("teaser"), "%" + trimmedKeyword + "%"),
                     builder.like(
-                            root.join("tags").get("id"),
+                            root.join("tags", JoinType.LEFT).get("id"),
                             "%" + trimmedKeyword.replace(' ', '-') + "%"
                     )
             )).getRestriction();
         };
 
-        final var pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc(CREATED_AT)));
+        final var pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc(UPDATED_AT)));
 
         final var articlesPage = articleRepository.findAll(specification, pageable);
 
@@ -141,7 +145,7 @@ public class ArticleServiceImpl implements ArticleService {
     @Transactional(readOnly = true)
     @Override
     public Page<OnlyArticleResponse> getArticlesByTag(String tagId, Integer page, Integer size) {
-        final var pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc(CREATED_AT)));
+        final var pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc(UPDATED_AT)));
         final var articlesPage = articleRepository.findByTagsId(tagId, pageable);
         final var onlyArticleResponses = articlesPage.getContent().stream()
                 .map(this::toOnlyArticleResponse)
@@ -152,7 +156,7 @@ public class ArticleServiceImpl implements ArticleService {
     @Transactional(readOnly = true)
     @Override
     public Page<OnlyArticleResponse> getArticlesByAdmin(String username, Integer page, Integer size) {
-        final var pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc(CREATED_AT)));
+        final var pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc(UPDATED_AT)));
         final var articlesPage = articleRepository.findByAdmin_Username(username, pageable);
         final var onlyArticleResponses = articlesPage.getContent().stream()
                 .map(this::toOnlyArticleResponse)
@@ -171,7 +175,7 @@ public class ArticleServiceImpl implements ArticleService {
                 article.getTags(),
                 article.getAdmin(),
                 article.getCoverImage(),
-                article.getImages()
+                article.getImageGallery()
         );
     }
 
@@ -201,30 +205,6 @@ public class ArticleServiceImpl implements ArticleService {
         }
     }
 
-    private List<ArticleImage> extractAndSaveArticleImages(List<MultipartFile> multipartFileImages, Article article) {
-        if (multipartFileImages == null) {
-            return Collections.emptyList();
-        }
-
-        final var articleImages = multipartFileImages.stream()
-                .map(image -> createArticleImage(image, article))
-                .toList();
-
-        return articleImageRepository.saveAll(articleImages);
-    }
-
-    private ArticleImage createArticleImage(MultipartFile multipartFileImage, Article article) {
-        final var articleImage = new ArticleImage();
-        try {
-            articleImage.setImage(multipartFileImage.getBytes());
-        } catch (IOException e) {
-            throw new ErrorResponseException(HttpStatus.BAD_REQUEST);
-        }
-        articleImage.setArticle(article);
-        return articleImage;
-
-    }
-
     private Set<Tag> extractAndSaveTags(Set<String> tagsString) {
         if (tagsString == null) {
             return Collections.emptySet();
@@ -240,12 +220,36 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     private Tag createTag(String tagName) {
-        final var cleanedTagName = tagName.replaceAll("[^a-zA-Z0-9 ]", "").trim().toLowerCase();
+        final var cleanTagName = tagName.replaceAll("[^a-zA-Z0-9 ]", "").trim().toLowerCase();
 
         final var tag = new Tag();
-        tag.setId(cleanedTagName.replace(' ', '-'));
-        tag.setName(cleanedTagName);
+        tag.setId(cleanTagName.replace(' ', '-'));
+        tag.setName(cleanTagName);
         return tag;
+
+    }
+
+    private void setArticleCoverImageAndGallery(Article article, MultipartFile coverImage, List<MultipartFile> images) {
+        article.setCoverImage(null);
+        article.setImageGallery(new ArrayList<>());
+
+        if (coverImage != null)
+            article.setCoverImage(imageService.save(coverImage));
+
+        Optional.ofNullable(images)
+                .ifPresent(it -> {
+                    for (var image : it) {
+                        article.getImageGallery().add(imageService.save(image));
+                    }
+                });
+    }
+
+    private void deleteArticleCoverImageAndGallery(Image coverImage, List<Image> articleImageGallery) {
+        Optional.ofNullable(coverImage)
+                .ifPresent(imageService::delete);
+
+        Optional.ofNullable(articleImageGallery)
+                .ifPresent(imageService::deleteAll);
 
     }
 
