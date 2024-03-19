@@ -13,6 +13,9 @@ servers:
 tags:
   - name: Auth
     description: For authentication matters
+  - name: Admin
+  - name: Article
+  - name: Image
 
 
 paths:
@@ -230,14 +233,18 @@ paths:
                     updatedAt: '2024-02-07 16:23:16'
                     body: Ini merupakan tubuh dari tulisan artikel
                     teaser: Kerangka Artikel
-                    coverImage: null
+                    coverImage:
+                      id: hf9349f-hv9r320v-v2rhv8-29vhv
+                      format: PNG
                   - id: 607e7f00-84df-4433-b598-6ce8c5d943bd
                     title: Pengaruh BBM Naik 100% kepada Keluarga
                     createdAt: '2024-02-06 23:55:52'
                     updatedAt: '2024-02-06 23:55:52'
                     body: Ini merupakan tubuh dari tulisan artikel
                     teaser: Kerangka Artikel
-                    coverImage: null
+                    coverImage:
+                      id: hf9349f-hv9r320v-v2rhv8-29vhv
+                      format: JPG
                   - id: 8c751e8c-fca5-43f5-bc9a-970b611f8e4f
                     title: this is judul
                     createdAt: '2024-02-06 23:27:56'
@@ -245,69 +252,89 @@ paths:
                     body: body
                     teaser: teaser baru ini
                     coverImage:
+                      id: hf9349f-hv9r320v-v2rhv8-29vhv
+                      format: JPEG
                   - id: 6c153e83-5e7b-41fc-a8e5-9d2bb4259d0a
                     title: Ini Judul
                     createdAt: '2024-02-06 01:41:39'
                     updatedAt: '2024-02-06 01:41:39'
                     body: Ini merupakan tubuh dari tulisan artikel
                     teaser: Kerangka Artikel
-                    coverImage: "/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEoHBw7nZhZY0cKA..."
+                    coverImage:
+                      id: hf9349f-hv9r320v-v2rhv8-29vhv
+                      format: PNG
                   - id: 2140456f-e0ad-4b7f-83aa-8a448e20d6b1
                     title: Ini Judul
                     createdAt: '2024-02-06 01:40:32'
                     updatedAt: '2024-02-06 01:40:32'
                     body: Ini merupakan tubuh dari tulisan artikel
                     teaser: Kerangka Artikel
-                    coverImage: null
+                    coverImage:
+                      id: hf9349f-hv9r320v-v2rhv8-29vhv
+                      format: JPG
                   - id: 42e918b5-130e-4434-9ddb-385e1f96923c
                     title: Ini Judul
                     createdAt: '2024-02-06 01:40:31'
                     updatedAt: '2024-02-06 01:40:31'
                     body: Ini merupakan tubuh dari tulisan artikel
                     teaser: Kerangka Artikel
-                    coverImage: null
+                    coverImage:
+                      id: hf9349f-hv9r320v-v2rhv8-29vhv
+                      format: JPEG
                   - id: 8eda744b-cb15-445d-b711-9484be66f53a
                     title: Ini Judul
                     createdAt: '2024-02-06 01:40:30'
                     updatedAt: '2024-02-06 01:40:30'
                     body: Ini merupakan tubuh dari tulisan artikel
                     teaser: Kerangka Artikel
-                    coverImage: null
+                    coverImage:
+                      id: hf9349f-hv9r320v-v2rhv8-29vhv
+                      format: PNG
                   - id: f769e575-29a9-4e51-975b-52af1472bdd6
                     title: Ini Judul
                     createdAt: '2024-02-06 01:40:29'
                     updatedAt: '2024-02-06 01:40:29'
                     body: Ini merupakan tubuh dari tulisan artikel
                     teaser: Kerangka Artikel
-                    coverImage: null
+                    coverImage:
+                      id: hf9349f-hv9r320v-v2rhv8-29vhv
+                      format: JPG
                   - id: 95a0c12e-e787-4393-9b55-6ea8b56405a6
                     title: Ini Judul
                     createdAt: '2024-02-06 01:40:28'
                     updatedAt: '2024-02-06 01:40:28'
                     body: Ini merupakan tubuh dari tulisan artikel
                     teaser: Kerangka Artikel
-                    coverImage: null
+                    coverImage:
+                      id: hf9349f-hv9r320v-v2rhv8-29vhv
+                      format: JPEG
                   - id: 6170a8a6-62eb-490e-a3c8-cded3f2b6242
                     title: Ini Judul
                     createdAt: '2024-02-06 01:40:26'
                     updatedAt: '2024-02-06 01:40:26'
                     body: Ini merupakan tubuh dari tulisan artikel
                     teaser: Kerangka Artikel
-                    coverImage: null
+                    coverImage:
+                      id: hf9349f-hv9r320v-v2rhv8-29vhv
+                      format: PNG
                   - id: 6da739a0-3294-422a-8cce-83238858b7e5
                     title: Ini Judul
                     createdAt: '2024-02-06 01:40:25'
                     updatedAt: '2024-02-06 01:40:25'
                     body: Ini merupakan tubuh dari tulisan artikel
                     teaser: Kerangka Artikel
-                    coverImage: null
+                    coverImage:
+                      id: hf9349f-hv9r320v-v2rhv8-29vhv
+                      format: JPG
                   - id: c44702ba-e47d-426d-91c5-62b0d8f0c5e6
                     title: Ini Judul
                     createdAt: '2024-02-06 01:40:24'
                     updatedAt: '2024-02-06 01:40:24'
                     body: Ini merupakan tubuh dari tulisan artikel
                     teaser: Kerangka Artikel
-                    coverImage: null
+                    coverImage:
+                      id: hf9349f-hv9r320v-v2rhv8-29vhv
+                      format: JPEG
                 errors: null
                 paging:
                   currentPage: 0
@@ -334,9 +361,45 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/WebResponseString"
+                $ref: "#/components/schemas/WebResponseArticleResponse"
               example:
-                data: article created with id `02904f4b-6260-44ad-91a0-caa3d792d245`
+                data:
+                  id: 02904f4b-6260-44ad-91a0-caa3d792d245
+                  title: Pengaruh BBM Naik 100% kepada Keluarga
+                  createdAt: 2024-02-07 16:23:16
+                  updatedAt: 2024-03-01 15:11:39
+                  body: Ini merupakan tubuh dari tulisan artikel
+                  teaser: Kerangka Artikel
+                  tags:
+                    - id: bbm
+                      name: bbm
+                    - id: bbm-naik
+                      name: bbm naik
+                    - id: pengaruh-bbm
+                      name: pengaruh bbm
+                  admin:
+                    username: admin
+                    name: Admin
+                    image:
+                      id: as9df8-n2ncv9-jasj2n3-jca989as
+                      format: JPEG
+                  coverImage:
+                    id: fjoj2or-ufje83-mvms93j-vdn3j12
+                    format: JPG
+                  images:
+                    - id: jfuw9kd-nekci3i-jcnwk83-vjnwn3i
+                      format: PNG
+                    - id: g3gg32g-b5g643-bvafg-y2g5gav
+                      format: PNG
+                    - id: nvjdi49-mbjdje9-k394jrk-mvkd93
+                      format: JPG
+                    - id: jvjr03-fjdi340-jcjsk39-kg04cvwf
+                      format: JPEG
+                    - id: jijf-fior890-viworijo-3249023f
+                      format: JPG
+                    - id: vi0few-4nnff-2orh23of-vewf34
+                      format: JPEG
+
                 errors: null
                 paging: null
         401:
@@ -398,15 +461,26 @@ paths:
                   admin:
                     username: admin
                     name: Admin
-                    image: fyecy2ry43ycr3n9hfrhn9vnaofhafafp3]ptr432u9v8qq...
-                  coverImage: sdfh2349ny49fynt9348yw9crfhohvfn2hopitghno...
+                    image:
+                      id: as9df8-n2ncv9-jasj2n3-jca989as
+                      format: JPEG
+                  coverImage:
+                    id: fjoj2or-ufje83-mvms93j-vdn3j12
+                    format: JPG
                   images:
-                    - id: 26f7b011-11be-49c1-aa23-b96f914a2fd8
-                      image: aiosdoiasowq90-nu0fuhrfn0-u[paotjvpw...
-                    - id: c67f3d86-67b9-4936-9556-aa2d53eaab89
-                      image: saodihy924hryahnsbflhnt3b1n[h02937380hgdj...
-                    - id: f18b1840-0be5-40bb-9364-b067cda5c5ea
-                      image: z;ufv3496thvobhneqiohgn9qnhgobhohnzj...
+                    - id: jfuw9kd-nekci3i-jcnwk83-vjnwn3i
+                      format: PNG
+                    - id: g3gg32g-b5g643-bvafg-y2g5gav
+                      format: PNG
+                    - id: nvjdi49-mbjdje9-k394jrk-mvkd93
+                      format: JPG
+                    - id: jvjr03-fjdi340-jcjsk39-kg04cvwf
+                      format: JPEG
+                    - id: jijf-fior890-viworijo-3249023f
+                      format: JPG
+                    - id: vi0few-4nnff-2orh23of-vewf34
+                      format: JPEG
+
                 errors: null
                 paging: null
 
@@ -448,26 +522,45 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/WebResponse"
+                $ref: "#/components/schemas/WebResponseArticleResponse"
               example:
                 data:
-                  id: 5c020359-a6db-42ba-9285-772e739f2620
-                  title: Ini Judul
-                  createdAt: 2024-03-01 15:00:00
-                  updatedAt: 2024-03-02 10:32:56
-                  coverImage: fyecy2ry43ycr3n9hfrhn9vnaofhafafp3]ptr432u9v8qq
-                  body: Article merupakan karya tulis lengkap, misalnya laporan berita atau esai dalam majalah, surat kabar dan sebagainya
-                  teaser: Artikel ini membicarakan definisi artikel
+                  id: 02904f4b-6260-44ad-91a0-caa3d792d245
+                  title: Pengaruh BBM Naik 100% kepada Keluarga
+                  createdAt: 2024-02-07 16:23:16
+                  updatedAt: 2024-03-01 15:11:39
+                  body: Ini merupakan tubuh dari tulisan artikel
+                  teaser: Kerangka Artikel
                   tags:
-                    - Article
-                    - Artikel
-                    - Definition
-                    - Karya Tulis
+                    - id: bbm
+                      name: bbm
+                    - id: bbm-naik
+                      name: bbm naik
+                    - id: pengaruh-bbm
+                      name: pengaruh bbm
+                  admin:
+                    username: admin
+                    name: Admin
+                    image:
+                      id: as9df8-n2ncv9-jasj2n3-jca989as
+                      format: JPEG
+                  coverImage:
+                    id: fjoj2or-ufje83-mvms93j-vdn3j12
+                    format: JPG
                   images:
-                    - ufrun994832unr9asfjajfvjpjbpjf[jf]FFK0[fbk0aifpoi9-rinbt
-                    - aisodjoijnvur0-vUAVHFNH4392upfjFEJNP[RJPFEJSRa5ybqhww
-                    - ohjnf08u4n0t4u30rajfvapjevjeqjtqjbatq4t632tq4wt4tn
-                    - 5923ybn9yahbtoghosdhgoabjtogj502ajvfjojnbjj09ut
+                    - id: jfuw9kd-nekci3i-jcnwk83-vjnwn3i
+                      format: PNG
+                    - id: g3gg32g-b5g643-bvafg-y2g5gav
+                      format: PNG
+                    - id: nvjdi49-mbjdje9-k394jrk-mvkd93
+                      format: JPG
+                    - id: jvjr03-fjdi340-jcjsk39-kg04cvwf
+                      format: JPEG
+                    - id: jijf-fior890-viworijo-3249023f
+                      format: JPG
+                    - id: vi0few-4nnff-2orh23of-vewf34
+                      format: JPEG
+
                 errors: null
                 paging: null
         401:
@@ -572,7 +665,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/WebResponse"
+                $ref: "#/components/schemas/WebResponseListOnlyArticleResponse"
               example:
                 data:
                   - id: 1f24face-9475-44b4-965a-5b811e997252
@@ -596,13 +689,17 @@ paths:
                     body: body
                     teaser: teaser baru ini
                     coverImage:
+                      id: 9d89407c-cb23-4f33-85b5-282faeece29b
+                      format: PNG
                   - id: 6c153e83-5e7b-41fc-a8e5-9d2bb4259d0a
                     title: Ini Judul
                     createdAt: '2024-02-06 01:41:39'
                     updatedAt: '2024-02-06 01:41:39'
                     body: Ini merupakan tubuh dari tulisan artikel
                     teaser: Kerangka Artikel
-                    coverImage: "/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEoHBw7nZhZY0cKA..."
+                    coverImage:
+                      id: b35bb944-bde3-4056-bcfa-9ff20c33c9c7
+                      format: JPG
                   - id: 2140456f-e0ad-4b7f-83aa-8a448e20d6b1
                     title: Ini Judul
                     createdAt: '2024-02-06 01:40:32'
@@ -658,7 +755,9 @@ paths:
                     updatedAt: '2024-02-06 01:40:24'
                     body: Ini merupakan tubuh dari tulisan artikel
                     teaser: Kerangka Artikel
-                    coverImage: null
+                    coverImage:
+                      id: 5bb6a41f-8d5f-45e6-b893-500826de66d6
+                      format: JPEG
                 errors: null
                 paging:
                   currentPage: 0
@@ -694,7 +793,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/WebResponse"
+                $ref: "#/components/schemas/WebResponseListOnlyArticleResponse"
               example:
                 data:
                   - id: 1f24face-9475-44b4-965a-5b811e997252
@@ -718,13 +817,17 @@ paths:
                     body: body
                     teaser: teaser baru ini
                     coverImage:
+                      id: 9d89407c-cb23-4f33-85b5-282faeece29b
+                      format: PNG
                   - id: 6c153e83-5e7b-41fc-a8e5-9d2bb4259d0a
                     title: Ini Judul
                     createdAt: '2024-02-06 01:41:39'
                     updatedAt: '2024-02-06 01:41:39'
                     body: Ini merupakan tubuh dari tulisan artikel
                     teaser: Kerangka Artikel
-                    coverImage: "/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEoHBw7nZhZY0cKA..."
+                    coverImage:
+                      id: b35bb944-bde3-4056-bcfa-9ff20c33c9c7
+                      format: JPG
                   - id: 2140456f-e0ad-4b7f-83aa-8a448e20d6b1
                     title: Ini Judul
                     createdAt: '2024-02-06 01:40:32'
@@ -780,12 +883,53 @@ paths:
                     updatedAt: '2024-02-06 01:40:24'
                     body: Ini merupakan tubuh dari tulisan artikel
                     teaser: Kerangka Artikel
-                    coverImage: null
+                    coverImage:
+                      id: 5bb6a41f-8d5f-45e6-b893-500826de66d6
+                      format: JPEG
                 errors: null
                 paging:
                   currentPage: 0
                   totalPage: 5
                   size: 12
+
+  /image/{imageFileName}:
+    get:
+      summary: Get image
+      tags:
+        - Image
+      parameters:
+        - name: imageFileName
+          in: path
+          required: true
+          schema:
+            type: string
+          description: "Put image file name, ex: `2d90545b-b069-48b1-b787-f44d2ff1be17.png`"
+      responses:
+        200:
+          description: Success get image
+          content:
+            image/png:
+              schema:
+                type: string
+                format: binary
+            image/jpg:
+              schema:
+                type: string
+                format: binary
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+        404:
+          description: there's no image with given name
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebResponse"
+              example:
+                data: null
+                errors: "'2d90545b-b069-48b1-b787-f44d2ff1be17.png' is not found"
+                paging: null
 
 components:
 
@@ -927,6 +1071,76 @@ components:
             - ohjnf08u4n0t4u30rajfvapjevjeqjtqjbatq4t632tq4wt4tn
             - 5923ybn9yahbtoghosdhgoabjtogj502ajvfjojnbjj09ut
 
+    ArticleResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        body:
+          type: string
+        teaser:
+          type: string
+        tags:
+          uniqueItems: true
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+        admin:
+          type: object
+          properties:
+            username:
+              type: string
+            name:
+              type: string
+            image:
+              type: object
+              properties:
+                id:
+                  type: string
+                format:
+                  type: string
+                  enum:
+                    - PNG
+                    - JPG
+                    - JPEG
+        coverImage:
+          type: object
+          properties:
+            id:
+              type: string
+            format:
+              type: string
+              enum:
+                - PNG
+                - JPG
+                - JPEG
+        images:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              format:
+                type: string
+                enum:
+                  - PNG
+                  - JPG
+                  - JPEG
+
     OnlyArticleResponse:
       type: object
       properties:
@@ -945,10 +1159,16 @@ components:
         teaser:
           type: string
         coverImage:
-          type: array
-          items:
-            type: string
-            format: byte
+          type: object
+          properties:
+            id:
+              type: string
+            format:
+              type: string
+              enum:
+                - PNG
+                - JPG
+                - JPEG
 
     RegisterAdminRequest:
       type: object
@@ -1043,61 +1263,7 @@ components:
       type: object
       properties:
         data:
-          type: object
-          properties:
-            id:
-              type: string
-            title:
-              type: string
-            createdAt:
-              type: string
-              format: date-time
-            updatedAt:
-              type: string
-              format: date-time
-            body:
-              type: string
-            teaser:
-              type: string
-            tags:
-              uniqueItems: true
-              type: array
-              items:
-                type: object
-                properties:
-                  id:
-                    type: string
-                  name:
-                    type: string
-            admin:
-              type: object
-              properties:
-                username:
-                  type: string
-                name:
-                  type: string
-                image:
-                  type: array
-                  items:
-                    type: string
-                    format: byte
-            coverImage:
-              type: array
-              items:
-                type: string
-                format: byte
-            images:
-              type: array
-              items:
-                type: object
-                properties:
-                  id:
-                    type: string
-                  image:
-                    type: array
-                    items:
-                      type: string
-                      format: byte
+          $ref: '#/components/schemas/ArticleResponse'
         errors:
           type: string
         paging:
