@@ -8,49 +8,49 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class AdminTest {
 
-    private final Admin admin = new Admin();
+    private final Admin ADMIN = new Admin();
 
     @Test
     void getAuthorities() {
-        assertEquals(Collections.emptyList(), admin.getAuthorities());
+        assertEquals(Collections.emptyList(), ADMIN.getAuthorities());
     }
 
     @Test
     void isAccountNonExpired() {
-        assertTrue(admin.isAccountNonExpired());
+        assertTrue(ADMIN.isAccountNonExpired());
     }
 
     @Test
     void isAccountNonLocked() {
-        assertTrue(admin.isAccountNonLocked());
+        assertTrue(ADMIN.isAccountNonLocked());
     }
 
     @Test
     void isCredentialsNonExpired() {
-        assertTrue(admin.isCredentialsNonExpired());
+        assertTrue(ADMIN.isCredentialsNonExpired());
     }
 
     @Test
     void isEnabled() {
-        assertTrue(admin.isEnabled());
+        assertTrue(ADMIN.isEnabled());
     }
 
     @Test
     void usernameGetterSetter() {
-        admin.setUsername("usernameGetterSetter");
-        assertEquals("usernameGetterSetter", admin.getUsername());
+        ADMIN.setUsername("usernameGetterSetter");
+        assertEquals("usernameGetterSetter", ADMIN.getUsername());
     }
 
     @Test
     void passwordGetterSetter() {
-        admin.setPassword("passwordGetterSetter");
-        assertEquals("passwordGetterSetter", admin.getPassword());
+        ADMIN.setPassword("passwordGetterSetter");
+        assertEquals("passwordGetterSetter", ADMIN.getPassword());
     }
 
     @Test
     void nameGetterSetter() {
-        admin.setName("nameGetterSetter");
-        assertEquals("nameGetterSetter", admin.getName());
+        ADMIN.setName("nameGetterSetter");
+        assertEquals("nameGetterSetter", ADMIN.getName());
     }
 
     @Test
@@ -59,14 +59,14 @@ class AdminTest {
         image.setId("imageId");
         image.setFormat(ImageFormat.PNG);
 
-        admin.setImage(image);
-        assertEquals(image, admin.getImage());
+        ADMIN.setImage(image);
+        assertEquals(image, ADMIN.getImage());
     }
 
     @Test
     void articlesGetterSetter() {
-        admin.setArticles(Collections.emptyList());
-        assertEquals(Collections.emptyList(), admin.getArticles());
+        ADMIN.setArticles(Collections.emptyList());
+        assertEquals(Collections.emptyList(), ADMIN.getArticles());
     }
 
     @Test
@@ -75,11 +75,11 @@ class AdminTest {
         image.setId("imageId");
         image.setFormat(ImageFormat.PNG);
 
-        admin.setUsername("username");
-        admin.setPassword("password");
-        admin.setName("name");
-        admin.setImage(image);
-        admin.setArticles(Collections.emptyList());
+        ADMIN.setUsername("username");
+        ADMIN.setPassword("password");
+        ADMIN.setName("name");
+        ADMIN.setImage(image);
+        ADMIN.setArticles(Collections.emptyList());
 
         final var image2 = new Image();
         image2.setId("imageId");
@@ -92,18 +92,18 @@ class AdminTest {
         adminEqual.setImage(image2);
         adminEqual.setArticles(Collections.emptyList());
 
-        assertEquals(admin, adminEqual);
+        assertEquals(ADMIN, adminEqual);
 
         final var adminNotEqual = new Admin();
-        assertNotEquals(admin, adminNotEqual);
+        assertNotEquals(ADMIN, adminNotEqual);
 
 
     }
 
     @Test
     void canEqual() {
-        assertTrue(admin.canEqual(new Admin()));
-        assertFalse(admin.canEqual(""));
+        assertTrue(ADMIN.canEqual(new Admin()));
+        assertFalse(ADMIN.canEqual(""));
     }
 
     @Test
@@ -112,13 +112,12 @@ class AdminTest {
         image.setId("imageId");
         image.setFormat(ImageFormat.PNG);
 
-        final var admin = new Admin();
-        admin.setUsername("username");
-        admin.setPassword("password");
-        admin.setName("name");
-        admin.setImage(image);
-        admin.setArticles(Collections.emptyList());
-        assertEquals(1555711085, admin.hashCode());
+        ADMIN.setUsername("username");
+        ADMIN.setPassword("password");
+        ADMIN.setName("name");
+        ADMIN.setImage(image);
+        ADMIN.setArticles(Collections.emptyList());
+        assertEquals(hashCodeCalculate(), ADMIN.hashCode());
     }
 
     @Test
@@ -127,14 +126,22 @@ class AdminTest {
         image.setId("imageId");
         image.setFormat(ImageFormat.PNG);
 
-        admin.setUsername("username");
-        admin.setPassword("password");
-        admin.setName("name");
-        admin.setImage(image);
-        admin.setArticles(Collections.emptyList());
+        ADMIN.setUsername("username");
+        ADMIN.setPassword("password");
+        ADMIN.setName("name");
+        ADMIN.setImage(image);
+        ADMIN.setArticles(Collections.emptyList());
 
         final var adminString = "Admin(username=username, password=password, name=name, image=" + image + ", articles=" + Collections.emptyList() + ")";
-        assertEquals(adminString, admin.toString());
+        assertEquals(adminString, ADMIN.toString());
 
+    }
+
+    private int hashCodeCalculate() {
+        final var usernameHashCode = ADMIN.getUsername() == null ? 43 : ADMIN.getUsername().hashCode();
+        final var passwordHashCode = ADMIN.getPassword() == null ? 43 : ADMIN.getPassword().hashCode();
+        final var nameHashCode = ADMIN.getName() == null ? 43 : ADMIN.getName().hashCode();
+        final var imageHashCode = ADMIN.getImage() == null ? 43 : ADMIN.getImage().hashCode();
+        return (((((((59 + usernameHashCode) * 59) + passwordHashCode) * 59) + nameHashCode) * 59) + imageHashCode);
     }
 }
