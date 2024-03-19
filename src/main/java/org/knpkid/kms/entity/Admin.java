@@ -23,7 +23,7 @@ public class Admin implements UserDetails {
 
     @OneToOne
     @JoinColumn(name = "image", referencedColumnName = "id")
-    private transient Image image;
+    private Image image;
 
     @OneToMany(mappedBy = "admin")
     private transient List<Article> articles;

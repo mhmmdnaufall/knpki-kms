@@ -3,10 +3,12 @@ package org.knpkid.kms.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
 @Entity
 @Table(name = "images")
-public class Image {
+public class Image implements Serializable {
 
     @Id
     private String id;
