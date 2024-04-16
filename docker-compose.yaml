@@ -4,7 +4,7 @@ services:
 
   knpki-kms-database:
     container_name: knpki-kms-database
-    image: mysql:latest
+    image: mysql:8.3.0
     ports:
       - "3306:3306"
     environment:
@@ -13,14 +13,11 @@ services:
       MYSQL_USER: knpkid
       MYSQL_PASSWORD: indonesiakeluargaperlindungannasionalkoalisi
     volumes:
-      - "./backup/knpki_kms_backup.sql:/docker-entrypoint-initdb.d/init.sql"
+      - "knpki-kms-data:/var/lib/mysql"
 
   knpki-kms:
     container_name: knpki-kms
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: mhmmdnaufal/knpki-kms:1.1.0
+    image: mhmmdnaufal/knpki-kms:1.2.0
     ports:
       - "8080:8080"
     environment:
@@ -32,9 +29,11 @@ services:
     depends_on:
       - knpki-kms-database
     volumes:
-      - "knpki-kms-volume:/image"
+      - "knpki-kms-image:/application/image"
 
 volumes:
-  knpki-kms-volume:
-    name: knpki-kms-volume
+  knpki-kms-image:
+    name: knpki-kms-image
+  knpki-kms-data:
+    name: knpki-kms-data
 
