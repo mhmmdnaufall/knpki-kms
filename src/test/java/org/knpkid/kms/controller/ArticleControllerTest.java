@@ -48,7 +48,7 @@ class ArticleControllerTest {
         );
 
         final var response = new ArticleResponse(
-                "articleId", "title", now, now, "body", "teaser",
+                2371312987L, "title", now, now, "body", "teaser",
                 null, admin, null, null
         );
 
@@ -80,21 +80,21 @@ class ArticleControllerTest {
         final var tags = Set.of(new Tag());
         final var admin = new Admin();
 
-        when(articleService.get("articleId")).thenReturn(
+        when(articleService.get(57327592735L)).thenReturn(
                 new ArticleResponse(
-                        "articleId", "title", now, now, "body", "teaser",
+                        57327592735L, "title", now, now, "body", "teaser",
                         tags, admin, image, List.of(image)
                 )
         );
 
-        final var webResponse = articleController.get("articleId");
+        final var webResponse = articleController.get(57327592735L);
 
-        verify(articleService).get("articleId");
+        verify(articleService).get(57327592735L);
 
         assertNotNull(webResponse);
         assertNull(webResponse.errors());
         assertNull(webResponse.paging());
-        assertEquals("articleId", webResponse.data().id());
+        assertEquals(57327592735L, webResponse.data().id());
         assertEquals("title", webResponse.data().title());
         assertEquals(now, webResponse.data().createdAt());
         assertEquals(now, webResponse.data().updatedAt());
@@ -124,14 +124,14 @@ class ArticleControllerTest {
         );
 
         final var response = new ArticleResponse(
-                "articleId", "title", now, now, "body", "teaser",
+                4594737594394L, "title", now, now, "body", "teaser",
                 null, admin, null, null
         );
 
-        when(articleService.update("articleId", request, admin)).thenReturn(response);
+        when(articleService.update(4594737594394L, request, admin)).thenReturn(response);
 
-        final var webResponse = articleController.update("articleId", request, admin);
-        verify(articleService).update("articleId", request, admin);
+        final var webResponse = articleController.update(4594737594394L, request, admin);
+        verify(articleService).update(4594737594394L, request, admin);
 
         assertNull(webResponse.errors());
         assertNull(webResponse.paging());
@@ -149,9 +149,9 @@ class ArticleControllerTest {
     @Test
     void delete() {
         final var admin = new Admin();
-        doNothing().when(articleService).delete("articleId", admin);
-        articleController.delete("articleId", admin);
-        verify(articleService).delete("articleId", admin);
+        doNothing().when(articleService).delete(4594737594394L, admin);
+        articleController.delete(4594737594394L, admin);
+        verify(articleService).delete(4594737594394L, admin);
     }
 
     @DisplayName("getAllOrSearchArticle() - getAll")
@@ -163,7 +163,7 @@ class ArticleControllerTest {
 
         final var onlyArticleResponses = List.of(
                 new OnlyArticleResponse(
-                        "id", "title",
+                        343242L, "title",
                         LocalDateTime.now(), LocalDateTime.now(),
                         "body", "teaser", image
                 )
@@ -202,7 +202,7 @@ class ArticleControllerTest {
 
         final var onlyArticleResponses = List.of(
                 new OnlyArticleResponse(
-                        "id", "search title",
+                        93240203L, "search title",
                         LocalDateTime.now(), LocalDateTime.now(),
                         "body", "search teaser", image
                 )
@@ -240,7 +240,7 @@ class ArticleControllerTest {
 
         final var onlyArticleResponses = List.of(
                 new OnlyArticleResponse(
-                        "tagId", "search title",
+                        23509803258032L, "search title",
                         LocalDateTime.now(), LocalDateTime.now(),
                         "body", "search teaser", image
                 )
@@ -273,7 +273,7 @@ class ArticleControllerTest {
 
         final var onlyArticleResponses = List.of(
                 new OnlyArticleResponse(
-                        "tagId", "search title",
+                        342080352359L, "search title",
                         LocalDateTime.now(), LocalDateTime.now(),
                         "body", "search teaser", image
                 )

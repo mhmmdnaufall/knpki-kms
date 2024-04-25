@@ -18,13 +18,13 @@ class ArticleResponseTest {
     private static final Image IMAGE = new Image();
 
     private static final ArticleResponse RESPONSE = new ArticleResponse(
-            "id", "title", NOW, NOW, "body", "teaser",
+            1L, "title", NOW, NOW, "body", "teaser",
             Set.of(new Tag()), new Admin(), IMAGE, List.of(IMAGE)
     );
 
     @Test
     void id() {
-        assertEquals("id", RESPONSE.id());
+        assertEquals(1L, RESPONSE.id());
     }
 
     @Test

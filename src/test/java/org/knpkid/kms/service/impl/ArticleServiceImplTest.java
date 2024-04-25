@@ -110,7 +110,7 @@ class ArticleServiceImplTest {
                                     .allMatch(tag -> tagsString.contains(tag.getName()))
                     );
                 }
-                article.setId("articleId");
+                article.setId(32998593L);
                 article.setCreatedAt(now);
                 article.setUpdatedAt(now);
                 return article;
@@ -120,7 +120,7 @@ class ArticleServiceImplTest {
         final var response = articleService.create(request, admin);
 
         {
-            assertEquals("articleId", response.id());
+            assertEquals(32998593L, response.id());
             assertEquals("title", response.title());
             assertTrue(
                     response.tags().stream()
@@ -161,13 +161,13 @@ class ArticleServiceImplTest {
                     assertTrue(article.getTags().isEmpty());
                     assertTrue(article.getImageGallery().isEmpty());
                 }
-                article.setId("articleId");
+                article.setId(4128415L);
                 article.setCreatedAt(now);
                 article.setUpdatedAt(now);
                 return article;
             });
         }
-
+//
         final var response = articleService.create(request, admin);
 
         {
@@ -176,6 +176,7 @@ class ArticleServiceImplTest {
             assertEquals("title", response.title());
             assertEquals("body", response.body());
             assertEquals("teaser", response.teaser());
+            assertEquals(4128415L, response.id());
             assertNull(response.coverImage());
             assertEquals(Collections.emptyList(), response.images());
             assertEquals(Collections.emptySet(), response.tags());
@@ -185,22 +186,24 @@ class ArticleServiceImplTest {
 
     @Test
     void get() {
+        final var existId = 2131231L;
+        final var notExistId = 12302130921L;
         final var article = new Article();
-        article.setId("exist");
+        article.setId(existId);
 
         {
-            when(articleRepository.findById("exist")).thenReturn(Optional.of(article));
-            when(articleRepository.findById("not exist")).thenReturn(Optional.empty());
+            when(articleRepository.findById(existId)).thenReturn(Optional.of(article));
+            when(articleRepository.findById(notExistId)).thenReturn(Optional.empty());
         }
 
         // exist
-        var articleResponse = assertDoesNotThrow(() -> articleService.get("exist"));
+        var articleResponse = assertDoesNotThrow(() -> articleService.get(existId));
         assertEquals(article.getId(), articleResponse.id());
 
         // not exist
-        final var exception = assertThrows(ResponseStatusException.class, () -> articleService.get("not exist"));
+        final var exception = assertThrows(ResponseStatusException.class, () -> articleService.get(notExistId));
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
-        assertEquals("article with id 'not exist' is not found", exception.getReason());
+        assertEquals("article with id '%d' is not found".formatted(notExistId), exception.getReason());
 
 
     }
@@ -239,7 +242,7 @@ class ArticleServiceImplTest {
         article.setImageGallery(oldImageGallery);
 
         {
-            when(articleRepository.findById("articleId")).thenReturn(Optional.of(article));
+            when(articleRepository.findById(74729173L)).thenReturn(Optional.of(article));
             doNothing().when(validationService).validate(any());
             when(imageService.save(any())).thenReturn(image);
             doNothing().when(imageService).delete(any());
@@ -280,7 +283,7 @@ class ArticleServiceImplTest {
                     );
                 }
 
-                articleUpdate.setId("articleId");
+                articleUpdate.setId(74729173L);
                 articleUpdate.setCreatedAt(now);
                 articleUpdate.setUpdatedAt(now);
 
@@ -288,13 +291,13 @@ class ArticleServiceImplTest {
             });
         }
 
-        final var response = assertDoesNotThrow(() ->  articleService.update("articleId", request, admin));
+        final var response = assertDoesNotThrow(() ->  articleService.update(74729173L, request, admin));
 
         {
             verify(tagRepository).saveAll(any());
             verify(imageService).delete(any());
             verify(imageService).deleteAll(any());
-            assertEquals("articleId", response.id());
+            assertEquals(74729173L, response.id());
             assertEquals("title", response.title());
             assertTrue(
                     response.tags().stream()
@@ -331,7 +334,7 @@ class ArticleServiceImplTest {
         article.setAdmin(admin);
 
         {
-            when(articleRepository.findById("articleId")).thenReturn(Optional.of(article));
+            when(articleRepository.findById(6423164612L)).thenReturn(Optional.of(article));
             doNothing().when(validationService).validate(any());
             when(articleRepository.save(article)).then(invocation -> {
                 final var articleUpdate = (Article) invocation.getArgument(0);
@@ -345,7 +348,7 @@ class ArticleServiceImplTest {
                     assertTrue(articleUpdate.getTags().isEmpty());
                 }
 
-                articleUpdate.setId("articleId");
+                articleUpdate.setId(6423164612L);
                 articleUpdate.setCreatedAt(now);
                 articleUpdate.setUpdatedAt(now);
 
@@ -353,14 +356,14 @@ class ArticleServiceImplTest {
             });
         }
 
-        final var response = assertDoesNotThrow(() ->  articleService.update("articleId", request, admin));
+        final var response = assertDoesNotThrow(() ->  articleService.update(6423164612L, request, admin));
 
         {
             verify(imageService, times(0)).save(any());
             verify(imageService, times(0)).delete(any());
             verify(imageService, times(0)).deleteAll(any());
             verify(tagRepository, times(0)).saveAll(any());
-            assertEquals("articleId", response.id());
+            assertEquals(6423164612L, response.id());
             assertEquals("title", response.title());
             assertEquals(admin, response.admin());
             assertNull(response.coverImage());
@@ -389,12 +392,12 @@ class ArticleServiceImplTest {
         diffAdmin.setUsername("differentAdmin");
 
         {
-            when(articleRepository.findById("articleId")).thenReturn(Optional.of(article));
+            when(articleRepository.findById(74123790423L)).thenReturn(Optional.of(article));
         }
 
         final var exception = assertThrows(
                 ResponseStatusException.class,
-                () -> articleService.update("articleId", request, diffAdmin)
+                () -> articleService.update(74123790423L, request, diffAdmin)
         );
 
         {
@@ -414,17 +417,17 @@ class ArticleServiceImplTest {
         final var admin = new Admin();
 
         {
-            when(articleRepository.findById("articleId")).thenReturn(Optional.empty());
+            when(articleRepository.findById(4392794L)).thenReturn(Optional.empty());
         }
 
         final var exception = assertThrows(
                 ResponseStatusException.class,
-                () -> articleService.update("articleId", request, admin)
+                () -> articleService.update(4392794L, request, admin)
         );
 
         {
             assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
-            assertEquals("article with id 'articleId' is not found", exception.getReason());
+            assertEquals("article with id '%d' is not found".formatted(4392794L), exception.getReason());
         }
     }
 
@@ -445,13 +448,13 @@ class ArticleServiceImplTest {
         article.setImageGallery(List.of(image));
 
         {
-            when(articleRepository.findById("articleId")).thenReturn(Optional.of(article));
+            when(articleRepository.findById(123812038L)).thenReturn(Optional.of(article));
             doNothing().when(articleRepository).delete(article);
             doNothing().when(imageService).delete(any());
             doNothing().when(imageService).deleteAll(any());
         }
 
-        assertDoesNotThrow(() -> articleService.delete("articleId", admin));
+        assertDoesNotThrow(() -> articleService.delete(123812038L, admin));
 
         {
             verify(articleRepository).delete(article);
@@ -472,11 +475,11 @@ class ArticleServiceImplTest {
         article.setAdmin(admin);
 
         {
-            when(articleRepository.findById("articleId")).thenReturn(Optional.of(article));
+            when(articleRepository.findById(13123123L)).thenReturn(Optional.of(article));
             doNothing().when(articleRepository).delete(article);
         }
 
-        assertDoesNotThrow(() -> articleService.delete("articleId", admin));
+        assertDoesNotThrow(() -> articleService.delete(13123123L, admin));
 
         {
             verify(articleRepository).delete(article);
@@ -493,12 +496,12 @@ class ArticleServiceImplTest {
         final var admin = new Admin();
 
         {
-            when(articleRepository.findById("notFoundId")).thenReturn(Optional.empty());
+            when(articleRepository.findById(1L)).thenReturn(Optional.empty());
         }
 
         final var exception = assertThrows(
                 ResponseStatusException.class,
-                () -> articleService.delete("notFoundId", admin)
+                () -> articleService.delete(1L, admin)
         );
 
         {
@@ -506,7 +509,7 @@ class ArticleServiceImplTest {
             verify(imageService, times(0)).delete(any());
             verify(imageService, times(0)).deleteAll(any());
             assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
-            assertEquals("article with id 'notFoundId' is not found", exception.getReason());
+            assertEquals("article with id '%s' is not found".formatted(1L), exception.getReason());
         }
 
     }
@@ -525,12 +528,12 @@ class ArticleServiceImplTest {
         diffAdmin.setUsername("different_admin");
 
         {
-            when(articleRepository.findById("articleId")).thenReturn(Optional.of(article));
+            when(articleRepository.findById(1L)).thenReturn(Optional.of(article));
         }
 
         final var exception = assertThrows(
                 ResponseStatusException.class,
-                () -> articleService.delete("articleId", diffAdmin)
+                () -> articleService.delete(1L, diffAdmin)
         );
 
         {
@@ -546,7 +549,7 @@ class ArticleServiceImplTest {
     @Test
     void getAll() {
         final var article = new Article();
-        article.setId("id");
+        article.setId(1L);
         article.setTitle("title");
         article.setTeaser("teaser");
 
@@ -580,7 +583,7 @@ class ArticleServiceImplTest {
     @Test
     void search() {
         final var article = new Article();
-        article.setId("id");
+        article.setId(1L);
         article.setTitle("keyword title");
         article.setTeaser("keyword teaser");
 
@@ -641,7 +644,7 @@ class ArticleServiceImplTest {
     void getArticlesByTag() {
 
         final var article = new Article();
-        article.setId("id");
+        article.setId(1L);
         article.setTitle("title");
         article.setTeaser("teaser");
 
@@ -677,7 +680,7 @@ class ArticleServiceImplTest {
     void getArticlesByAdmin() {
 
         final var article = new Article();
-        article.setId("id");
+        article.setId(1L);
         article.setTitle("title");
         article.setTeaser("teaser");
 

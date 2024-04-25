@@ -14,13 +14,13 @@ class OnlyArticleResponseTest {
     private static final Image IMAGE = new Image();
 
     private static final OnlyArticleResponse RESPONSE = new OnlyArticleResponse(
-            "id", "title", NOW, NOW,
+            1L, "title", NOW, NOW,
             "body", "teaser", new Image()
     );
 
     @Test
     void id() {
-        assertEquals("id", RESPONSE.id());
+        assertEquals(1L, RESPONSE.id());
     }
 
     @Test

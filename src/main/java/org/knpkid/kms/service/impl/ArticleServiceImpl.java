@@ -65,13 +65,13 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Transactional(readOnly = true)
     @Override
-    public ArticleResponse get(String articleId) {
+    public ArticleResponse get(Long articleId) {
         return toArticleResponse(getArticleById(articleId));
     }
 
     @Transactional
     @Override
-    public ArticleResponse update(String articleId, UpdateArticleRequest request, Admin admin) {
+    public ArticleResponse update(Long articleId, UpdateArticleRequest request, Admin admin) {
         final var article = getArticleById(articleId);
 
         checkArticleAuthor(article, admin);
@@ -98,7 +98,7 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Transactional
     @Override
-    public void delete(String articleId, Admin admin) {
+    public void delete(Long articleId, Admin admin) {
         final var article = getArticleById(articleId);
         checkArticleAuthor(article, admin);
 
@@ -191,7 +191,7 @@ public class ArticleServiceImpl implements ArticleService {
         );
     }
 
-    private Article getArticleById(String articleId) {
+    private Article getArticleById(long articleId) {
         return articleRepository.findById(articleId)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "article with id '" + articleId + "' is not found")

@@ -11,11 +11,11 @@ public interface ArticleService {
 
     ArticleResponse create(CreateArticleRequest request, Admin admin);
 
-    ArticleResponse get(String articleId);
+    ArticleResponse get(Long articleId);
 
-    ArticleResponse update(String articleId, UpdateArticleRequest request, Admin admin);
+    ArticleResponse update(Long articleId, UpdateArticleRequest request, Admin admin);
 
-    void delete(String articleId, Admin admin);
+    void delete(Long articleId, Admin admin);
 
     Page<OnlyArticleResponse> getAll(Integer page, Integer size);
 

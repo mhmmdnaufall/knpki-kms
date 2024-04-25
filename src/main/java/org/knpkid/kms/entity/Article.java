@@ -17,8 +17,8 @@ import java.util.Set;
 public class Article {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private Long id;
 
     private String title;
 
@@ -38,9 +38,13 @@ public class Article {
 
     private String teaser;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "username", referencedColumnName = "username")
-    private Admin admin;
+    @ManyToMany
+    @JoinTable(
+            name = "articles_authors",
+            joinColumns = @JoinColumn(name = "article_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "author_id", referencedColumnName = "id")
+    )
+    private Set<Author> authors;
 
     @ManyToMany
     @JoinTable(
@@ -57,5 +61,13 @@ public class Article {
             inverseJoinColumns = @JoinColumn(name = "image_id", referencedColumnName = "id")
     )
     private List<Image> imageGallery;
+
+    @OneToOne
+    @JoinColumn(name = "archive_id", referencedColumnName = "id")
+    private Archive archive;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "username", referencedColumnName = "username")
+    private Admin admin;
 
 }
