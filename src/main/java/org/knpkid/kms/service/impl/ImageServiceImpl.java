@@ -11,9 +11,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Objects;
 import java.util.UUID;
+
+import static org.knpkid.kms.Constant.IMAGE_PATH_DIRECTORY;
 
 @Service
 @RequiredArgsConstructor
@@ -21,8 +22,6 @@ import java.util.UUID;
 public class ImageServiceImpl implements ImageService {
 
     private final ImageRepository imageRepository;
-
-    private static final Path IMAGE_PATH_DIRECTORY = Path.of("image");
 
     @Override
     @SneakyThrows

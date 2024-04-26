@@ -28,6 +28,8 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.knpkid.kms.Constant.UPDATED_AT;
+
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -40,8 +42,6 @@ public class ArticleServiceImpl implements ArticleService {
     private final ImageService imageService;
 
     private final ValidationService validationService;
-
-    private static final String UPDATED_AT = "updatedAt";
 
     @Transactional
     @Override

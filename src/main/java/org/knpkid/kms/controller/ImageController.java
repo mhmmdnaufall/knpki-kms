@@ -9,12 +9,11 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
+
+import static org.knpkid.kms.Constant.IMAGE_PATH_DIRECTORY;
 
 @RestController
 public class ImageController {
-
-    private static final Path IMAGE_PATH_DIRECTORY = Path.of("image");
 
     @GetMapping(
             path = "/image/{imageFileName}",
