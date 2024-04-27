@@ -12,7 +12,7 @@ public class Quote {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String quote;
+    private String body;
 
     @ManyToOne
     @JoinColumn(name = "author_id", referencedColumnName = "id")
