@@ -31,8 +31,8 @@ class ArticleTest {
 
     @Test
     void idGetterSetter() {
-        ARTICLE.setId(3401094L);
-        assertEquals(3401094L, ARTICLE.getId());
+        ARTICLE.setId(3401094);
+        assertEquals(3401094, ARTICLE.getId());
     }
 
     @Test
@@ -101,11 +101,11 @@ class ArticleTest {
     void authorsGetterSetter() {
         final var author1 = new Author();
         author1.setName("author1");
-        author1.setId(1L);
+        author1.setId(1);
 
         final var author2 = new Author();
         author1.setName("author2");
-        author1.setId(2L);
+        author1.setId(2);
 
         ARTICLE.setAuthors(Set.of(author1, author2));
         assertTrue(ARTICLE.getAuthors().contains(author1));
@@ -130,13 +130,13 @@ class ArticleTest {
         final var now = LocalDateTime.now();
 
         final var author1 = new Author();
-        author1.setId(1L);
+        author1.setId(1);
 
         final var author2 = new Author();
-        author2.setId(2L);
+        author2.setId(2);
 
         final var articleSetup = (UnaryOperator<Article>) article -> {
-            article.setId(41247210L);
+            article.setId(41247210);
             article.setTitle("title");
             article.setBody("body");
             article.setTeaser("teaser");
@@ -174,7 +174,7 @@ class ArticleTest {
     void testHashCode() {
         assertEquals(hashCodeCalculate(), ARTICLE.hashCode());
 
-        ARTICLE.setId(384810242L);
+        ARTICLE.setId(384810242);
         assertEquals(hashCodeCalculate(), ARTICLE.hashCode());
 
         ARTICLE.setTitle("title");
@@ -206,11 +206,11 @@ class ArticleTest {
 
         final var author1 = new Author();
         author1.setName("author1");
-        author1.setId(1L);
+        author1.setId(1);
 
         final var author2 = new Author();
         author1.setName("author2");
-        author1.setId(2L);
+        author1.setId(2);
 
         ARTICLE.setAuthors(Set.of(author1, author2));
         assertEquals(hashCodeCalculate(), ARTICLE.hashCode());
@@ -233,7 +233,7 @@ class ArticleTest {
         image.setId("articleId");
         image.setFormat(ImageFormat.PNG);
 
-        ARTICLE.setId(48120402L);
+        ARTICLE.setId(48120402);
         ARTICLE.setTitle("title");
         ARTICLE.setBody("body");
         ARTICLE.setTeaser("teaser");

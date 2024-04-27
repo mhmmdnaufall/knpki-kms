@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 public record OnlyArticleResponse (
 
-    Long id,
+    Integer id,
 
     String title,
 

@@ -21,8 +21,8 @@ class AuthorTest {
 
     @Test
     void idGetterSetter() {
-        AUTHOR.setId(1L);
-        assertEquals(1L, AUTHOR.getId());
+        AUTHOR.setId(1);
+        assertEquals(1, AUTHOR.getId());
     }
 
     @Test
@@ -66,7 +66,7 @@ class AuthorTest {
     void testHashCode() {
         assertEquals(hashCodeCalculate(), AUTHOR.hashCode());
 
-        AUTHOR.setId(384810242L);
+        AUTHOR.setId(384810242);
         assertEquals(hashCodeCalculate(), AUTHOR.hashCode());
 
         AUTHOR.setName("author");
@@ -81,7 +81,7 @@ class AuthorTest {
 
     @Test
     void testToString() {
-        AUTHOR.setId(1L);
+        AUTHOR.setId(1);
         AUTHOR.setName("author");
         assertEquals("Author(id=1, name=author, articles=null, quotes=null)", AUTHOR.toString());
     }

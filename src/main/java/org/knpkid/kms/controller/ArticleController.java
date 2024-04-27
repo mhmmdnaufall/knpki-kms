@@ -31,7 +31,7 @@ public class ArticleController {
             path = "/api/articles/{articleId}",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public WebResponse<ArticleResponse> get(@PathVariable Long articleId) {
+    public WebResponse<ArticleResponse> get(@PathVariable Integer articleId) {
         final var articleResponse = articleService.get(articleId);
         return new WebResponse<>(articleResponse, null, null);
     }
@@ -41,7 +41,7 @@ public class ArticleController {
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public WebResponse<ArticleResponse> update(@PathVariable Long articleId,
+    public WebResponse<ArticleResponse> update(@PathVariable Integer articleId,
                                                @ModelAttribute UpdateArticleRequest request,
                                                Admin admin) {
 
@@ -51,7 +51,7 @@ public class ArticleController {
 
     @DeleteMapping("/api/articles/{articleId}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long articleId, Admin admin) {
+    public void delete(@PathVariable Integer articleId, Admin admin) {
         articleService.delete(articleId, admin);
     }
 

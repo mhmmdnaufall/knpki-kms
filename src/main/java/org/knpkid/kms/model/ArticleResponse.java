@@ -15,7 +15,7 @@ import java.util.Set;
 
 public record ArticleResponse (
 
-        Long id,
+        Integer id,
 
         String title,
 
