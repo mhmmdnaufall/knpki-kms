@@ -5,16 +5,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.knpkid.kms.entity.Image;
 import org.knpkid.kms.service.ImageService;
+import org.knpkid.kms.service.TagService;
 import org.springframework.data.domain.*;
 import org.knpkid.kms.entity.Admin;
 import org.knpkid.kms.entity.Article;
-import org.knpkid.kms.entity.Tag;
 import org.knpkid.kms.model.ArticleResponse;
 import org.knpkid.kms.model.CreateArticleRequest;
 import org.knpkid.kms.model.OnlyArticleResponse;
 import org.knpkid.kms.model.UpdateArticleRequest;
 import org.knpkid.kms.repository.ArticleRepository;
-import org.knpkid.kms.repository.TagRepository;
 import org.knpkid.kms.service.ArticleService;
 import org.knpkid.kms.service.ValidationService;
 import org.springframework.data.jpa.domain.Specification;
@@ -26,7 +25,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.knpkid.kms.Constant.UPDATED_AT;
 
@@ -37,7 +35,7 @@ public class ArticleServiceImpl implements ArticleService {
 
     private final ArticleRepository articleRepository;
 
-    private final TagRepository tagRepository;
+    private final TagService tagService;
 
     private final ImageService imageService;
 
@@ -53,7 +51,7 @@ public class ArticleServiceImpl implements ArticleService {
         article.setBody(request.body());
         article.setTeaser(request.teaser());
         article.setAdmin(admin);
-        article.setTags(extractAndSaveTags(request.tags()));
+        article.setTags(tagService.saveAll(request.tags()));
         setArticleCoverImageAndGallery(article, request.coverImage(), request.images());
 
         articleRepository.save(article);
@@ -84,7 +82,7 @@ public class ArticleServiceImpl implements ArticleService {
         article.setBody(request.body());
         article.setTeaser(request.teaser());
         article.setUpdatedAt(LocalDateTime.now());
-        article.setTags(extractAndSaveTags(request.tags()));
+        article.setTags(tagService.saveAll(request.tags()));
         setArticleCoverImageAndGallery(article, request.coverImage(), request.images());
 
         articleRepository.save(article);
@@ -203,30 +201,6 @@ public class ArticleServiceImpl implements ArticleService {
             log.warn("'{}' tries to modify '{}' article", admin.getUsername(), article.getAdmin().getUsername());
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "this article belongs to someone else");
         }
-    }
-
-    private Set<Tag> extractAndSaveTags(Set<String> tagsString) {
-        if (tagsString == null) {
-            return Collections.emptySet();
-        }
-
-        final var tags = tagsString.stream()
-                .map(this::createTag)
-                .collect(Collectors.toSet());
-
-        tagRepository.saveAll(tags);
-
-        return tags;
-    }
-
-    private Tag createTag(String tagName) {
-        final var cleanTagName = tagName.replaceAll("[^a-zA-Z0-9 ]", "").trim().toLowerCase();
-
-        final var tag = new Tag();
-        tag.setId(cleanTagName.replace(' ', '-'));
-        tag.setName(cleanTagName);
-        return tag;
-
     }
 
     private void setArticleCoverImageAndGallery(Article article, MultipartFile coverImage, List<MultipartFile> images) {
