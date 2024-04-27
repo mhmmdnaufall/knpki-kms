@@ -18,4 +18,8 @@ public class Quote {
     @JoinColumn(name = "author_id", referencedColumnName = "id")
     private Author author;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "username", referencedColumnName = "username")
+    private Admin admin;
+
 }

@@ -28,6 +28,9 @@ public class Admin implements UserDetails {
     @OneToMany(mappedBy = "admin")
     private transient List<Article> articles;
 
+    @OneToMany(mappedBy = "admin")
+    private transient List<Quote> quotes;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.emptyList();
