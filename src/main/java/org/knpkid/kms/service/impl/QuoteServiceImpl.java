@@ -9,11 +9,14 @@ import org.knpkid.kms.model.QuoteResponse;
 import org.knpkid.kms.repository.AuthorRepository;
 import org.knpkid.kms.repository.QuoteRepository;
 import org.knpkid.kms.service.QuoteService;
+import org.knpkid.kms.service.ValidationService;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
 public class QuoteServiceImpl implements QuoteService {
+
+    private final ValidationService validationService;
 
     private final QuoteRepository quoteRepository;
 
@@ -21,6 +24,8 @@ public class QuoteServiceImpl implements QuoteService {
 
     @Override
     public QuoteResponse create(CreateQuoteRequest request, Admin admin) {
+        validationService.validate(request);
+
         final var author = authorRepository.findByName(request.author())
                 .orElseGet(() -> {
                     final var newAuthor = new Author();
