@@ -14,4 +14,6 @@ public interface AuthorRepository extends JpaRepository<Author, Integer> {
     Optional<Author> findByName(String name);
 
     List<Author> findByNameIn(Set<String> authorsString);
+
+    List<Author> findByArticlesEmptyAndQuotesEmpty();
 }
