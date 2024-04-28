@@ -249,7 +249,7 @@ class ArticleTest {
                 + ", updatedAt=" + now + ", coverImage=" + image + ", body=body, teaser=teaser, "
                 + "authors=null, "
                 + "tags=[Tag(id=null, name=null, articles=null)], imageGallery=" + List.of(image) + ", archive=null, "
-                + "admin=Admin(username=null, password=null, name=null, image=null, articles=null))";
+                + "admin=Admin(username=null, password=null, name=null, image=null, articles=null, quotes=null))";
         assertEquals(articleString, ARTICLE.toString());
 
     }

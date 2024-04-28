@@ -66,7 +66,7 @@ class ArchiveTest {
         archive.setId(uuid.toString());
         archive.setFormat(ArchiveFormat.PDF);
 
-        assertEquals("Archive(id=%s, format=PDF)".formatted(uuid), archive.toString());
+        assertEquals("%s.%s".formatted(archive.getId(), archive.getFormat().name().toLowerCase()), archive.toString());
     }
 
     private int hashCodeCalculate(Archive archive) {
