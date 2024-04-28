@@ -105,8 +105,8 @@ public class ArticleServiceImpl implements ArticleService {
         final var article = getArticleById(articleId);
         checkArticleAuthor(article, admin);
 
+        archiveService.delete(article.getArchive());
         articleRepository.delete(article);
-
         deleteArticleCoverImageAndGallery(article.getCoverImage(), article.getImageGallery());
 
         log.info("article with id '{}' has been deleted", article.getId());
