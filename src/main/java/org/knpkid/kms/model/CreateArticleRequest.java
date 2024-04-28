@@ -1,14 +1,16 @@
 package org.knpkid.kms.model;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
-import org.knpkid.kms.entity.Archive;
-import org.knpkid.kms.entity.Author;
-import org.knpkid.kms.validation.MultipartImage;
+import org.knpkid.kms.validation.File;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Set;
+
+import static org.knpkid.kms.validation.FileFormat.*;
+import static org.knpkid.kms.validation.FileSize.MB;
 
 public record CreateArticleRequest (
 
@@ -16,7 +18,7 @@ public record CreateArticleRequest (
     @Size(max = 100)
     String title,
 
-    @MultipartImage(max = 2_097_151, message = "maximum image size is 2MB")
+    @File(max = 2L, size = MB, format = {JPG, JPEG, PNG}, message = "maximum image size is 2MB")
     MultipartFile coverImage,
 
     @NotBlank
@@ -28,10 +30,12 @@ public record CreateArticleRequest (
 
     Set<@NotBlank @Size(max = 50) String> tags,
 
-    List<@MultipartImage(max = 2_097_151, message = "maximum image size is 2MB") MultipartFile> images,
+    List<@File(max = 2L, size = MB, format = {JPG, JPEG, PNG}, message = "maximum image size is 2MB") MultipartFile> images,
 
-    Author author,
+    @NotEmpty
+    Set<@NotBlank @Size(max = 100) String> authors,
 
-    Archive archive
+    @File(max = 2, size = MB, format = PDF, message = "maximum pdf size is 2MB")
+    MultipartFile archive
 
 ) { }

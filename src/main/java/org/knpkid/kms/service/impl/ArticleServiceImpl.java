@@ -4,8 +4,7 @@ import jakarta.persistence.criteria.JoinType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.knpkid.kms.entity.Image;
-import org.knpkid.kms.service.ImageService;
-import org.knpkid.kms.service.TagService;
+import org.knpkid.kms.service.*;
 import org.springframework.data.domain.*;
 import org.knpkid.kms.entity.Admin;
 import org.knpkid.kms.entity.Article;
@@ -14,8 +13,6 @@ import org.knpkid.kms.model.CreateArticleRequest;
 import org.knpkid.kms.model.OnlyArticleResponse;
 import org.knpkid.kms.model.UpdateArticleRequest;
 import org.knpkid.kms.repository.ArticleRepository;
-import org.knpkid.kms.service.ArticleService;
-import org.knpkid.kms.service.ValidationService;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -39,6 +36,10 @@ public class ArticleServiceImpl implements ArticleService {
 
     private final ImageService imageService;
 
+    private final AuthorService authorService;
+
+    private final ArchiveService archiveService;
+
     private final ValidationService validationService;
 
     @Transactional
@@ -53,6 +54,8 @@ public class ArticleServiceImpl implements ArticleService {
         article.setAdmin(admin);
         article.setTags(tagService.saveAll(request.tags()));
         setArticleCoverImageAndGallery(article, request.coverImage(), request.images());
+        article.setAuthors(authorService.saveAll(request.authors()));
+        article.setArchive(archiveService.save(request.archive()));
 
         articleRepository.save(article);
 
@@ -84,6 +87,8 @@ public class ArticleServiceImpl implements ArticleService {
         article.setUpdatedAt(LocalDateTime.now());
         article.setTags(tagService.saveAll(request.tags()));
         setArticleCoverImageAndGallery(article, request.coverImage(), request.images());
+        article.setAuthors(authorService.saveAll(request.authors()));
+        article.setArchive(archiveService.save(request.archive()));
 
         articleRepository.save(article);
 
@@ -172,8 +177,10 @@ public class ArticleServiceImpl implements ArticleService {
                 article.getTeaser(),
                 article.getTags(),
                 article.getAdmin(),
+                article.getAuthors(),
                 article.getCoverImage(),
-                article.getImageGallery()
+                article.getImageGallery(),
+                article.getArchive()
         );
     }
 

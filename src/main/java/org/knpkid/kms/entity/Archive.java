@@ -14,4 +14,12 @@ public class Archive {
     @Enumerated(EnumType.STRING)
     private ArchiveFormat format;
 
+    /**
+     * @return file name
+     */
+    @Override
+    public String toString() {
+        return "%s.%s".formatted(id, format.name().toLowerCase());
+    }
+
 }
