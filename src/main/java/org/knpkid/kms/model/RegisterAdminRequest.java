@@ -2,8 +2,11 @@ package org.knpkid.kms.model;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import org.knpkid.kms.validation.MultipartImage;
+import org.knpkid.kms.validation.File;
 import org.springframework.web.multipart.MultipartFile;
+
+import static org.knpkid.kms.validation.FileFormat.*;
+import static org.knpkid.kms.validation.FileSize.MB;
 
 public record RegisterAdminRequest(
 
@@ -19,7 +22,7 @@ public record RegisterAdminRequest(
         @Size(max = 100)
         String name,
 
-        @MultipartImage(max = 2_097_151, message = "maximum image size is 2MB")
+        @File(max = 2L, size = MB, format = {JPG, JPEG, PNG}, message = "maximum image size is 2MB")
         MultipartFile image
 
 ) { }
