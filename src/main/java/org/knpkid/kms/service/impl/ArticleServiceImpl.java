@@ -55,7 +55,7 @@ public class ArticleServiceImpl implements ArticleService {
         article.setTags(tagService.saveAll(request.tags()));
         setArticleCoverImageAndGallery(article, request.coverImage(), request.images());
         article.setAuthors(authorService.saveAll(request.authors()));
-        article.setArchive(archiveService.save(request.archive()));
+        article.setArchive(!Objects.isNull(request.archive()) ? archiveService.save(request.archive()) : null);
 
         articleRepository.save(article);
 
@@ -78,11 +78,10 @@ public class ArticleServiceImpl implements ArticleService {
         checkArticleAuthor(article, admin);
         validationService.validate(request);
 
+        // for deletion
         final var oldCoverImage = article.getCoverImage();
         final var oldArticleImageGallery = article.getImageGallery();
         final var oldArchive = article.getArchive();
-        // delete old archive
-        if (oldArchive != null) archiveService.delete(oldArchive);
 
         article.setTitle(request.title());
         article.setBody(request.body());
@@ -96,8 +95,8 @@ public class ArticleServiceImpl implements ArticleService {
 
         articleRepository.save(article);
 
-        // delete old image
-        deleteArticleCoverImageAndGallery(oldCoverImage, oldArticleImageGallery);
+        deleteArticleCoverImageAndGallery(oldCoverImage, oldArticleImageGallery); // delete old image
+        if (oldArchive != null) archiveService.delete(oldArchive); // delete old archive
 
         log.info("article with id '{}' has been updated", articleId);
 
@@ -110,8 +109,8 @@ public class ArticleServiceImpl implements ArticleService {
         final var article = getArticleById(articleId);
         checkArticleAuthor(article, admin);
 
-        archiveService.delete(article.getArchive());
         articleRepository.delete(article);
+        if (article.getArchive() != null) archiveService.delete(article.getArchive());
         deleteArticleCoverImageAndGallery(article.getCoverImage(), article.getImageGallery());
 
         log.info("article with id '{}' has been deleted", article.getId());
