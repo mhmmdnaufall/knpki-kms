@@ -8,4 +8,6 @@ public interface AuthorService {
 
     Set<Author> saveAll(Set<String> authors);
 
+    Author getOrCreateByName(String authorName);
+
 }

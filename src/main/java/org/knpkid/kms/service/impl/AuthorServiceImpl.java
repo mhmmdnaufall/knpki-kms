@@ -39,4 +39,13 @@ public class AuthorServiceImpl implements AuthorService {
         return existingAuthorList.stream().collect(Collectors.toUnmodifiableSet());
     }
 
+    @Override
+    public Author getOrCreateByName(String authorName) {
+        return authorRepository.findByName(authorName)
+                .orElseGet(() -> {
+                    final var newAuthor = new Author();
+                    newAuthor.setName(authorName);
+                    return authorRepository.save(newAuthor);
+                });
+    }
 }
