@@ -35,7 +35,7 @@ public class ImageServiceImpl implements ImageService {
         final var imagePath = IMAGE_PATH_DIRECTORY.resolve(image.toString());
 
         if (!Files.exists(IMAGE_PATH_DIRECTORY))
-            Files.createDirectory(IMAGE_PATH_DIRECTORY);
+            Files.createDirectories(IMAGE_PATH_DIRECTORY);
 
         imageFile.transferTo(imagePath);
 
