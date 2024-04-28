@@ -75,7 +75,7 @@ public class ArticleServiceImpl implements ArticleService {
     public ArticleResponse update(Integer articleId, UpdateArticleRequest request, Admin admin) {
         final var article = getArticleById(articleId);
 
-        checkArticleAuthor(article, admin);
+        checkArticleAdmin(article, admin);
         validationService.validate(request);
 
         // for deletion
@@ -107,7 +107,7 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public void delete(Integer articleId, Admin admin) {
         final var article = getArticleById(articleId);
-        checkArticleAuthor(article, admin);
+        checkArticleAdmin(article, admin);
 
         articleRepository.delete(article);
         if (article.getArchive() != null) archiveService.delete(article.getArchive());
@@ -207,7 +207,7 @@ public class ArticleServiceImpl implements ArticleService {
                 );
     }
 
-    private void checkArticleAuthor(Article article, Admin admin) {
+    private void checkArticleAdmin(Article article, Admin admin) {
         if (!admin.equals(article.getAdmin())) {
             log.warn("'{}' tries to modify '{}' article", admin.getUsername(), article.getAdmin().getUsername());
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "this article belongs to someone else");
