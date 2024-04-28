@@ -5,7 +5,6 @@ import org.knpkid.kms.service.AdminService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
@@ -21,6 +20,8 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
+
+import static org.springframework.http.HttpMethod.*;
 
 @AllArgsConstructor
 @Configuration
@@ -55,11 +56,12 @@ public class WebSecurityConfig {
                 .cors(Customizer.withDefaults())
                 .csrf(Customizer.withDefaults())
                 .authorizeHttpRequests(auth ->
-                        auth.requestMatchers(HttpMethod.POST, "/api/articles").authenticated()
-                                .requestMatchers(HttpMethod.PUT, "/api/articles/{articleId}").authenticated()
-                                .requestMatchers(HttpMethod.DELETE, "/api/articles/{articleId}").authenticated()
-                                .requestMatchers(HttpMethod.DELETE, "/api/auth/logout").authenticated()
-                                .requestMatchers(HttpMethod.GET, "/api/admin/current").authenticated()
+                        auth.requestMatchers(POST, "/api/articles").authenticated()
+                                .requestMatchers(PUT, "/api/articles/{articleId}").authenticated()
+                                .requestMatchers(DELETE, "/api/articles/{articleId}").authenticated()
+                                .requestMatchers(DELETE, "/api/auth/logout").authenticated()
+                                .requestMatchers(GET, "/api/admin/current").authenticated()
+                                .requestMatchers(POST, "api/quotes").authenticated()
                                 .anyRequest().permitAll()
                 )
                 .authenticationProvider(daoAuthenticationProvider())
@@ -75,10 +77,10 @@ public class WebSecurityConfig {
         configuration.setAllowedOrigins(List.of("https://www.knpkid.org/"));
         configuration.setAllowedMethods(
                 List.of(
-                        HttpMethod.GET.name(),
-                        HttpMethod.POST.name(),
-                        HttpMethod.PUT.name(),
-                        HttpMethod.DELETE.name()
+                        GET.name(),
+                        POST.name(),
+                        PUT.name(),
+                        DELETE.name()
                 )
         );
         configuration.setAllowedHeaders(
