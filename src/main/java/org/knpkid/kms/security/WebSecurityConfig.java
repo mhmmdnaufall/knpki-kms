@@ -62,6 +62,8 @@ public class WebSecurityConfig {
                                 .requestMatchers(DELETE, "/api/auth/logout").authenticated()
                                 .requestMatchers(GET, "/api/admin/current").authenticated()
                                 .requestMatchers(POST, "api/quotes").authenticated()
+                                .requestMatchers(DELETE, "/api/quotes/{quoteId}").authenticated()
+                                .requestMatchers(PUT, "/api/quotes/{quoteId}").authenticated()
                                 .anyRequest().permitAll()
                 )
                 .authenticationProvider(daoAuthenticationProvider())
