@@ -8,4 +8,5 @@ public interface QuoteService {
 
     QuoteResponse create(CreateQuoteRequest request, Admin admin);
 
+    void delete(Integer quoteId, Admin admin);
 }

@@ -5,10 +5,9 @@ import org.knpkid.kms.entity.Admin;
 import org.knpkid.kms.model.CreateQuoteRequest;
 import org.knpkid.kms.model.QuoteResponse;
 import org.knpkid.kms.service.QuoteService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
@@ -23,6 +22,12 @@ public class QuoteController {
     )
     public QuoteResponse create(@RequestBody CreateQuoteRequest request, Admin admin) {
         return quoteService.create(request, admin);
+    }
+
+    @DeleteMapping("/api/quotes/{quoteId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Integer quoteId, Admin admin) {
+        quoteService.delete(quoteId, admin);
     }
 
 }
