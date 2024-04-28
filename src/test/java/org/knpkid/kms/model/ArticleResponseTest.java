@@ -1,9 +1,7 @@
 package org.knpkid.kms.model;
 
 import org.junit.jupiter.api.Test;
-import org.knpkid.kms.entity.Admin;
-import org.knpkid.kms.entity.Image;
-import org.knpkid.kms.entity.Tag;
+import org.knpkid.kms.entity.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,13 +16,13 @@ class ArticleResponseTest {
     private static final Image IMAGE = new Image();
 
     private static final ArticleResponse RESPONSE = new ArticleResponse(
-            1L, "title", NOW, NOW, "body", "teaser",
-            Set.of(new Tag()), new Admin(), IMAGE, List.of(IMAGE)
+            1, "title", NOW, NOW, "body", "teaser",
+            Set.of(new Tag()), new Admin(), Set.of(new Author()), IMAGE, List.of(IMAGE), new Archive()
     );
 
     @Test
     void id() {
-        assertEquals(1L, RESPONSE.id());
+        assertEquals(1, RESPONSE.id());
     }
 
     @Test
@@ -63,12 +61,24 @@ class ArticleResponseTest {
     }
 
     @Test
+    void authors() {
+        assertEquals(1, RESPONSE.authors().size());
+        assertTrue(RESPONSE.authors().contains(new Author()));
+    }
+
+    @Test
     void coverImage() {
         assertEquals(IMAGE, RESPONSE.coverImage());
     }
 
     @Test
-    void getImages() {
+    void images() {
         assertEquals(1, RESPONSE.images().size());
     }
+
+    @Test
+    void archive() {
+        assertEquals(new Archive(), RESPONSE.archive());
+    }
+
 }
