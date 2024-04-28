@@ -11,6 +11,7 @@ import org.knpkid.kms.repository.QuoteRepository;
 import org.knpkid.kms.service.QuoteService;
 import org.knpkid.kms.service.ValidationService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -22,6 +23,7 @@ public class QuoteServiceImpl implements QuoteService {
 
     private final AuthorRepository authorRepository;
 
+    @Transactional
     @Override
     public QuoteResponse create(CreateQuoteRequest request, Admin admin) {
         validationService.validate(request);
