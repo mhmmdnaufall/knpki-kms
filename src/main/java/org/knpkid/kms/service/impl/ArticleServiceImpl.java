@@ -80,6 +80,9 @@ public class ArticleServiceImpl implements ArticleService {
 
         final var oldCoverImage = article.getCoverImage();
         final var oldArticleImageGallery = article.getImageGallery();
+        final var oldArchive = article.getArchive();
+        // delete old archive
+        if (oldArchive != null) archiveService.delete(oldArchive);
 
         article.setTitle(request.title());
         article.setBody(request.body());
@@ -87,11 +90,13 @@ public class ArticleServiceImpl implements ArticleService {
         article.setUpdatedAt(LocalDateTime.now());
         article.setTags(tagService.saveAll(request.tags()));
         setArticleCoverImageAndGallery(article, request.coverImage(), request.images());
-        article.setAuthors(authorService.saveAll(request.authors()));
-        article.setArchive(archiveService.save(request.archive()));
+        article.setAuthors(new HashSet<>(authorService.saveAll(request.authors())));
+
+        article.setArchive(!Objects.isNull(request.archive()) ? archiveService.save(request.archive()) : null);
 
         articleRepository.save(article);
 
+        // delete old image
         deleteArticleCoverImageAndGallery(oldCoverImage, oldArticleImageGallery);
 
         log.info("article with id '{}' has been updated", articleId);
