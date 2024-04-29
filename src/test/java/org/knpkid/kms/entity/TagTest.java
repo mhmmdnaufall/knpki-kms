@@ -43,7 +43,20 @@ class TagTest {
         tagEqual.setArticles(articleList);
         assertEquals(tag, tagEqual);
 
+        tag.setId(null);
+        tagEqual.setId(null);
+        assertEquals(tag, tagEqual);
+
+        tag.setName(null);
+        tagEqual.setName(null);
+        assertEquals(tag, tagEqual);
+
+        tag.setArticles(null);
+        tagEqual.setArticles(null);
+        assertEquals(tag, tagEqual);
+
         final var tagNotEqual = new Tag();
+        tagNotEqual.setName("unequal");
         assertNotEquals(tag, tagNotEqual);
     }
 

@@ -100,7 +100,28 @@ class AdminTest {
 
         assertEquals(ADMIN, adminEqual);
 
+        ADMIN.setUsername(null);
+        adminEqual.setUsername(null);
+        assertEquals(ADMIN, adminEqual);
+
+        ADMIN.setPassword(null);
+        adminEqual.setPassword(null);
+        assertEquals(ADMIN, adminEqual);
+
+        ADMIN.setName(null);
+        adminEqual.setName(null);
+        assertEquals(ADMIN, adminEqual);
+
+        ADMIN.setImage(null);
+        adminEqual.setImage(null);
+        assertEquals(ADMIN, adminEqual);
+
+        ADMIN.setArticles(null);
+        adminEqual.setArticles(null);
+        assertEquals(ADMIN, adminEqual);
+
         final var adminNotEqual = new Admin();
+        adminNotEqual.setName("unequal");
         assertNotEquals(ADMIN, adminNotEqual);
 
 

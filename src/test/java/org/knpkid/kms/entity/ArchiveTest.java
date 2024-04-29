@@ -32,7 +32,19 @@ class ArchiveTest {
         archive2.setFormat(ArchiveFormat.PDF);
 
         assertEquals(archive1, archive2);
-        assertNotEquals(archive1, new Archive());
+
+        archive1.setId(null);
+        archive2.setId(null);
+        assertEquals(archive1, archive2);
+
+        archive1.setFormat(null);
+        archive2.setFormat(null);
+        assertEquals(archive1, archive2);
+
+        final var archiveUnequal = new Archive();
+        archiveUnequal.setId("unequal");
+
+        assertNotEquals(archive1, archiveUnequal);
     }
 
     @Test

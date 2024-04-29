@@ -47,13 +47,45 @@ class AuthorTest {
 
     @Test
     void testEquals() {
-        AUTHOR.setName("author");
-
         final var author = new Author();
-        author.setName("author");
-
         assertEquals(AUTHOR, author);
-        assertNotEquals(AUTHOR, new Author());
+
+        AUTHOR.setId(1);
+        author.setId(1);
+        assertEquals(AUTHOR, author);
+
+        AUTHOR.setName("author");
+        author.setName("author");
+        assertEquals(AUTHOR, author);
+
+        AUTHOR.setQuotes(List.of(new Quote()));
+        author.setQuotes(List.of(new Quote()));
+        assertEquals(AUTHOR, author);
+
+        AUTHOR.setArticles(List.of(new Article()));
+        author.setArticles(List.of(new Article()));
+        assertEquals(AUTHOR, author);
+
+        AUTHOR.setId(null);
+        author.setId(null);
+        assertEquals(AUTHOR, author);
+
+        AUTHOR.setName(null);
+        author.setName(null);
+        assertEquals(AUTHOR, author);
+
+        AUTHOR.setQuotes(null);
+        author.setQuotes(null);
+        assertEquals(AUTHOR, author);
+
+        AUTHOR.setArticles(null);
+        author.setArticles(null);
+        assertEquals(AUTHOR, author);
+
+        final var authorUnequal = new Author();
+        authorUnequal.setName("unequal");
+
+        assertNotEquals(AUTHOR, authorUnequal);
     }
 
     @Test

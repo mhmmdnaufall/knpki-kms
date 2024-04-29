@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.function.UnaryOperator;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -135,32 +134,58 @@ class ArticleTest {
         final var author2 = new Author();
         author2.setId(2);
 
-        final var articleSetup = (UnaryOperator<Article>) article -> {
-            article.setId(41247210);
-            article.setTitle("title");
-            article.setBody("body");
-            article.setTeaser("teaser");
-            article.setAdmin(new Admin());
-            article.setCoverImage(new Image());
-            article.setUpdatedAt(now);
-            article.setCreatedAt(now);
-            article.setImageGallery(List.of(new Image()));
-            article.setTags(Set.of(new Tag()));
-            article.setAuthors(Set.of(author1, author2));
-            article.setArchive(new Archive());
-
-            return article;
-        };
-
-        articleSetup.apply(ARTICLE);
-
         final var articleEqual = new Article();
-        articleSetup.apply(articleEqual);
+        assertEquals(ARTICLE, articleEqual);
 
+        ARTICLE.setId(1);
+        articleEqual.setId(1);
+        assertEquals(ARTICLE, articleEqual);
+
+        ARTICLE.setTitle("title");
+        articleEqual.setTitle("title");
+        assertEquals(ARTICLE, articleEqual);
+
+        ARTICLE.setBody("body");
+        articleEqual.setBody("body");
+        assertEquals(ARTICLE, articleEqual);
+
+        ARTICLE.setTeaser("teaser");
+        articleEqual.setTeaser("teaser");
+        assertEquals(ARTICLE, articleEqual);
+
+        ARTICLE.setAdmin(new Admin());
+        articleEqual.setAdmin(new Admin());
+        assertEquals(ARTICLE, articleEqual);
+
+        ARTICLE.setCoverImage(new Image());
+        articleEqual.setCoverImage(new Image());
+        assertEquals(ARTICLE, articleEqual);
+
+        ARTICLE.setCreatedAt(now);
+        articleEqual.setCreatedAt(now);
+        assertEquals(ARTICLE, articleEqual);
+
+        ARTICLE.setUpdatedAt(now);
+        articleEqual.setUpdatedAt(now);
+        assertEquals(ARTICLE, articleEqual);
+
+        ARTICLE.setImageGallery(List.of(new Image()));
+        articleEqual.setImageGallery(List.of(new Image()));
+        assertEquals(ARTICLE, articleEqual);
+
+        ARTICLE.setTags(Set.of(new Tag()));
+        articleEqual.setTags(Set.of(new Tag()));
+        assertEquals(ARTICLE, articleEqual);
+
+        ARTICLE.setAuthors(Set.of(author1, author2));
+        articleEqual.setAuthors(Set.of(author1, author2));
+        assertEquals(ARTICLE, articleEqual);
+
+        ARTICLE.setArchive(new Archive());
+        articleEqual.setArchive(new Archive());
         assertEquals(ARTICLE, articleEqual);
 
         assertNotEquals(ARTICLE, new Article());
-
 
     }
 

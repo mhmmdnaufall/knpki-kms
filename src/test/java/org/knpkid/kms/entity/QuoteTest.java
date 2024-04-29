@@ -3,12 +3,7 @@ package org.knpkid.kms.entity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.function.UnaryOperator;
-
 import static org.junit.jupiter.api.Assertions.*;
-import static org.hamcrest.MatcherAssert.*;
-import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.*;
 
 class QuoteTest {
 
@@ -63,25 +58,25 @@ class QuoteTest {
 
     @Test
     void testEquals() {
-        final var fill = (UnaryOperator<Quote>) quote -> {
-            final var admin = new Admin();
-            admin.setUsername("admin");
+        final var quoteEqual = new Quote();
+        assertEquals(quote, quoteEqual);
 
-            final var author = new Author();
-            author.setName("author");
+        quote.setId(1);
+        quoteEqual.setId(1);
+        assertEquals(quote, quoteEqual);
 
-            quote.setId(1);
-            quote.setBody("body");
-            quote.setAdmin(admin);
-            quote.setAuthor(author);
-            return quote;
-        };
+        quote.setAdmin(new Admin());
+        quoteEqual.setAdmin(new Admin());
+        assertEquals(quote, quoteEqual);
 
-        final var equalQuote = new Quote();
-        fill.apply(quote);
-        fill.apply(equalQuote);
+        quote.setAuthor(new Author());
+        quoteEqual.setAuthor(new Author());
+        assertEquals(quote, quoteEqual);
 
-        assertEquals(quote, equalQuote);
+        quote.setBody("body");
+        quoteEqual.setBody("body");
+        assertEquals(quote, quoteEqual);
+
         assertNotEquals(quote, new Quote());
     }
 
