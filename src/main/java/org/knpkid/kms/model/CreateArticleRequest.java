@@ -18,7 +18,7 @@ public record CreateArticleRequest (
     @Size(max = 100)
     String title,
 
-    @File(max = 2L, size = MB, format = {JPG, JPEG, PNG}, message = "maximum image size is 2MB")
+    @File(max = 2L, size = MB, format = {JPG, JPEG, PNG})
     MultipartFile coverImage,
 
     @NotBlank
@@ -30,12 +30,12 @@ public record CreateArticleRequest (
 
     Set<@NotBlank @Size(max = 50) String> tags,
 
-    List<@File(max = 2L, size = MB, format = {JPG, JPEG, PNG}, message = "maximum image size is 2MB") MultipartFile> images,
+    List<@File(max = 2L, size = MB, format = {JPG, JPEG, PNG}) MultipartFile> images,
 
     @NotEmpty
     Set<@NotBlank @Size(max = 100) String> authors,
 
-    @File(max = 2, size = MB, format = PDF, message = "maximum pdf size is 2MB")
+    @File(max = 2L, size = MB, format = PDF)
     MultipartFile archive
 
 ) { }

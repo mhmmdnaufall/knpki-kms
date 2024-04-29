@@ -3,12 +3,11 @@ package org.knpkid.kms.validation;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import lombok.SneakyThrows;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public class FileValidator implements ConstraintValidator<File, MultipartFile> {
 
@@ -28,26 +27,56 @@ public class FileValidator implements ConstraintValidator<File, MultipartFile> {
     @SneakyThrows
     @Override
     public boolean isValid(MultipartFile value, ConstraintValidatorContext context) {
-
+        // null value = ok
         if (value == null) return true;
 
-        Optional.ofNullable(value.getOriginalFilename())
-                .ifPresent(fileName -> {
-                    if (formats.length == 0) {
-                        return;
-                    }
+        final var errorMessageStringBuilder = new StringBuilder();
+        errorMessageStringBuilder.append(context.getDefaultConstraintMessageTemplate());
+        context.disableDefaultConstraintViolation(); // disable default constraint violation
 
-                    final var isWrongFormat = Arrays.stream(formats)
-                            .noneMatch(format -> fileName.endsWith(format.name().toLowerCase()));
+        final var sizeOk = checkFileSize(value.getBytes().length, errorMessageStringBuilder);
+        final var formatOk = (formats.length == 0) || checkFileFormat(value.getOriginalFilename(), errorMessageStringBuilder);
 
-                    if (isWrongFormat) {
-                        throw new ResponseStatusException(
-                                HttpStatus.BAD_REQUEST,
+        if (sizeOk && formatOk) return true;
+
+        // if not ok
+        context.buildConstraintViolationWithTemplate(errorMessageStringBuilder.toString())
+                .addConstraintViolation();
+
+        return false;
+    }
+
+    private boolean checkFileSize(int size, StringBuilder errorMessageStringBuilder) {
+        // file size OK
+        if (size <= (max * fileSize.getSize()))
+            return true;
+
+        createErrorMessage(errorMessageStringBuilder, "maximum file size is %d%s".formatted(max, fileSize));
+        return false;
+    }
+
+    private boolean checkFileFormat(String fileName, StringBuilder errorMessageStringBuilder) {
+        return Optional.ofNullable(fileName)
+                // if file format valid
+                .filter(s ->
+                        Stream.of(formats)
+                                .anyMatch(format -> s.endsWith(format.name().toLowerCase()))
+                )
+                // return true
+                .map(s -> true)
+                // if file format not valid, return false
+                .orElseGet(() -> {
+                        createErrorMessage(
+                                errorMessageStringBuilder,
                                 "only " + Arrays.toString(formats).toLowerCase() + " format are acceptable"
                         );
-                    }
+                        return false;
                 });
+    }
 
-        return value.getBytes().length <= max * fileSize.getSize();
+    private void createErrorMessage(StringBuilder errorMessageStringBuilder, String errorMessage) {
+        errorMessageStringBuilder
+                .append(", ")
+                .append(errorMessage);
     }
 }

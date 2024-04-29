@@ -22,7 +22,7 @@ public record RegisterAdminRequest(
         @Size(max = 100)
         String name,
 
-        @File(max = 2L, size = MB, format = {JPG, JPEG, PNG}, message = "maximum image size is 2MB")
+        @File(max = 2L, size = MB, format = {JPG, JPEG, PNG})
         MultipartFile image
 
 ) { }

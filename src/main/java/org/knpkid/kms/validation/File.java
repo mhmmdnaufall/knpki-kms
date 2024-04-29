@@ -25,7 +25,7 @@ public @interface File {
 
     FileFormat[] format() default {};
 
-    String message() default "maximum file size is 15Kb";
+    String message() default "format does not match";
 
     Class<?>[] groups() default {};
 
