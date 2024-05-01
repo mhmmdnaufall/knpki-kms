@@ -6,6 +6,8 @@ import org.knpkid.kms.repository.AuthorRepository;
 import org.knpkid.kms.service.AuthorService;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -17,14 +19,15 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     public Set<Author> saveAll(Set<String> authorsString) {
-        final var existingAuthorList = authorRepository.findByNameIn(authorsString);
+        final var authorStringModifiableSet = new HashSet<>(authorsString);
+        final var existingAuthorModifiableList = new ArrayList<>(authorRepository.findByNameIn(authorStringModifiableSet));
 
         // ignoring every existing author
-        existingAuthorList.forEach(existingAuthor ->
-                authorsString.remove(existingAuthor.getName())
+        existingAuthorModifiableList.forEach(existingAuthor ->
+                authorStringModifiableSet.remove(existingAuthor.getName())
         );
 
-        final var authorsSet = authorsString.stream()
+        final var authorsSet = authorStringModifiableSet.stream()
                 .map(authorName -> {
                     final var author = new Author();
                     author.setName(authorName);
@@ -35,8 +38,8 @@ public class AuthorServiceImpl implements AuthorService {
         authorRepository.saveAll(authorsSet);
 
         // merge all author
-        existingAuthorList.addAll(authorsSet);
-        return existingAuthorList.stream().collect(Collectors.toUnmodifiableSet());
+        existingAuthorModifiableList.addAll(authorsSet);
+        return existingAuthorModifiableList.stream().collect(Collectors.toUnmodifiableSet());
     }
 
     @Override
