@@ -51,13 +51,13 @@ class ImageServiceImplTest {
 
             {
                 if (!isImageDirectoryExist) {
-                    filesMock.verify(() -> Files.createDirectory(any()), times(1));
+                    filesMock.verify(() -> Files.createDirectories(any()), times(1));
 
                     // error test
-                    filesMock.when(() -> Files.createDirectory(any())).thenThrow(new IOException());
+                    filesMock.when(() -> Files.createDirectories(any())).thenThrow(new IOException());
                     assertThrows(IOException.class, () -> imageService.save(multipartFileMock));
                 } else
-                    filesMock.verify(() -> Files.createDirectory(any()), times(0));
+                    filesMock.verify(() -> Files.createDirectories(any()), times(0));
 
             }
 
