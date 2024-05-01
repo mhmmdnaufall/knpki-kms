@@ -78,14 +78,14 @@ public class QuoteServiceImpl implements QuoteService {
     private Quote getQuoteById(Integer quoteId) {
         return quoteRepository.findById(quoteId)
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "article with id '" + quoteId + "' is not found")
+                        HttpStatus.NOT_FOUND, "quote with id '" + quoteId + "' is not found")
                 );
     }
 
     private void checkQuoteAdmin(Quote quote, Admin admin) {
         if (quote.getAdmin().equals(admin)) return;
         log.warn("'{}' tries to modify '{}' article", admin.getUsername(), quote.getAdmin().getUsername());
-        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "this article belongs to someone else");
+        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "this quote belongs to someone else");
     }
 
 }
