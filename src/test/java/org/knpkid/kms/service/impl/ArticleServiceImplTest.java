@@ -1,5 +1,6 @@
 package org.knpkid.kms.service.impl;
 
+import jakarta.persistence.criteria.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,6 +11,11 @@ import org.knpkid.kms.service.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -148,6 +154,30 @@ class ArticleServiceImplTest {
 
     }
 
+    @Test
+    void get() {
+        final var existId = 2131231;
+        final var notExistId = 123021309;
+        final var article = new Article();
+        article.setId(existId);
+
+        {
+            when(articleRepository.findById(existId)).thenReturn(Optional.of(article));
+            when(articleRepository.findById(notExistId)).thenReturn(Optional.empty());
+        }
+
+        // exist
+        var articleResponse = assertDoesNotThrow(() -> articleService.get(existId));
+        assertEquals(article.getId(), articleResponse.id());
+
+        // not exist
+        final var exception = assertThrows(ResponseStatusException.class, () -> articleService.get(notExistId));
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+        assertEquals("article with id '%d' is not found".formatted(notExistId), exception.getReason());
+
+
+    }
+
     @DisplayName("delete() - success")
     @Test
     void delete() {
@@ -263,6 +293,173 @@ class ArticleServiceImplTest {
             assertEquals(HttpStatus.FORBIDDEN, exception.getStatusCode());
             assertEquals("this article belongs to someone else", exception.getReason());
         }
+
+    }
+
+    @Test
+    void getAll() {
+        final var article = new Article();
+        article.setId(1);
+        article.setTitle("title");
+        article.setTeaser("teaser");
+
+        final var articles = List.of(article);
+
+        final var pageable = PageRequest.of(0, 12, Sort.by(Sort.Order.desc("updatedAt")));
+
+        {
+            when(articleRepository.findAll(pageable))
+                    .thenReturn(
+                            new PageImpl<>(
+                                    articles,
+                                    PageRequest.of(0, 12),
+                                    articles.size()
+                            )
+                    );
+        }
+
+        final var onlyArticleResponsePage = articleService.getAll(0, 12);
+
+        verify(articleRepository).findAll(pageable);
+        assertEquals(articles.size(), onlyArticleResponsePage.getContent().size());
+        assertEquals(article.getId(), onlyArticleResponsePage.getContent().get(0).id());
+        assertEquals(article.getTitle(), onlyArticleResponsePage.getContent().get(0).title());
+        assertEquals(article.getTeaser(), onlyArticleResponsePage.getContent().get(0).teaser());
+    }
+
+    @Test
+    void search() {
+        final var article = new Article();
+        article.setId(1);
+        article.setTitle("keyword title");
+        article.setTeaser("keyword teaser");
+
+        final var articles = List.of(article);
+
+        {
+            when(articleRepository.findAll(any(Specification.class), any(Pageable.class)))
+                    .then(invocation -> {
+
+                        final var root = mock(Root.class);
+                        final var query = mock(CriteriaQuery.class);
+                        final var builder = mock(CriteriaBuilder.class);
+                        final var join = mock(Join.class);
+                        final var predicate = mock(Predicate.class);
+
+                        {
+                            when(builder.or(any(), any(), any())).thenReturn(predicate);
+                            when(root.join("tags", JoinType.LEFT)).thenReturn(join);
+                            when(query.where(any(Predicate.class))).thenReturn(query);
+                            when(query.getRestriction()).thenReturn(predicate);
+                        }
+
+                        final var specification = (Specification<Article>) invocation.getArgument(0);
+
+                        specification.toPredicate(root, query, builder);
+
+                        {
+                            verify(builder).or(any(), any(), any());
+                            verify(builder, times(3)).like(any(), anyString());
+                            verify(root, times(2)).get(anyString());
+                            verify(root).join("tags", JoinType.LEFT);
+                            verify(join).get(anyString());
+
+                        }
+
+                        return new PageImpl<>(
+                                articles,
+                                PageRequest.of(0, 12),
+                                articles.size()
+                        );
+                    });
+        }
+
+        final var onlyArticleResponsePage = articleService.search("keyword", 0, 12);
+
+        {
+            verify(articleRepository).findAll(any(Specification.class), any(Pageable.class));
+        }
+
+        assertEquals(articles.size(), onlyArticleResponsePage.getContent().size());
+        assertEquals(article.getId(), onlyArticleResponsePage.getContent().get(0).id());
+        assertEquals(article.getTitle(), onlyArticleResponsePage.getContent().get(0).title());
+        assertEquals(article.getTeaser(), onlyArticleResponsePage.getContent().get(0).teaser());
+
+    }
+
+    @Test
+    void getArticlesByTag() {
+
+        final var article = new Article();
+        article.setId(1);
+        article.setTitle("title");
+        article.setTeaser("teaser");
+
+        final var articles = List.of(article);
+
+        final var pageable = PageRequest.of(0, 12, Sort.by(Sort.Order.desc("updatedAt")));
+
+        {
+            when(articleRepository.findByTagsId("tagId", pageable))
+                    .thenReturn(
+                            new PageImpl<>(
+                                    articles,
+                                    PageRequest.of(0, 12),
+                                    articles.size()
+                            )
+                    );
+        }
+
+        final var onlyArticleResponsePage = articleService.getArticlesByTag("tagId", 0, 12);
+
+        {
+            verify(articleRepository).findByTagsId("tagId", pageable);
+        }
+
+        assertEquals(articles.size(), onlyArticleResponsePage.getContent().size());
+        assertEquals(article.getId(), onlyArticleResponsePage.getContent().get(0).id());
+        assertEquals(article.getTitle(), onlyArticleResponsePage.getContent().get(0).title());
+        assertEquals(article.getTeaser(), onlyArticleResponsePage.getContent().get(0).teaser());
+
+    }
+
+    @Test
+    void getArticlesByAdmin() {
+
+        final var article = new Article();
+        article.setId(1);
+        article.setTitle("title");
+        article.setTeaser("teaser");
+
+        final var admin = new Admin();
+        admin.setUsername("username");
+        article.setAdmin(admin);
+
+        final var articles = List.of(article);
+
+        final var pageable = PageRequest.of(0, 12, Sort.by(Sort.Order.desc("updatedAt")));
+
+        {
+            when(articleRepository.findByAdmin_Username("username", pageable))
+                    .thenReturn(
+                            new PageImpl<>(
+                                    articles,
+                                    PageRequest.of(0, 12),
+                                    articles.size()
+                            )
+                    );
+        }
+
+        final var onlyArticleResponsePage = articleService.getArticlesByAdmin("username", 0, 12);
+
+        {
+            verify(articleRepository).findByAdmin_Username("username", pageable);
+        }
+
+        assertEquals(articles.size(), onlyArticleResponsePage.getContent().size());
+        assertEquals(article.getId(), onlyArticleResponsePage.getContent().get(0).id());
+        assertEquals(article.getTitle(), onlyArticleResponsePage.getContent().get(0).title());
+        assertEquals(article.getTeaser(), onlyArticleResponsePage.getContent().get(0).teaser());
 
     }
 
