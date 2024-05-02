@@ -223,7 +223,7 @@ public class ArticleServiceImpl implements ArticleService {
 
         Optional.ofNullable(images)
                 .ifPresent(it -> {
-                    for (var image : it) {
+                    for (final var image : it) {
                         article.getImageGallery().add(imageService.save(image));
                     }
                 });
