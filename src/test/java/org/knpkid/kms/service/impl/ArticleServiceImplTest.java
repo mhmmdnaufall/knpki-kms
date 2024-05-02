@@ -10,10 +10,13 @@ import org.knpkid.kms.service.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -142,6 +145,124 @@ class ArticleServiceImplTest {
         assertNull(response.coverImage());
         assertEquals(Collections.emptyList(), response.images());
         assertEquals(Collections.emptySet(), response.tags());
+
+    }
+
+    @DisplayName("delete() - success")
+    @Test
+    void delete() {
+
+        final var coverImage = getCoverImage();
+        final var images = List.of(new Image(), new Image());
+        final var archive = getArchive();
+        final var admin = getAdmin();
+
+        final var article = new Article();
+        article.setAdmin(admin);
+        article.setCoverImage(coverImage);
+        article.setImageGallery(images);
+        article.setArchive(archive);
+
+        {
+            when(articleRepository.findById(123812038)).thenReturn(Optional.of(article));
+            doNothing().when(articleRepository).delete(article);
+            doNothing().when(imageService).delete(any());
+            doNothing().when(imageService).deleteAll(any());
+            doNothing().when(archiveService).delete(archive);
+        }
+
+        assertDoesNotThrow(() -> articleService.delete(123812038, admin));
+
+        {
+            verify(articleRepository).findById(123812038);
+            verify(articleRepository).delete(article);
+            verify(imageService).delete(any());
+            verify(imageService).deleteAll(any());
+            verify(archiveService).delete(archive);
+        }
+
+    }
+
+    @DisplayName("delete() - null image, imageGallery, archive")
+    @Test
+    void delete_nullFiles() {
+
+        final var admin = getAdmin();
+
+        final var article = new Article();
+        article.setAdmin(admin);
+
+        {
+            when(articleRepository.findById(13123123)).thenReturn(Optional.of(article));
+            doNothing().when(articleRepository).delete(article);
+        }
+
+        assertDoesNotThrow(() -> articleService.delete(13123123, admin));
+
+        {
+            verify(articleRepository).findById(13123123);
+            verify(articleRepository).delete(article);
+            verify(archiveService, times(0)).delete(any());
+            verify(imageService, times(0)).delete(any());
+            verify(imageService, times(0)).deleteAll(any());
+        }
+
+    }
+
+    @DisplayName("delete() - article not found")
+    @Test
+    void delete_articleNotFound() {
+
+        final var admin = new Admin();
+
+        {
+            when(articleRepository.findById(1)).thenReturn(Optional.empty());
+        }
+
+        final var exception = assertThrows(
+                ResponseStatusException.class,
+                () -> articleService.delete(1, admin)
+        );
+
+        {
+            verify(articleRepository, times(0)).delete(any(Article.class));
+            verify(imageService, times(0)).delete(any());
+            verify(imageService, times(0)).deleteAll(any());
+            assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+            assertEquals("article with id '%s' is not found".formatted(1L), exception.getReason());
+        }
+
+    }
+
+    @DisplayName("delete() - use another account forbidden")
+    @Test
+    void delete_useAnotherAccount() {
+
+        final var admin = new Admin();
+        admin.setUsername("admin");
+
+        final var article = new Article();
+        article.setAdmin(admin);
+
+        final var diffAdmin = new Admin();
+        diffAdmin.setUsername("different_admin");
+
+        {
+            when(articleRepository.findById(1)).thenReturn(Optional.of(article));
+        }
+
+        final var exception = assertThrows(
+                ResponseStatusException.class,
+                () -> articleService.delete(1, diffAdmin)
+        );
+
+        {
+            verify(articleRepository, times(0)).delete(any(Article.class));
+            verify(imageService, times(0)).delete(any());
+            verify(imageService, times(0)).deleteAll(any());
+            assertEquals(HttpStatus.FORBIDDEN, exception.getStatusCode());
+            assertEquals("this article belongs to someone else", exception.getReason());
+        }
 
     }
 
