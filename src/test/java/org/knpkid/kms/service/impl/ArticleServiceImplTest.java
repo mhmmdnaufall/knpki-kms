@@ -138,7 +138,6 @@ class ArticleServiceImplTest {
 
         final var response = articleService.create(request, admin);
 
-        // 2 imageGallery + 1 coverImage = 3 imageService.save
         verify(imageService, times(0)).save(any());
         verify(validationService).validate(request);
         verify(tagService).saveAll(null);
