@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.knpkid.kms.entity.*;
 import org.knpkid.kms.model.CreateArticleRequest;
+import org.knpkid.kms.model.UpdateArticleRequest;
 import org.knpkid.kms.repository.ArticleRepository;
 import org.knpkid.kms.service.*;
 import org.mockito.InjectMocks;
@@ -20,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -152,6 +154,201 @@ class ArticleServiceImplTest {
         assertEquals(Collections.emptyList(), response.images());
         assertEquals(Collections.emptySet(), response.tags());
 
+    }
+
+    @DisplayName("update() - success")
+    @Test
+    void update() {
+        final var now = LocalDateTime.now();
+
+        final var admin = getAdmin();
+        final var coverImageRequest = getCoverImageRequest();
+        final var tagsRequest = getTagsRequest();
+        final var imagesRequest = getImagesRequest();
+        final var authorsRequest = getAuthorsRequest();
+        final var archiveRequest = getArchiveRequest();
+
+        final var oldCoverImage = new Image();
+        final var oldArticleImageGallery = List.of(new Image());
+        final var oldArchive = new Archive();
+        final var oldAuthors = Set.of(new Author());
+
+        final var article = new Article();
+        article.setId(1);
+        article.setAdmin(admin);
+        article.setCoverImage(oldCoverImage);
+        article.setImageGallery(oldArticleImageGallery);
+        article.setAuthors(Set.of(new Author()));
+        article.setArchive(oldArchive);
+        article.setAuthors(oldAuthors);
+
+        final var request = new UpdateArticleRequest(
+                "title",
+                coverImageRequest,
+                "body",
+                "teaser",
+                tagsRequest,
+                imagesRequest,
+                authorsRequest,
+                archiveRequest
+        );
+
+        {
+            doNothing().when(validationService).validate(request);
+            when(articleRepository.findById(1)).thenReturn(Optional.of(article));
+            when(tagService.saveAll(tagsRequest)).thenReturn(getTags());
+            when(imageService.save(any())).thenReturn(new Image());
+            when(imageService.save(coverImageRequest)).thenReturn(getCoverImage());
+            when(authorService.saveAll(authorsRequest)).thenReturn(getAuthors());
+            when(archiveService.save(archiveRequest)).thenReturn(getArchive());
+            when(articleRepository.save(any())).then(invocation -> {
+                final var saveArticle = (Article) invocation.getArgument(0);
+                saveArticle.setUpdatedAt(now);
+                return saveArticle;
+            });
+            doNothing().when(archiveService).delete(oldArchive);
+        }
+
+        final var response = assertDoesNotThrow(() -> articleService.update(1, request, admin));
+
+        verify(validationService).validate(request);
+        verify(articleRepository).findById(1);
+        verify(tagService).saveAll(tagsRequest);
+        verify(authorService).saveAll(authorsRequest);
+        verify(archiveService).save(archiveRequest);
+        verify(articleRepository).save(any());
+        verify(archiveService).delete(oldArchive);
+        verify(imageService).delete(oldCoverImage);
+        verify(imageService).deleteAll(oldArticleImageGallery);
+
+
+        // 2 imageGallery + 1 coverImage = 3 imageService.save
+        verify(imageService, times(3)).save(any());
+
+        assertEquals(1, response.id());
+        assertEquals("title", response.title());
+        assertEquals("body", response.body());
+        assertEquals("teaser", response.teaser());
+        assertEquals(now, response.updatedAt());
+        assertEquals(getArchive(), response.archive());
+        assertEquals(getAuthors(), response.authors());
+        assertEquals(getCoverImage(), response.coverImage());
+        assertEquals(2, response.images().size());
+        assertEquals(getTags(), response.tags());
+        assertNotEquals(response.archive(), oldArchive);
+        assertNotEquals(response.images(), oldArticleImageGallery);
+        assertNotEquals(response.coverImage(), oldCoverImage);
+        assertNotEquals(oldAuthors, response.authors());
+    }
+
+    @DisplayName("update() - Set nullable fields to null. Including old field")
+    @Test
+    void update_null() {
+        final var now = LocalDateTime.now();
+
+        final var admin = getAdmin();
+        final var authorsRequest = getAuthorsRequest();
+
+        final var oldAuthors = Set.of(new Author());
+
+        final var article = new Article();
+        article.setId(1);
+        article.setAdmin(admin);
+        article.setAuthors(oldAuthors);
+
+        final var request = new UpdateArticleRequest(
+                "title",
+                null,
+                "body",
+                null,
+                null,
+                null,
+                authorsRequest,
+                null
+        );
+
+        {
+            doNothing().when(validationService).validate(request);
+            when(articleRepository.findById(1)).thenReturn(Optional.of(article));
+            when(tagService.saveAll(null)).thenReturn(Collections.emptySet());
+            when(authorService.saveAll(authorsRequest)).thenReturn(getAuthors());
+            when(articleRepository.save(any())).then(invocation -> {
+                final var saveArticle = (Article) invocation.getArgument(0);
+                saveArticle.setUpdatedAt(now);
+                return saveArticle;
+            });
+        }
+
+        final var response = assertDoesNotThrow(() -> articleService.update(1, request, admin));
+
+        verify(validationService).validate(request);
+        verify(articleRepository).findById(1);
+        verify(tagService).saveAll(null);
+        verify(authorService).saveAll(authorsRequest);
+        verify(archiveService, times(0)).save(any());
+        verify(articleRepository).save(any());
+        verify(archiveService, times(0)).delete(any());
+        verify(imageService, times(0)).delete(any());
+        verify(imageService, times(0)).deleteAll(any());
+        verify(imageService, times(0)).save(any());
+
+        assertEquals(1, response.id());
+        assertEquals("title", response.title());
+        assertEquals("body", response.body());
+        assertNull(response.teaser());
+        assertEquals(now, response.updatedAt());
+        assertEquals(getAuthors(), response.authors());
+        assertEquals(0, response.images().size());
+        assertEquals(Collections.emptySet(), response.tags());
+        assertNull(response.archive());
+        assertEquals(Collections.emptyList(), response.images());
+        assertNull(response.coverImage());
+    }
+
+    @DisplayName("update() - use Another Account forbidden")
+    @Test
+    void update_useAnotherAccount() {
+        final var request = new UpdateArticleRequest(
+                "title", null, "body",
+                "teaser", null, null, Set.of("author"), null
+        );
+
+        final var article = new Article();
+        article.setAdmin(getAdmin());
+
+        final var diffAdmin = new Admin();
+        diffAdmin.setUsername("differentAdmin");
+
+        {
+            when(articleRepository.findById(741237903)).thenReturn(Optional.of(article));
+        }
+
+        final var exception = assertThrows(
+                ResponseStatusException.class,
+                () -> articleService.update(741237903, request, diffAdmin)
+        );
+        assertEquals(HttpStatus.FORBIDDEN, exception.getStatusCode());
+        assertEquals("this article belongs to someone else", exception.getReason());
+    }
+
+    @DisplayName("update() - article not found")
+    @Test
+    void update_articleNotFound() {
+        when(articleRepository.findById(1)).thenReturn(Optional.empty());
+
+        final var request = new UpdateArticleRequest(
+                "title", null, "body",
+                "teaser", null, null, Set.of("author"), null
+        );
+
+        final var admin = new Admin();
+        final var exception = assertThrows(
+                ResponseStatusException.class,
+                () -> articleService.update(1, request, admin)
+        );
+
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+        assertEquals("article with id '%d' is not found".formatted(1), exception.getReason());
     }
 
     @Test
