@@ -8,6 +8,9 @@ import org.knpkid.kms.model.AuthorResponse;
 import org.knpkid.kms.model.OnlyArticleResponse;
 import org.knpkid.kms.model.QuoteResponse;
 
+import java.util.Collections;
+import java.util.Optional;
+
 public class ConvertToModel {
 
     private ConvertToModel() {}
@@ -51,11 +54,17 @@ public class ConvertToModel {
     }
 
     public static AuthorResponse authorResponse(Author author) {
+        final var articleList = Optional.ofNullable(author.getArticles())
+                .orElse(Collections.emptyList());
+
+        final var quoteList = Optional.ofNullable(author.getQuotes())
+                .orElse(Collections.emptyList());
+
         return new AuthorResponse(
                 author.getId(),
                 author.getName(),
-                author.getArticles().stream().map(ConvertToModel::articleResponse).toList(),
-                author.getQuotes()
+                articleList.stream().map(ConvertToModel::articleResponse).toList(),
+                quoteList
         );
     }
 

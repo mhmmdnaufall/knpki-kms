@@ -7,10 +7,10 @@ import org.knpkid.kms.repository.AuthorRepository;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -76,7 +76,7 @@ class AuthorServiceImplTest {
     }
 
     @Test
-    void ngetOrCreateByName_create() {
+    void getOrCreateByName_create() {
         when(authorRepository.findByName("author")).thenReturn(Optional.empty());
         when(authorRepository.save(any())).then(invocation -> {
             final var author = (Author) invocation.getArgument(0);
@@ -88,5 +88,33 @@ class AuthorServiceImplTest {
         verify(authorRepository).findByName("author");
         verify(authorRepository).save(any());
         assertEquals("author", author.getName());
+    }
+
+    @Test
+    void get() {
+        final var author = new Author();
+        author.setId(1);
+        author.setName("author");
+
+        when(authorRepository.findById(1)).thenReturn(Optional.of(author));
+
+        final var authorResponse = authorService.get(1);
+
+        verify(authorRepository).findById(1);
+        assertEquals(author.getId(), authorResponse.id());
+        assertEquals(author.getName(), authorResponse.name());
+        assertEquals(Collections.emptyList(), authorResponse.articles());
+        assertEquals(Collections.emptyList(), authorResponse.quotes());
+    }
+
+    @Test
+    void get_authorNotFound() {
+        when(authorRepository.findById(1)).thenReturn(Optional.empty());
+
+        final var error = assertThrows(ResponseStatusException.class, () -> authorService.get(1));
+        verify(authorRepository).findById(1);
+        assertEquals(HttpStatus.NOT_FOUND, error.getStatusCode());
+        assertEquals("author with id '1' is not found", error.getReason());
+
     }
 }

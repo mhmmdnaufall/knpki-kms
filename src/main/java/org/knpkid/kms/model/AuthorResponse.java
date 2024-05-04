@@ -8,7 +8,7 @@ import java.util.List;
 
 public record AuthorResponse(
 
-        long id,
+        int id,
 
         String name,
 
