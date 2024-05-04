@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.knpkid.kms.entity.Image;
 import org.knpkid.kms.service.*;
+import org.knpkid.kms.utility.ConvertToModel;
 import org.springframework.data.domain.*;
 import org.knpkid.kms.entity.Admin;
 import org.knpkid.kms.entity.Article;
@@ -61,13 +62,13 @@ public class ArticleServiceImpl implements ArticleService {
 
         log.info("article created with id = '{}'", article.getId());
 
-        return toArticleResponse(article);
+        return ConvertToModel.articleResponse(article);
     }
 
     @Transactional(readOnly = true)
     @Override
     public ArticleResponse get(Integer articleId) {
-        return toArticleResponse(getArticleById(articleId));
+        return ConvertToModel.articleResponse(getArticleById(articleId));
     }
 
     @Transactional
@@ -100,7 +101,7 @@ public class ArticleServiceImpl implements ArticleService {
 
         log.info("article with id '{}' has been updated", articleId);
 
-        return toArticleResponse(article);
+        return ConvertToModel.articleResponse(article);
     }
 
     @Transactional
@@ -120,7 +121,7 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public Page<OnlyArticleResponse> getAll(Integer page, Integer size) {
         return articleRepository.findAll(PageRequest.of(page, size, Sort.by(Sort.Order.desc(UPDATED_AT))))
-                .map(this::toOnlyArticleResponse);
+                .map(ConvertToModel::onlyArticleResponse);
     }
 
     @Transactional(readOnly = true)
@@ -143,7 +144,7 @@ public class ArticleServiceImpl implements ArticleService {
         final var articlesPage = articleRepository.findAll(specification, pageable);
 
         final var onlyArticleResponses = articlesPage.getContent().stream()
-                .map(this::toOnlyArticleResponse)
+                .map(ConvertToModel::onlyArticleResponse)
                 .toList();
 
         return new PageImpl<>(onlyArticleResponses, pageable, articlesPage.getTotalElements());
@@ -155,7 +156,7 @@ public class ArticleServiceImpl implements ArticleService {
         final var pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc(UPDATED_AT)));
         final var articlesPage = articleRepository.findByTagsId(tagId, pageable);
         final var onlyArticleResponses = articlesPage.getContent().stream()
-                .map(this::toOnlyArticleResponse)
+                .map(ConvertToModel::onlyArticleResponse)
                 .toList();
         return new PageImpl<>(onlyArticleResponses, pageable, articlesPage.getTotalElements());
     }
@@ -166,38 +167,9 @@ public class ArticleServiceImpl implements ArticleService {
         final var pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc(UPDATED_AT)));
         final var articlesPage = articleRepository.findByAdmin_Username(username, pageable);
         final var onlyArticleResponses = articlesPage.getContent().stream()
-                .map(this::toOnlyArticleResponse)
+                .map(ConvertToModel::onlyArticleResponse)
                 .toList();
         return new PageImpl<>(onlyArticleResponses, pageable, articlesPage.getTotalElements());
-    }
-
-    private ArticleResponse toArticleResponse(Article article) {
-        return new ArticleResponse(
-                article.getId(),
-                article.getTitle(),
-                article.getCreatedAt(),
-                article.getUpdatedAt(),
-                article.getBody(),
-                article.getTeaser(),
-                article.getTags(),
-                article.getAdmin(),
-                article.getAuthors(),
-                article.getCoverImage(),
-                article.getImageGallery(),
-                article.getArchive()
-        );
-    }
-
-    private OnlyArticleResponse toOnlyArticleResponse(Article article) {
-        return new OnlyArticleResponse(
-                article.getId(),
-                article.getTitle(),
-                article.getCreatedAt(),
-                article.getUpdatedAt(),
-                article.getBody(),
-                article.getTeaser(),
-                article.getCoverImage()
-        );
     }
 
     private Article getArticleById(Integer articleId) {

@@ -11,6 +11,7 @@ import org.knpkid.kms.repository.QuoteRepository;
 import org.knpkid.kms.service.AuthorService;
 import org.knpkid.kms.service.QuoteService;
 import org.knpkid.kms.service.ValidationService;
+import org.knpkid.kms.utility.ConvertToModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,7 +40,7 @@ public class QuoteServiceImpl implements QuoteService {
         quote.setAuthor(author);
         quote.setAdmin(admin);
 
-        return toQuoteResponse(quoteRepository.save(quote));
+        return ConvertToModel.quoteResponse(quoteRepository.save(quote));
     }
 
     @Transactional
@@ -63,16 +64,7 @@ public class QuoteServiceImpl implements QuoteService {
         quote.setAuthor(author);
         quote.setBody(request.body());
 
-        return toQuoteResponse(quoteRepository.save(quote));
-    }
-
-    private QuoteResponse toQuoteResponse(Quote quote) {
-        return new QuoteResponse(
-                quote.getId(),
-                quote.getBody(),
-                quote.getAuthor(),
-                quote.getAdmin()
-        );
+        return ConvertToModel.quoteResponse(quoteRepository.save(quote));
     }
 
     private Quote getQuoteById(Integer quoteId) {
