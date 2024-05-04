@@ -35,7 +35,7 @@ public record ArticleResponse (
         @JsonIncludeProperties({"username", "name", "image"})
         Admin admin,
 
-        @JsonIncludeProperties("name")
+        @JsonIncludeProperties({"id", "name"})
         Set<Author> authors,
 
         Image coverImage,
