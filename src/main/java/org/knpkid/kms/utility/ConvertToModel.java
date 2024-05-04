@@ -1,8 +1,10 @@
 package org.knpkid.kms.utility;
 
 import org.knpkid.kms.entity.Article;
+import org.knpkid.kms.entity.Author;
 import org.knpkid.kms.entity.Quote;
 import org.knpkid.kms.model.ArticleResponse;
+import org.knpkid.kms.model.AuthorResponse;
 import org.knpkid.kms.model.OnlyArticleResponse;
 import org.knpkid.kms.model.QuoteResponse;
 
@@ -45,6 +47,15 @@ public class ConvertToModel {
                 quote.getBody(),
                 quote.getAuthor(),
                 quote.getAdmin()
+        );
+    }
+
+    public static AuthorResponse authorResponse(Author author) {
+        return new AuthorResponse(
+                author.getId(),
+                author.getName(),
+                author.getArticles().stream().map(ConvertToModel::articleResponse).toList(),
+                author.getQuotes()
         );
     }
 

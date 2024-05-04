@@ -2,9 +2,13 @@ package org.knpkid.kms.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.knpkid.kms.entity.Author;
+import org.knpkid.kms.model.AuthorResponse;
 import org.knpkid.kms.repository.AuthorRepository;
 import org.knpkid.kms.service.AuthorService;
+import org.knpkid.kms.utility.ConvertToModel;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -51,4 +55,14 @@ public class AuthorServiceImpl implements AuthorService {
                     return authorRepository.save(newAuthor);
                 });
     }
+
+    @Override
+    public AuthorResponse get(int authorId) {
+        final var author = authorRepository.findById(authorId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "author with id '" + authorId + "' is not found"
+                ));
+        return ConvertToModel.authorResponse(author);
+    }
+
 }
