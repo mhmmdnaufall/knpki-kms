@@ -135,6 +135,10 @@ public class ArticleServiceImpl implements ArticleService {
                     builder.like(
                             root.join("tags", JoinType.LEFT).get("id"),
                             "%" + trimmedKeyword.replace(' ', '-') + "%"
+                    ),
+                    builder.like(
+                            root.join("authors", JoinType.LEFT).get("name"),
+                            "%" + trimmedKeyword + "%"
                     )
             )).getRestriction();
         };
