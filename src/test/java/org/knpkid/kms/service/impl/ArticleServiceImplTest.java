@@ -543,8 +543,9 @@ class ArticleServiceImplTest {
                         final var predicate = mock(Predicate.class);
 
                         {
-                            when(builder.or(any(), any(), any())).thenReturn(predicate);
+                            when(builder.or(any(), any(), any(), any())).thenReturn(predicate);
                             when(root.join("tags", JoinType.LEFT)).thenReturn(join);
+                            when(root.join("authors", JoinType.LEFT)).thenReturn(join);
                             when(query.where(any(Predicate.class))).thenReturn(query);
                             when(query.getRestriction()).thenReturn(predicate);
                         }
@@ -554,11 +555,13 @@ class ArticleServiceImplTest {
                         specification.toPredicate(root, query, builder);
 
                         {
-                            verify(builder).or(any(), any(), any());
-                            verify(builder, times(3)).like(any(), anyString());
+                            verify(builder).or(any(), any(), any(), any());
+                            verify(builder, times(4)).like(any(), anyString());
                             verify(root, times(2)).get(anyString());
                             verify(root).join("tags", JoinType.LEFT);
-                            verify(join).get(anyString());
+                            verify(root).join("authors", JoinType.LEFT);
+                            verify(join).get("id"); // get by tag.id
+                            verify(join).get("name"); // get by author.name
 
                         }
 
