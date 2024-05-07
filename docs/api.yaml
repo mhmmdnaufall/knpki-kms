@@ -220,7 +220,7 @@ paths:
                 $ref: "#/components/schemas/WebResponseListOnlyArticleResponse"
               example:
                 data:
-                  - id: 1f24face-9475-44b4-965a-5b811e997252
+                  - id: 1
                     title: Pengaruh BBM Naik 100% kepada Keluarga
                     createdAt: '2024-02-07 16:23:16'
                     updatedAt: '2024-02-07 16:23:16'
@@ -229,7 +229,7 @@ paths:
                     coverImage:
                       id: hf9349f-hv9r320v-v2rhv8-29vhv
                       format: PNG
-                  - id: 607e7f00-84df-4433-b598-6ce8c5d943bd
+                  - id: 2
                     title: Pengaruh BBM Naik 100% kepada Keluarga
                     createdAt: '2024-02-06 23:55:52'
                     updatedAt: '2024-02-06 23:55:52'
@@ -238,7 +238,7 @@ paths:
                     coverImage:
                       id: hf9349f-hv9r320v-v2rhv8-29vhv
                       format: JPG
-                  - id: 8c751e8c-fca5-43f5-bc9a-970b611f8e4f
+                  - id: 3
                     title: this is judul
                     createdAt: '2024-02-06 23:27:56'
                     updatedAt: '2024-02-06 23:27:56'
@@ -247,7 +247,7 @@ paths:
                     coverImage:
                       id: hf9349f-hv9r320v-v2rhv8-29vhv
                       format: JPEG
-                  - id: 6c153e83-5e7b-41fc-a8e5-9d2bb4259d0a
+                  - id: 4
                     title: Ini Judul
                     createdAt: '2024-02-06 01:41:39'
                     updatedAt: '2024-02-06 01:41:39'
@@ -256,7 +256,7 @@ paths:
                     coverImage:
                       id: hf9349f-hv9r320v-v2rhv8-29vhv
                       format: PNG
-                  - id: 2140456f-e0ad-4b7f-83aa-8a448e20d6b1
+                  - id: 5
                     title: Ini Judul
                     createdAt: '2024-02-06 01:40:32'
                     updatedAt: '2024-02-06 01:40:32'
@@ -265,7 +265,7 @@ paths:
                     coverImage:
                       id: hf9349f-hv9r320v-v2rhv8-29vhv
                       format: JPG
-                  - id: 42e918b5-130e-4434-9ddb-385e1f96923c
+                  - id: 6
                     title: Ini Judul
                     createdAt: '2024-02-06 01:40:31'
                     updatedAt: '2024-02-06 01:40:31'
@@ -274,7 +274,7 @@ paths:
                     coverImage:
                       id: hf9349f-hv9r320v-v2rhv8-29vhv
                       format: JPEG
-                  - id: 8eda744b-cb15-445d-b711-9484be66f53a
+                  - id: 7
                     title: Ini Judul
                     createdAt: '2024-02-06 01:40:30'
                     updatedAt: '2024-02-06 01:40:30'
@@ -283,7 +283,7 @@ paths:
                     coverImage:
                       id: hf9349f-hv9r320v-v2rhv8-29vhv
                       format: PNG
-                  - id: f769e575-29a9-4e51-975b-52af1472bdd6
+                  - id: 8
                     title: Ini Judul
                     createdAt: '2024-02-06 01:40:29'
                     updatedAt: '2024-02-06 01:40:29'
@@ -292,7 +292,7 @@ paths:
                     coverImage:
                       id: hf9349f-hv9r320v-v2rhv8-29vhv
                       format: JPG
-                  - id: 95a0c12e-e787-4393-9b55-6ea8b56405a6
+                  - id: 9
                     title: Ini Judul
                     createdAt: '2024-02-06 01:40:28'
                     updatedAt: '2024-02-06 01:40:28'
@@ -301,7 +301,7 @@ paths:
                     coverImage:
                       id: hf9349f-hv9r320v-v2rhv8-29vhv
                       format: JPEG
-                  - id: 6170a8a6-62eb-490e-a3c8-cded3f2b6242
+                  - id: 10
                     title: Ini Judul
                     createdAt: '2024-02-06 01:40:26'
                     updatedAt: '2024-02-06 01:40:26'
@@ -310,7 +310,7 @@ paths:
                     coverImage:
                       id: hf9349f-hv9r320v-v2rhv8-29vhv
                       format: PNG
-                  - id: 6da739a0-3294-422a-8cce-83238858b7e5
+                  - id: 11
                     title: Ini Judul
                     createdAt: '2024-02-06 01:40:25'
                     updatedAt: '2024-02-06 01:40:25'
@@ -319,7 +319,7 @@ paths:
                     coverImage:
                       id: hf9349f-hv9r320v-v2rhv8-29vhv
                       format: JPG
-                  - id: c44702ba-e47d-426d-91c5-62b0d8f0c5e6
+                  - id: 12
                     title: Ini Judul
                     createdAt: '2024-02-06 01:40:24'
                     updatedAt: '2024-02-06 01:40:24'
@@ -356,45 +356,68 @@ paths:
               schema:
                 $ref: "#/components/schemas/WebResponseArticleResponse"
               example:
-                data:
-                  id: 02904f4b-6260-44ad-91a0-caa3d792d245
-                  title: Pengaruh BBM Naik 100% kepada Keluarga
-                  createdAt: 2024-02-07 16:23:16
-                  updatedAt: 2024-03-01 15:11:39
-                  body: Ini merupakan tubuh dari tulisan artikel
-                  teaser: Kerangka Artikel
-                  tags:
-                    - id: bbm
-                      name: bbm
-                    - id: bbm-naik
-                      name: bbm naik
-                    - id: pengaruh-bbm
-                      name: pengaruh bbm
-                  admin:
-                    username: admin
-                    name: Admin
-                    image:
-                      id: as9df8-n2ncv9-jasj2n3-jca989as
-                      format: JPEG
-                  coverImage:
-                    id: fjoj2or-ufje83-mvms93j-vdn3j12
-                    format: JPG
-                  images:
-                    - id: jfuw9kd-nekci3i-jcnwk83-vjnwn3i
-                      format: PNG
-                    - id: g3gg32g-b5g643-bvafg-y2g5gav
-                      format: PNG
-                    - id: nvjdi49-mbjdje9-k394jrk-mvkd93
-                      format: JPG
-                    - id: jvjr03-fjdi340-jcjsk39-kg04cvwf
-                      format: JPEG
-                    - id: jijf-fior890-viworijo-3249023f
-                      format: JPG
-                    - id: vi0few-4nnff-2orh23of-vewf34
-                      format: JPEG
-
-                errors: null
-                paging: null
+                {
+                  "data": {
+                    "id": 23,
+                    "title": "Pengaruh BBM Naik 100% kepada Keluarga",
+                    "createdAt": "2024-05-07 23:32:09",
+                    "updatedAt": "2024-05-07 23:32:09",
+                    "body": "Ini merupakan tubuh dari tulisan artikel",
+                    "teaser": "Kerangka Artikel",
+                    "tags": [
+                      {
+                        "id": "bbm-naik",
+                        "name": "bbm naik"
+                      },
+                      {
+                        "id": "bbm",
+                        "name": "bbm"
+                      },
+                      {
+                        "id": "pengaruh-bbm",
+                        "name": "pengaruh bbm"
+                      }
+                    ],
+                    "admin": {
+                      "username": "mhmmdnaufal",
+                      "name": "Muhammad Naufal",
+                      "image": {
+                        "id": "8accef9a-b08b-4a8a-b216-a822b9ad3fc0",
+                        "format": "JPG"
+                      }
+                    },
+                    "authors": [
+                      {
+                        "id": 23,
+                        "name": "Muhammad Naufal"
+                      },
+                      {
+                        "id": 22,
+                        "name": "Albert Einstein"
+                      }
+                    ],
+                    "coverImage": {
+                      "id": "bb78b4b8-45f8-4243-bbfc-64d13d02e07e",
+                      "format": "JPG"
+                    },
+                    "images": [
+                      {
+                        "id": "423d56c8-91fd-429a-8dd6-ffd24412cebb",
+                        "format": "JPG"
+                      },
+                      {
+                        "id": "1cae7fd1-12d7-4c0b-bd2f-b844fbc3f777",
+                        "format": "JPG"
+                      }
+                    ],
+                    "archive": {
+                      "id": "784fb5bb-5f9c-45cd-ad01-feeec4a42387",
+                      "format": "PDF"
+                    }
+                  },
+                  "errors": null,
+                  "paging": null
+                }
         401:
           $ref: "#/components/responses/401"
 
@@ -409,6 +432,18 @@ paths:
                   description: "title can't be blank"
                   value:
                     data: "title: must not be blank"
+                    errors: null
+                    paging: null
+                mismatch image format:
+                  description: "wrong image format"
+                  value:
+                    data: "coverImage: format does not match, only [jpg, jpeg, png] format are acceptable"
+                    errors: null
+                    paging: null
+                mismatch file format:
+                  description: "wrong file format"
+                  value:
+                    data: "archive: format does not match, only [pdf] format are acceptable"
                     errors: null
                     paging: null
 
@@ -428,7 +463,7 @@ paths:
           schema:
             type: string
           description: Put the `id` of the article you want to view
-          example: 5c020359-a6db-42ba-9285-772e739f2620
+          example: 23
       responses:
         200:
           description: Viewing specified article
@@ -437,45 +472,68 @@ paths:
               schema:
                 $ref: "#/components/schemas/WebResponseArticleResponse"
               example:
-                data:
-                  id: f9467a1b-bc25-45f5-85a1-0b3cdb5f60b1
-                  title: Pengaruh BBM Naik 100% kepada Keluarga
-                  createdAt: 2024-03-01 15:00:00
-                  updatedAt: 2024-03-01 15:00:00
-                  body: Ini merupakan tubuh dari tulisan artikel
-                  teaser: Artikel ini membicarakan definisi artikel
-                  tags:
-                    - id: bbm-naik
-                      name: bbm naik
-                    - id: pengaruh-bbm
-                      name: pengaruh bbm
-                    - id: bbm
-                      name: bbm
-                  admin:
-                    username: admin
-                    name: Admin
-                    image:
-                      id: as9df8-n2ncv9-jasj2n3-jca989as
-                      format: JPEG
-                  coverImage:
-                    id: fjoj2or-ufje83-mvms93j-vdn3j12
-                    format: JPG
-                  images:
-                    - id: jfuw9kd-nekci3i-jcnwk83-vjnwn3i
-                      format: PNG
-                    - id: g3gg32g-b5g643-bvafg-y2g5gav
-                      format: PNG
-                    - id: nvjdi49-mbjdje9-k394jrk-mvkd93
-                      format: JPG
-                    - id: jvjr03-fjdi340-jcjsk39-kg04cvwf
-                      format: JPEG
-                    - id: jijf-fior890-viworijo-3249023f
-                      format: JPG
-                    - id: vi0few-4nnff-2orh23of-vewf34
-                      format: JPEG
-
-                errors: null
-                paging: null
+                {
+                  "data": {
+                    "id": 23,
+                    "title": "Pengaruh BBM Naik 100% kepada Keluarga",
+                    "createdAt": "2024-05-07 23:32:09",
+                    "updatedAt": "2024-05-07 23:32:09",
+                    "body": "Ini merupakan tubuh dari tulisan artikel",
+                    "teaser": "Kerangka Artikel",
+                    "tags": [
+                      {
+                        "id": "bbm-naik",
+                        "name": "bbm naik"
+                      },
+                      {
+                        "id": "bbm",
+                        "name": "bbm"
+                      },
+                      {
+                        "id": "pengaruh-bbm",
+                        "name": "pengaruh bbm"
+                      }
+                    ],
+                    "admin": {
+                      "username": "mhmmdnaufal",
+                      "name": "Muhammad Naufal",
+                      "image": {
+                        "id": "8accef9a-b08b-4a8a-b216-a822b9ad3fc0",
+                        "format": "JPG"
+                      }
+                    },
+                    "authors": [
+                      {
+                        "id": 23,
+                        "name": "Muhammad Naufal"
+                      },
+                      {
+                        "id": 22,
+                        "name": "Albert Einstein"
+                      }
+                    ],
+                    "coverImage": {
+                      "id": "bb78b4b8-45f8-4243-bbfc-64d13d02e07e",
+                      "format": "JPG"
+                    },
+                    "images": [
+                      {
+                        "id": "1cae7fd1-12d7-4c0b-bd2f-b844fbc3f777",
+                        "format": "JPG"
+                      },
+                      {
+                        "id": "423d56c8-91fd-429a-8dd6-ffd24412cebb",
+                        "format": "JPG"
+                      }
+                    ],
+                    "archive": {
+                      "id": "784fb5bb-5f9c-45cd-ad01-feeec4a42387",
+                      "format": "PDF"
+                    }
+                  },
+                  "errors": null,
+                  "paging": null
+                }
 
         404:
           description: Article is not found
@@ -502,7 +560,7 @@ paths:
           schema:
             type: string
           description: Put the `id` of the article you want to update
-          example: 5c020359-a6db-42ba-9285-772e739f2620
+          example: 23
       requestBody:
         required: true
         content:
@@ -517,45 +575,69 @@ paths:
               schema:
                 $ref: "#/components/schemas/WebResponseArticleResponse"
               example:
-                data:
-                  id: 02904f4b-6260-44ad-91a0-caa3d792d245
-                  title: Pengaruh BBM Naik 100% kepada Keluarga
-                  createdAt: 2024-02-07 16:23:16
-                  updatedAt: 2024-03-01 15:11:39
-                  body: Ini merupakan tubuh dari tulisan artikel
-                  teaser: Kerangka Artikel
-                  tags:
-                    - id: bbm
-                      name: bbm
-                    - id: bbm-naik
-                      name: bbm naik
-                    - id: pengaruh-bbm
-                      name: pengaruh bbm
-                  admin:
-                    username: admin
-                    name: Admin
-                    image:
-                      id: as9df8-n2ncv9-jasj2n3-jca989as
-                      format: JPEG
-                  coverImage:
-                    id: fjoj2or-ufje83-mvms93j-vdn3j12
-                    format: JPG
-                  images:
-                    - id: jfuw9kd-nekci3i-jcnwk83-vjnwn3i
-                      format: PNG
-                    - id: g3gg32g-b5g643-bvafg-y2g5gav
-                      format: PNG
-                    - id: nvjdi49-mbjdje9-k394jrk-mvkd93
-                      format: JPG
-                    - id: jvjr03-fjdi340-jcjsk39-kg04cvwf
-                      format: JPEG
-                    - id: jijf-fior890-viworijo-3249023f
-                      format: JPG
-                    - id: vi0few-4nnff-2orh23of-vewf34
-                      format: JPEG
-
-                errors: null
-                paging: null
+                {
+                  "data": {
+                    "id": 23,
+                    "title": "form title updated",
+                    "createdAt": "2024-05-07 23:32:09",
+                    "updatedAt": "2024-05-07 23:35:48",
+                    "body": "form body updated",
+                    "teaser": "form teaser updated",
+                    "tags": [
+                      {
+                        "id": "naufal",
+                        "name": "naufal"
+                      }
+                    ],
+                    "admin": {
+                      "username": "mhmmdnaufal",
+                      "name": "Muhammad Naufal",
+                      "image": {
+                        "id": "8accef9a-b08b-4a8a-b216-a822b9ad3fc0",
+                        "format": "JPG"
+                      }
+                    },
+                    "authors": [
+                      {
+                        "id": 23,
+                        "name": "Muhammad Naufal"
+                      }
+                    ],
+                    "coverImage": null,
+                    "images": [ ],
+                    "archive": {
+                      "id": "88a96836-b2de-4092-a510-2b7a6057b86e",
+                      "format": "PDF"
+                    }
+                  },
+                  "errors": null,
+                  "paging": null
+                }
+        400:
+          description: Wrong format
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebResponse"
+              examples:
+                blank title:
+                  description: "title can't be blank"
+                  value:
+                    data: "title: must not be blank"
+                    errors: null
+                    paging: null
+                mismatch image format:
+                  description: "wrong image format"
+                  value:
+                    data: "coverImage: format does not match, only [jpg, jpeg, png] format are acceptable"
+                    errors: null
+                    paging: null
+                mismatch file format:
+                  description: "wrong file format"
+                  value:
+                    data: "archive: format does not match, only [pdf] format are acceptable"
+                    errors: null
+                    paging: null
         401:
           $ref: "#/components/responses/401"
 
@@ -589,7 +671,7 @@ paths:
           schema:
             type: string
           description: Put the `id` of the article you want to delete
-          example: 5c020359-a6db-42ba-9285-772e739f2620
+          example: 1
       responses:
         204:
           description: Success Delete Article
@@ -636,7 +718,7 @@ paths:
           schema:
             type: string
           description: Put the tags id you want to search
-          example: bbm-naik
+          example: bbm
         - name: page
           in: query
           required: false
@@ -660,113 +742,52 @@ paths:
               schema:
                 $ref: "#/components/schemas/WebResponseListOnlyArticleResponse"
               example:
-                data:
-                  - id: 1f24face-9475-44b4-965a-5b811e997252
-                    title: Pengaruh BBM Naik 100% kepada Keluarga
-                    createdAt: '2024-02-07 16:23:16'
-                    updatedAt: '2024-02-07 16:23:16'
-                    body: Ini merupakan tubuh dari tulisan artikel
-                    teaser: Kerangka Artikel
-                    coverImage: null
-                  - id: 607e7f00-84df-4433-b598-6ce8c5d943bd
-                    title: Pengaruh BBM Naik 100% kepada Keluarga
-                    createdAt: '2024-02-06 23:55:52'
-                    updatedAt: '2024-02-06 23:55:52'
-                    body: Ini merupakan tubuh dari tulisan artikel
-                    teaser: Kerangka Artikel
-                    coverImage: null
-                  - id: 8c751e8c-fca5-43f5-bc9a-970b611f8e4f
-                    title: this is judul
-                    createdAt: '2024-02-06 23:27:56'
-                    updatedAt: '2024-02-06 23:27:56'
-                    body: body
-                    teaser: teaser baru ini
-                    coverImage:
-                      id: 9d89407c-cb23-4f33-85b5-282faeece29b
-                      format: PNG
-                  - id: 6c153e83-5e7b-41fc-a8e5-9d2bb4259d0a
-                    title: Ini Judul
-                    createdAt: '2024-02-06 01:41:39'
-                    updatedAt: '2024-02-06 01:41:39'
-                    body: Ini merupakan tubuh dari tulisan artikel
-                    teaser: Kerangka Artikel
-                    coverImage:
-                      id: b35bb944-bde3-4056-bcfa-9ff20c33c9c7
-                      format: JPG
-                  - id: 2140456f-e0ad-4b7f-83aa-8a448e20d6b1
-                    title: Ini Judul
-                    createdAt: '2024-02-06 01:40:32'
-                    updatedAt: '2024-02-06 01:40:32'
-                    body: Ini merupakan tubuh dari tulisan artikel
-                    teaser: Kerangka Artikel
-                    coverImage: null
-                  - id: 42e918b5-130e-4434-9ddb-385e1f96923c
-                    title: Ini Judul
-                    createdAt: '2024-02-06 01:40:31'
-                    updatedAt: '2024-02-06 01:40:31'
-                    body: Ini merupakan tubuh dari tulisan artikel
-                    teaser: Kerangka Artikel
-                    coverImage: null
-                  - id: 8eda744b-cb15-445d-b711-9484be66f53a
-                    title: Ini Judul
-                    createdAt: '2024-02-06 01:40:30'
-                    updatedAt: '2024-02-06 01:40:30'
-                    body: Ini merupakan tubuh dari tulisan artikel
-                    teaser: Kerangka Artikel
-                    coverImage: null
-                  - id: f769e575-29a9-4e51-975b-52af1472bdd6
-                    title: Ini Judul
-                    createdAt: '2024-02-06 01:40:29'
-                    updatedAt: '2024-02-06 01:40:29'
-                    body: Ini merupakan tubuh dari tulisan artikel
-                    teaser: Kerangka Artikel
-                    coverImage: null
-                  - id: 95a0c12e-e787-4393-9b55-6ea8b56405a6
-                    title: Ini Judul
-                    createdAt: '2024-02-06 01:40:28'
-                    updatedAt: '2024-02-06 01:40:28'
-                    body: Ini merupakan tubuh dari tulisan artikel
-                    teaser: Kerangka Artikel
-                    coverImage: null
-                  - id: 6170a8a6-62eb-490e-a3c8-cded3f2b6242
-                    title: Ini Judul
-                    createdAt: '2024-02-06 01:40:26'
-                    updatedAt: '2024-02-06 01:40:26'
-                    body: Ini merupakan tubuh dari tulisan artikel
-                    teaser: Kerangka Artikel
-                    coverImage: null
-                  - id: 6da739a0-3294-422a-8cce-83238858b7e5
-                    title: Ini Judul
-                    createdAt: '2024-02-06 01:40:25'
-                    updatedAt: '2024-02-06 01:40:25'
-                    body: Ini merupakan tubuh dari tulisan artikel
-                    teaser: Kerangka Artikel
-                    coverImage: null
-                  - id: c44702ba-e47d-426d-91c5-62b0d8f0c5e6
-                    title: Ini Judul
-                    createdAt: '2024-02-06 01:40:24'
-                    updatedAt: '2024-02-06 01:40:24'
-                    body: Ini merupakan tubuh dari tulisan artikel
-                    teaser: Kerangka Artikel
-                    coverImage:
-                      id: 5bb6a41f-8d5f-45e6-b893-500826de66d6
-                      format: JPEG
-                errors: null
-                paging:
-                  currentPage: 0
-                  totalPage: 5
-                  size: 12
-
-        404:
-          description: Article with specified tag is not found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/WebResponse"
-              example:
-                data: null
-                errors: Article with tag 'orang-tua' is not found
-                paging: null
+                {
+                  "data": [
+                    {
+                      "id": 22,
+                      "title": "Pengaruh BBM Naik 100% kepada Keluarga",
+                      "createdAt": "2024-05-07 23:30:40",
+                      "updatedAt": "2024-05-07 23:30:40",
+                      "body": "Ini merupakan tubuh dari tulisan artikel",
+                      "teaser": "Kerangka Artikel",
+                      "coverImage": {
+                        "id": "70cdc03d-bb07-48b7-83e4-a822c49303d1",
+                        "format": "JPG"
+                      }
+                    },
+                    {
+                      "id": 21,
+                      "title": "Pengaruh BBM Naik 100% kepada Keluarga",
+                      "createdAt": "2024-05-07 23:16:06",
+                      "updatedAt": "2024-05-07 23:16:06",
+                      "body": "Ini merupakan tubuh dari tulisan artikel",
+                      "teaser": "Kerangka Artikel",
+                      "coverImage": {
+                        "id": "1c657dfd-51db-4e53-8cf7-89be088d88c7",
+                        "format": "JPG"
+                      }
+                    },
+                    {
+                      "id": 20,
+                      "title": "Pengaruh BBM Naik 100% kepada Keluarga",
+                      "createdAt": "2024-05-05 15:17:49",
+                      "updatedAt": "2024-05-05 15:17:49",
+                      "body": "Ini merupakan tubuh dari tulisan artikel",
+                      "teaser": "Kerangka Artikel",
+                      "coverImage": {
+                        "id": "850c32dc-7912-4152-bad6-3e2d7261ddfc",
+                        "format": "JPG"
+                      }
+                    }
+                  ],
+                  "errors": null,
+                  "paging": {
+                    "currentPage": 0,
+                    "totalPage": 1,
+                    "size": 12
+                  }
+                }
 
   /api/admin/{username}/articles:
     get:
@@ -788,102 +809,70 @@ paths:
               schema:
                 $ref: "#/components/schemas/WebResponseListOnlyArticleResponse"
               example:
-                data:
-                  - id: 1f24face-9475-44b4-965a-5b811e997252
-                    title: Pengaruh BBM Naik 100% kepada Keluarga
-                    createdAt: '2024-02-07 16:23:16'
-                    updatedAt: '2024-02-07 16:23:16'
-                    body: Ini merupakan tubuh dari tulisan artikel
-                    teaser: Kerangka Artikel
-                    coverImage: null
-                  - id: 607e7f00-84df-4433-b598-6ce8c5d943bd
-                    title: Pengaruh BBM Naik 100% kepada Keluarga
-                    createdAt: '2024-02-06 23:55:52'
-                    updatedAt: '2024-02-06 23:55:52'
-                    body: Ini merupakan tubuh dari tulisan artikel
-                    teaser: Kerangka Artikel
-                    coverImage: null
-                  - id: 8c751e8c-fca5-43f5-bc9a-970b611f8e4f
-                    title: this is judul
-                    createdAt: '2024-02-06 23:27:56'
-                    updatedAt: '2024-02-06 23:27:56'
-                    body: body
-                    teaser: teaser baru ini
-                    coverImage:
-                      id: 9d89407c-cb23-4f33-85b5-282faeece29b
-                      format: PNG
-                  - id: 6c153e83-5e7b-41fc-a8e5-9d2bb4259d0a
-                    title: Ini Judul
-                    createdAt: '2024-02-06 01:41:39'
-                    updatedAt: '2024-02-06 01:41:39'
-                    body: Ini merupakan tubuh dari tulisan artikel
-                    teaser: Kerangka Artikel
-                    coverImage:
-                      id: b35bb944-bde3-4056-bcfa-9ff20c33c9c7
-                      format: JPG
-                  - id: 2140456f-e0ad-4b7f-83aa-8a448e20d6b1
-                    title: Ini Judul
-                    createdAt: '2024-02-06 01:40:32'
-                    updatedAt: '2024-02-06 01:40:32'
-                    body: Ini merupakan tubuh dari tulisan artikel
-                    teaser: Kerangka Artikel
-                    coverImage: null
-                  - id: 42e918b5-130e-4434-9ddb-385e1f96923c
-                    title: Ini Judul
-                    createdAt: '2024-02-06 01:40:31'
-                    updatedAt: '2024-02-06 01:40:31'
-                    body: Ini merupakan tubuh dari tulisan artikel
-                    teaser: Kerangka Artikel
-                    coverImage: null
-                  - id: 8eda744b-cb15-445d-b711-9484be66f53a
-                    title: Ini Judul
-                    createdAt: '2024-02-06 01:40:30'
-                    updatedAt: '2024-02-06 01:40:30'
-                    body: Ini merupakan tubuh dari tulisan artikel
-                    teaser: Kerangka Artikel
-                    coverImage: null
-                  - id: f769e575-29a9-4e51-975b-52af1472bdd6
-                    title: Ini Judul
-                    createdAt: '2024-02-06 01:40:29'
-                    updatedAt: '2024-02-06 01:40:29'
-                    body: Ini merupakan tubuh dari tulisan artikel
-                    teaser: Kerangka Artikel
-                    coverImage: null
-                  - id: 95a0c12e-e787-4393-9b55-6ea8b56405a6
-                    title: Ini Judul
-                    createdAt: '2024-02-06 01:40:28'
-                    updatedAt: '2024-02-06 01:40:28'
-                    body: Ini merupakan tubuh dari tulisan artikel
-                    teaser: Kerangka Artikel
-                    coverImage: null
-                  - id: 6170a8a6-62eb-490e-a3c8-cded3f2b6242
-                    title: Ini Judul
-                    createdAt: '2024-02-06 01:40:26'
-                    updatedAt: '2024-02-06 01:40:26'
-                    body: Ini merupakan tubuh dari tulisan artikel
-                    teaser: Kerangka Artikel
-                    coverImage: null
-                  - id: 6da739a0-3294-422a-8cce-83238858b7e5
-                    title: Ini Judul
-                    createdAt: '2024-02-06 01:40:25'
-                    updatedAt: '2024-02-06 01:40:25'
-                    body: Ini merupakan tubuh dari tulisan artikel
-                    teaser: Kerangka Artikel
-                    coverImage: null
-                  - id: c44702ba-e47d-426d-91c5-62b0d8f0c5e6
-                    title: Ini Judul
-                    createdAt: '2024-02-06 01:40:24'
-                    updatedAt: '2024-02-06 01:40:24'
-                    body: Ini merupakan tubuh dari tulisan artikel
-                    teaser: Kerangka Artikel
-                    coverImage:
-                      id: 5bb6a41f-8d5f-45e6-b893-500826de66d6
-                      format: JPEG
-                errors: null
-                paging:
-                  currentPage: 0
-                  totalPage: 5
-                  size: 12
+                {
+                  "data": [
+                    {
+                      "id": 23,
+                      "title": "form title updated",
+                      "createdAt": "2024-05-07 23:32:09",
+                      "updatedAt": "2024-05-07 23:35:48",
+                      "body": "form body updated",
+                      "teaser": "form teaser updated",
+                      "coverImage": null
+                    },
+                    {
+                      "id": 22,
+                      "title": "Pengaruh BBM Naik 100% kepada Keluarga",
+                      "createdAt": "2024-05-07 23:30:40",
+                      "updatedAt": "2024-05-07 23:30:40",
+                      "body": "Ini merupakan tubuh dari tulisan artikel",
+                      "teaser": "Kerangka Artikel",
+                      "coverImage": {
+                        "id": "70cdc03d-bb07-48b7-83e4-a822c49303d1",
+                        "format": "JPG"
+                      }
+                    },
+                    {
+                      "id": 21,
+                      "title": "Pengaruh BBM Naik 100% kepada Keluarga",
+                      "createdAt": "2024-05-07 23:16:06",
+                      "updatedAt": "2024-05-07 23:16:06",
+                      "body": "Ini merupakan tubuh dari tulisan artikel",
+                      "teaser": "Kerangka Artikel",
+                      "coverImage": {
+                        "id": "1c657dfd-51db-4e53-8cf7-89be088d88c7",
+                        "format": "JPG"
+                      }
+                    },
+                    {
+                      "id": 20,
+                      "title": "Pengaruh BBM Naik 100% kepada Keluarga",
+                      "createdAt": "2024-05-05 15:17:49",
+                      "updatedAt": "2024-05-05 15:17:49",
+                      "body": "Ini merupakan tubuh dari tulisan artikel",
+                      "teaser": "Kerangka Artikel",
+                      "coverImage": {
+                        "id": "850c32dc-7912-4152-bad6-3e2d7261ddfc",
+                        "format": "JPG"
+                      }
+                    },
+                    {
+                      "id": 19,
+                      "title": "form title updated",
+                      "createdAt": "2024-05-03 08:53:43",
+                      "updatedAt": "2024-05-04 17:51:18",
+                      "body": "form body updated",
+                      "teaser": "form teaser updated",
+                      "coverImage": null
+                    }
+                  ],
+                  "errors": null,
+                  "paging": {
+                    "currentPage": 0,
+                    "totalPage": 1,
+                    "size": 12
+                  }
+                }
 
   /image/{imageFileName}:
     get:
@@ -1013,6 +1002,7 @@ components:
       required:
         - body
         - title
+        - authors
       type: object
       properties:
         title:
@@ -1054,6 +1044,7 @@ components:
       required:
         - body
         - title
+        - authors
       properties:
         title:
           maxLength: 100
