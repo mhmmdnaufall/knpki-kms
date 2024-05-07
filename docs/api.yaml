@@ -1024,6 +1024,14 @@ components:
           items:
             type: string
             format: binary
+        authors:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        archive:
+          type: string
+          format: binary
 
     UpdateArticleRequest:
       type: object
@@ -1070,6 +1078,15 @@ components:
             - aisodjoijnvur0-vUAVHFNH4392upfjFEJNP[RJPFEJSRa5ybqhww
             - ohjnf08u4n0t4u30rajfvapjevjeqjtqjbatq4t632tq4wt4tn
             - 5923ybn9yahbtoghosdhgoabjtogj502ajvfjojnbjj09ut
+        authors:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        archive:
+          type: string
+          format: binary
+          example: vy948vy9vhnarshnv1yt01243yattvantvo123atel123dktla231jtqvj
 
     ArticleResponse:
       type: object
@@ -1116,6 +1133,16 @@ components:
                     - PNG
                     - JPG
                     - JPEG
+        authors:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              name:
+                type: string
+
         coverImage:
           type: object
           properties:
@@ -1140,6 +1167,17 @@ components:
                   - PNG
                   - JPG
                   - JPEG
+        archive:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              format:
+                type: string
+                enum:
+                  - PDF
 
     OnlyArticleResponse:
       type: object
