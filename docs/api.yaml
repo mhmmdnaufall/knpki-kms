@@ -33,14 +33,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/WebResponse"
-              example:
-                data:
-                  username: mhmmdnaufal
-                  name: Naufal
-                  image: jfvnrhofhishvf3fi1rf31y4rt9wurofurjqi]igtgi-2jgu4...
-                errors: null
-                paging: null
+                $ref: "#/components/schemas/WebResponseAdminResponse"
         401:
           $ref: "#/components/responses/401"
 
@@ -979,6 +972,29 @@ components:
 
   schemas:
 
+    AdminResponse:
+      type: object
+      properties:
+        username:
+          type: string
+          example: "mhmmdnaufal"
+        name:
+          type: string
+          example: "Muhammad Naufal"
+        image:
+          type: object
+          properties:
+            id:
+              type: string
+              example: 8accef9a-b08b-4a8a-b216-a822b9ad3fc0
+            format:
+              type: string
+              enum:
+                - JPG
+                - JPEG
+                - PNG
+              example: JPG
+
     LoginAdminRequest:
       type: object
       properties:
@@ -1264,6 +1280,17 @@ components:
         size:
           type: integer
           format: int32
+
+    WebResponseAdminResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/AdminResponse'
+        errors:
+          type: string
+          example: null
+        paging:
+          $ref: '#/components/schemas/PagingResponse'
 
     WebResponseListOnlyArticleResponse:
       type: object
