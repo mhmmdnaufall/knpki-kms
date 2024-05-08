@@ -16,6 +16,7 @@ tags:
   - name: Admin
   - name: Article
   - name: Image
+  - name: Quote
 
 
 paths:
@@ -913,6 +914,177 @@ paths:
                 errors: "'2d90545b-b069-48b1-b787-f44d2ff1be17.png' is not found"
                 paging: null
 
+  /api/quotes:
+    post:
+      summary: Create Quote
+      description: For create new quote. only for logged-in account (admin)
+      tags:
+        - Quote
+      security:
+        - BearerToken: []
+        - CsrfToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateQuoteRequest'
+      responses:
+        201:
+          description: Success create new quote
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebResponseQuoteResponse"
+              example:
+                {
+                  "data": {
+                    "id": 8,
+                    "body": "Insanity is doing the same thing over and over again and expecting different results",
+                    "author": {
+                      "id": 22,
+                      "name": "Albert Einstein"
+                    },
+                    "admin": {
+                      "username": "mhmmdnaufal",
+                      "name": "Muhammad Naufal",
+                      "image": {
+                        "id": "8accef9a-b08b-4a8a-b216-a822b9ad3fc0",
+                        "format": "JPG"
+                      }
+                    }
+                  },
+                  "errors": null,
+                  "paging": null
+                }
+        400:
+          description: Wrong format
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebResponse"
+              examples:
+                blank body:
+                  description: "body can't be blank"
+                  value:
+                    {
+                      "data": null,
+                      "errors": "body: must not be blank",
+                      "paging": null
+                    }
+                blank author:
+                  description: "author can't be blank"
+                  value:
+                    {
+                      "data": null,
+                      "errors": "author: must not be blank",
+                      "paging": null
+                    }
+                body & author blank:
+                  description: "body and author can't be blank"
+                  value:
+                    {
+                      "data": null,
+                      "errors": "body: must not be blank, author: must not be blank",
+                      "paging": null
+                    }
+        401:
+          $ref: "#/components/responses/401"
+        403:
+          $ref: "#/components/responses/403"
+
+  /api/quotes/{quoteId}:
+    put:
+      summary: Update Quote
+      tags:
+        - Quote
+      security:
+        - BearerToken: []
+        - CsrfToken: []
+      parameters:
+        - name: articleId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Put the `id` of the article you want to update
+          example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateQuoteRequest'
+      responses:
+        200:
+          description: Update Quote Successed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuoteResponse'
+
+        400:
+          description: Wrong format
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebResponse"
+              examples:
+                blank body:
+                  description: "body can't be blank"
+                  value:
+                    {
+                      "data": null,
+                      "errors": "body: must not be blank",
+                      "paging": null
+                    }
+                blank author:
+                  description: "author can't be blank"
+                  value:
+                    {
+                      "data": null,
+                      "errors": "author: must not be blank",
+                      "paging": null
+                    }
+                body & author blank:
+                  description: "body and author can't be blank"
+                  value:
+                    {
+                      "data": null,
+                      "errors": "body: must not be blank, author: must not be blank",
+                      "paging": null
+                    }
+        401:
+          $ref: "#/components/responses/401"
+        403:
+          $ref: "#/components/responses/403"
+
+    delete:
+      summary: Delete Quote
+      description: For deleting article. only for logged-in account (admin)
+      tags:
+        - Quote
+      security:
+        - BearerToken: []
+        - CsrfToken: []
+      parameters:
+        - name: articleId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Put the `id` of the article you want to update
+          example: 1
+      responses:
+        204:
+          description: Success Delete Article
+
+        401:
+          $ref: "#/components/responses/401"
+
+        403:
+          $ref: "#/components/responses/403"
+
 components:
 
   securitySchemes:
@@ -1238,6 +1410,76 @@ components:
           type: string
           format: binary
 
+    CreateQuoteRequest:
+      required:
+        - body
+        - author
+      type: object
+      properties:
+        body:
+          type: string
+          maxLength: 200
+          example: Insanity is doing the same thing over and over again and expecting different results
+        author:
+          type: string
+          maxLength: 100
+          example: Albert Einstein
+
+    UpdateQuoteRequest:
+      required:
+        - body
+        - author
+      type: object
+      properties:
+        body:
+          type: string
+          maxLength: 200
+          example: Insanity is doing the same thing over and over again and expecting different results
+        author:
+          type: string
+          maxLength: 100
+          example: Albert Einstein
+
+    QuoteResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        body:
+          type: string
+          example: Insanity is doing the same thing over and over again and expecting different results
+        author:
+          type: object
+          properties:
+            id:
+              type: integer
+              example: 2
+            name:
+              type: string
+              example: Albert Einstein
+        admin:
+          type: object
+          properties:
+            username:
+              type: string
+              example: mhmmdnaufal
+            name:
+              type: string
+            image:
+              type: object
+              properties:
+                id:
+                  type: string
+                  example: 8accef9a-b08b-4a8a-b216-a822b9ad3fc0
+                format:
+                  type: string
+                  enum:
+                    - JPG
+                    - JPEG
+                    - PNG
+                  example: JPG
+
     TokenResponse:
       type: object
       required:
@@ -1320,6 +1562,16 @@ components:
       properties:
         data:
           $ref: '#/components/schemas/ArticleResponse'
+        errors:
+          type: string
+        paging:
+          $ref: '#/components/schemas/PagingResponse'
+
+    WebResponseQuoteResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/QuoteResponse'
         errors:
           type: string
         paging:
