@@ -17,6 +17,7 @@ tags:
   - name: Article
   - name: Image
   - name: Quote
+  - name: Archive
 
 
 paths:
@@ -1084,6 +1085,51 @@ paths:
 
         403:
           $ref: "#/components/responses/403"
+
+  /archives/{archiveName}:
+    get:
+      tags:
+        - Archive
+      summary: Get Archive OR Download Archive
+      parameters:
+        - name: archiveName
+          in: path
+          required: true
+          schema:
+            type: string
+            example: a48f6cd3-46d4-4c50-bb90-c04be3bd92cb.pdf
+        - name: download
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: false
+      responses:
+        200:
+          description: Success get archive file
+          headers:
+            Content-Disposition:
+              description: This header is set if `download=true` in query parameter
+              schema:
+                type: string
+                example: attachment; filename="a48f6cd3-46d4-4c50-bb90-c04be3bd92cb.pdf"
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+        404:
+          description: there's no image with given name
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebResponse"
+              example:
+                data: null
+                errors: "'a48f6cd3-46d4-4c50-bb90-c04be3bd92cb.pdf' is not found"
+                paging: null
+
+
 
 components:
 
