@@ -22,6 +22,7 @@ public class QuoteController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
+    @ResponseStatus(HttpStatus.CREATED)
     public WebResponse<QuoteResponse> create(@RequestBody CreateQuoteRequest request, Admin admin) {
         final var quoteResponse = quoteService.create(request, admin);
         return new WebResponse<>(quoteResponse, null, null);
