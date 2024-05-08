@@ -19,7 +19,7 @@ import static org.knpkid.kms.Constant.ARCHIVE_PATH_DIRECTORY;
 public class ArchiveController {
 
     @GetMapping(
-            path = "/api/archives/{archiveName}",
+            path = "/archives/{archiveName}",
             produces = MediaType.APPLICATION_PDF_VALUE
     )
     public byte[] getOrDownload(
