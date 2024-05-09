@@ -1059,6 +1059,18 @@ paths:
           $ref: "#/components/responses/401"
         403:
           $ref: "#/components/responses/403"
+        404:
+          description: quote not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebResponse'
+              example:
+                {
+                  "data": null,
+                  "errors": "quote with id '1' is not found",
+                  "paging": null
+                }
 
     delete:
       summary: Delete Quote
@@ -1085,6 +1097,19 @@ paths:
 
         403:
           $ref: "#/components/responses/403"
+
+        404:
+          description: quote not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebResponse'
+              example:
+                {
+                  "data": null,
+                  "errors": "quote with id '1' is not found",
+                  "paging": null
+                }
 
   /archives/{archiveName}:
     get:
