@@ -1008,7 +1008,7 @@ paths:
           required: true
           schema:
             type: integer
-          description: Put the `id` of the article you want to update
+          description: Put the `id` of the quote you want to update
           example: 1
       requestBody:
         required: true
@@ -1086,7 +1086,7 @@ paths:
           required: true
           schema:
             type: integer
-          description: Put the `id` of the article you want to update
+          description: Put the `id` of the quote you want to update
           example: 1
       responses:
         204:
