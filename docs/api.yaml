@@ -1129,6 +1129,121 @@ paths:
                 errors: "'a48f6cd3-46d4-4c50-bb90-c04be3bd92cb.pdf' is not found"
                 paging: null
 
+  /api/authors/{authorId}:
+    get:
+      parameters:
+        - name: authorId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Put the `id` of the author you want to get
+          example: 1
+      responses:
+        200:
+          description: success get author
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebResponseAuthorResponse'
+              example:
+                {
+                  "data": {
+                    "id": 1,
+                    "name": "Albert Einstein",
+                    "articles": [
+                      {
+                        "id": 20,
+                        "title": "Pengaruh BBM Naik 100% kepada Keluarga",
+                        "createdAt": "2024-05-05 15:17:49",
+                        "updatedAt": "2024-05-05 15:17:49",
+                        "body": "Ini merupakan tubuh dari tulisan artikel",
+                        "teaser": "Kerangka Artikel",
+                        "tags": [
+                          {
+                            "id": "pengaruh-bbm",
+                            "name": "pengaruh bbm"
+                          },
+                          {
+                            "id": "bbm",
+                            "name": "bbm"
+                          },
+                          {
+                            "id": "bbm-naik",
+                            "name": "bbm naik"
+                          }
+                        ],
+                        "admin": {
+                          "username": "mhmmdnaufal",
+                          "name": "Muhammad Naufal",
+                          "image": {
+                            "id": "8accef9a-b08b-4a8a-b216-a822b9ad3fc0",
+                            "format": "JPG"
+                          }
+                        },
+                        "authors": [
+                          {
+                            "id": 1,
+                            "name": "Albert Einstein"
+                          }
+                        ],
+                        "coverImage": {
+                          "id": "850c32dc-7912-4152-bad6-3e2d7261ddfc",
+                          "format": "JPG"
+                        },
+                        "images": [
+                          {
+                            "id": "70eab26b-83a7-429a-a80f-d3ae6a438107",
+                            "format": "JPG"
+                          },
+                          {
+                            "id": "72e60fcb-9f8e-4cdf-903a-38c40ca3ae80",
+                            "format": "JPG"
+                          }
+                        ],
+                        "archive": {
+                          "id": "f0c5f880-e092-4b2b-8731-031e576e2cb1",
+                          "format": "PDF"
+                        }
+                      }
+                    ],
+                    "quotes": [
+                      {
+                        "id": 7,
+                        "body": "Insanity is doing the same thing over and over again and expecting different results",
+                        "author": {
+                          "id": 22,
+                          "name": "Albert Einstein"
+                        },
+                        "admin": {
+                          "username": "mhmmdnaufal",
+                          "name": "Muhammad Naufal",
+                          "image": {
+                            "id": "8accef9a-b08b-4a8a-b216-a822b9ad3fc0",
+                            "format": "JPG"
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  "errors": null,
+                  "paging": null
+                }
+        404:
+          description: author not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebResponse'
+              example:
+                {
+                  "data": null,
+                  "errors": "author with id '1' is not found",
+                  "paging": null
+                }
+
+
+
 
 
 components:
@@ -1534,6 +1649,23 @@ components:
         token:
           type: string
 
+    AuthorResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        articles:
+          type: array
+          items:
+            $ref: '#/components/schemas/ArticleResponse'
+        quotes:
+          type: array
+          items:
+            $ref: '#/components/schemas/QuoteResponse'
+
+
     WebResponse:
       type: object
       properties:
@@ -1618,6 +1750,16 @@ components:
       properties:
         data:
           $ref: '#/components/schemas/QuoteResponse'
+        errors:
+          type: string
+        paging:
+          $ref: '#/components/schemas/PagingResponse'
+
+    WebResponseAuthorResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/AuthorResponse'
         errors:
           type: string
         paging:
