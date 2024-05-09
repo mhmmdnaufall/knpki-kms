@@ -64,7 +64,7 @@ public class ConvertToModel {
                 author.getId(),
                 author.getName(),
                 articleList.stream().map(ConvertToModel::articleResponse).toList(),
-                quoteList
+                quoteList.stream().map(ConvertToModel::quoteResponse).toList()
         );
     }
 
