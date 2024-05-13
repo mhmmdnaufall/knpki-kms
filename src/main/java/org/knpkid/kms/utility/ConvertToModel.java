@@ -48,6 +48,8 @@ public class ConvertToModel {
         return new QuoteResponse(
                 quote.getId(),
                 quote.getBody(),
+                quote.getCreatedAt(),
+                quote.getUpdatedAt(),
                 quote.getAuthor(),
                 quote.getAdmin()
         );

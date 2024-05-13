@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
+
 @RequiredArgsConstructor
 @Service
 @Slf4j
@@ -63,6 +65,7 @@ public class QuoteServiceImpl implements QuoteService {
 
         quote.setAuthor(author);
         quote.setBody(request.body());
+        quote.setUpdatedAt(LocalDateTime.now());
 
         return ConvertToModel.quoteResponse(quoteRepository.save(quote));
     }

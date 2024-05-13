@@ -4,11 +4,15 @@ import org.junit.jupiter.api.Test;
 import org.knpkid.kms.entity.Admin;
 import org.knpkid.kms.entity.Author;
 
+import java.time.LocalDateTime;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class QuoteResponseTest {
 
-    private final QuoteResponse response = new QuoteResponse(1, "body", new Author(), new Admin());
+    private static final LocalDateTime now = LocalDateTime.now();
+
+    private final QuoteResponse response = new QuoteResponse(1, "body", now, now, new Author(), new Admin());
 
     @Test
     void id() {
@@ -18,6 +22,16 @@ class QuoteResponseTest {
     @Test
     void body() {
         assertEquals("body", response.body());
+    }
+
+    @Test
+    void createdAt() {
+        assertEquals(now, response.createdAt());
+    }
+
+    @Test
+    void updatedAt() {
+        assertEquals(now, response.updatedAt());
     }
 
     @Test

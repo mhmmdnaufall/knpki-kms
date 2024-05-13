@@ -12,6 +12,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -34,16 +36,19 @@ class QuoteControllerTest {
         final var admin = new Admin();
         admin.setUsername("admin");
 
+        final var now = LocalDateTime.now();
         {
             when(quoteService.create(request, admin)).
                     thenReturn(new QuoteResponse(
-                            1, "body", author, admin
+                            1, "body", now, now, author, admin
                     ));
         }
 
         final var webResponseQuoteResponse = quoteController.create(request, admin);
         assertEquals(1, webResponseQuoteResponse.data().id());
         assertEquals("body", webResponseQuoteResponse.data().body());
+        assertEquals(now, webResponseQuoteResponse.data().createdAt());
+        assertEquals(now, webResponseQuoteResponse.data().updatedAt());
         assertEquals(author, webResponseQuoteResponse.data().author());
         assertEquals(admin, webResponseQuoteResponse.data().admin());
 
@@ -66,9 +71,10 @@ class QuoteControllerTest {
         admin.setUsername("admin");
 
         final var request = new UpdateQuoteRequest("body", author.getName());
+        final var now = LocalDateTime.now();
 
         when(quoteService.update(1, request, admin))
-                .thenReturn(new QuoteResponse(1, request.body(), author, admin));
+                .thenReturn(new QuoteResponse(1, request.body(), now, now, author, admin));
 
         final var webResponseQuoteResponse = quoteController.update(1, request, admin);
 
@@ -76,6 +82,8 @@ class QuoteControllerTest {
         assertEquals("author", webResponseQuoteResponse.data().author().getName());
         assertEquals("admin", webResponseQuoteResponse.data().admin().getUsername());
         assertEquals("body", webResponseQuoteResponse.data().body());
+        assertEquals(now, webResponseQuoteResponse.data().createdAt());
+        assertEquals(now, webResponseQuoteResponse.data().updatedAt());
         assertEquals(1, webResponseQuoteResponse.data().id());
     }
 }

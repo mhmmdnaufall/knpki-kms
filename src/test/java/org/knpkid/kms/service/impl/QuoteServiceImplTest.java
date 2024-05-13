@@ -16,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -127,6 +128,10 @@ class QuoteServiceImplTest {
         final var quote = new Quote();
         quote.setId(1);
         quote.setBody("body");
+
+        final var now = LocalDateTime.now();
+        quote.setCreatedAt(now.minusDays(1));
+        quote.setUpdatedAt(now.minusDays(1));
         quote.setAuthor(author);
         quote.setAdmin(admin);
 
@@ -140,6 +145,8 @@ class QuoteServiceImplTest {
             when(quoteRepository.save(any())).then(invocation -> {
                 final var updatedQuote = (Quote) invocation.getArgument(0);
                 assertNotNull(updatedQuote);
+                assertEquals(now.minusDays(1), updatedQuote.getCreatedAt());
+                assertNotEquals(now, updatedQuote.getUpdatedAt());
                 assertEquals(request.body(), updatedQuote.getBody());
                 assertEquals(request.author(), updatedQuote.getAuthor().getName());
                 return updatedQuote;

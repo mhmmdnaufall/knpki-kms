@@ -3,6 +3,8 @@ package org.knpkid.kms.entity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDateTime;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class QuoteTest {
@@ -13,6 +15,8 @@ class QuoteTest {
     void setUp() {
         quote.setId(null);
         quote.setBody(null);
+        quote.setCreatedAt(null);
+        quote.setUpdatedAt(null);
         quote.setAuthor(null);
         quote.setAdmin(null);
     }
@@ -27,6 +31,20 @@ class QuoteTest {
     void bodyGetterSetter() {
         quote.setBody("body");
         assertEquals("body", quote.getBody());
+    }
+
+    @Test
+    void createdAtGetterSetter() {
+        final var now = LocalDateTime.now();
+        quote.setCreatedAt(now);
+        assertEquals(now, quote.getCreatedAt());
+    }
+
+    @Test
+    void updatedAtGetterSetter() {
+        final var now = LocalDateTime.now();
+        quote.setUpdatedAt(now);
+        assertEquals(now, quote.getUpdatedAt());
     }
 
     @Test
@@ -77,17 +95,31 @@ class QuoteTest {
         quoteEqual.setBody("body");
         assertEquals(quote, quoteEqual);
 
+        final var now = LocalDateTime.now();
+        quote.setCreatedAt(now);
+        quoteEqual.setCreatedAt(now);
+        assertEquals(quote, quoteEqual);
+
+        quote.setUpdatedAt(now);
+        quoteEqual.setUpdatedAt(now);
+        assertEquals(quote, quoteEqual);
+
         assertNotEquals(quote, new Quote());
     }
 
     @Test
     void testToString() {
+        final var now = LocalDateTime.now();
         quote.setId(1);
         quote.setBody("body");
+        quote.setCreatedAt(now);
+        quote.setUpdatedAt(now);
 
         final var quoteString = "Quote("
                     + "id="+quote.getId()+", "
                     + "body="+quote.getBody()+", "
+                    + "createdAt="+now+", "
+                    + "updatedAt="+now+", "
                     + "author=null, "
                     + "admin=null"
                 + ")";
@@ -105,6 +137,13 @@ class QuoteTest {
         quote.setBody("body");
         assertEquals(hashCodeCalculate(quote), quote.hashCode());
 
+        final var now = LocalDateTime.now();
+        quote.setCreatedAt(now);
+        assertEquals(hashCodeCalculate(quote), quote.hashCode());
+
+        quote.setUpdatedAt(now);
+        assertEquals(hashCodeCalculate(quote), quote.hashCode());
+
         quote.setAuthor(new Author());
         assertEquals(hashCodeCalculate(quote), quote.hashCode());
 
@@ -115,12 +154,16 @@ class QuoteTest {
     private int hashCodeCalculate(Quote quote) {
         final var idHashCode = quote.getId() == null ? 43 : quote.getId().hashCode();
         final var bodyHashCode = quote.getBody() == null ? 43 : quote.getBody().hashCode();
+        final var createdAtHashCode = quote.getCreatedAt() == null ? 43 : quote.getCreatedAt().hashCode();
+        final var updatedAtHashCode = quote.getUpdatedAt() == null ? 43 : quote.getUpdatedAt().hashCode();
         final var authorHashCode = quote.getAuthor() == null ? 43 : quote.getAuthor().hashCode();
         final var adminHashCode = quote.getAdmin() == null ? 43 : quote.getAdmin().hashCode();
 
         var result = 1;
         result = result * 59 + idHashCode;
         result = result * 59 + bodyHashCode;
+        result = result * 59 + createdAtHashCode;
+        result = result * 59 + updatedAtHashCode;
         result = result * 59 + authorHashCode;
         result = result * 59 + adminHashCode;
 
