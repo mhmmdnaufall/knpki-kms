@@ -18,6 +18,7 @@ tags:
   - name: Image
   - name: Quote
   - name: Archive
+  - name: Author
 
 
 paths:
@@ -994,6 +995,64 @@ paths:
         403:
           $ref: "#/components/responses/403"
 
+    get:
+      tags:
+        - Quote
+      summary: Get All Existing Quote
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 12
+
+      responses:
+        200:
+          description: Success get all existing Quote
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebResponseListQuoteResponse"
+              example:
+                {
+                  "data": [
+                    {
+                      "id": 1,
+                      "body": "Updated quote",
+                      "createdAt": "2024-05-13 11:14:16",
+                      "updatedAt": "2024-05-13 11:21:33",
+                      "author": {
+                        "id": 22,
+                        "name": "Albert Einstein"
+                      },
+                      "admin": {
+                        "username": "mhmmdnaufal",
+                        "name": "Muhammad Naufal",
+                        "image": {
+                          "id": "8accef9a-b08b-4a8a-b216-a822b9ad3fc0",
+                          "format": "JPG"
+                        }
+                      }
+                    }
+                  ],
+                  "errors": null,
+                  "paging": {
+                    "currentPage": 0,
+                    "totalPage": 1,
+                    "size": 12
+                  }
+                }
+
+
   /api/quotes/{quoteId}:
     put:
       summary: Update Quote
@@ -1003,7 +1062,7 @@ paths:
         - BearerToken: []
         - CsrfToken: []
       parameters:
-        - name: articleId
+        - name: quoteId
           in: path
           required: true
           schema:
@@ -1081,7 +1140,7 @@ paths:
         - BearerToken: []
         - CsrfToken: []
       parameters:
-        - name: articleId
+        - name: quoteId
           in: path
           required: true
           schema:
@@ -1110,6 +1169,39 @@ paths:
                   "errors": "quote with id '1' is not found",
                   "paging": null
                 }
+
+    get:
+      tags:
+        - Quote
+      summary: Get Quote by Id
+      parameters:
+        - name: quoteId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Put the `id` of the quote you want to update
+          example: 1
+      responses:
+        200:
+          description: Update Quote Successed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuoteResponse'
+        404:
+          description: quote not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebResponse'
+              example:
+                {
+                  "data": null,
+                  "errors": "quote with id '1' is not found",
+                  "paging": null
+                }
+
 
   /archives/{archiveName}:
     get:
@@ -1156,6 +1248,9 @@ paths:
 
   /api/authors/{authorId}:
     get:
+      tags:
+        - Author
+      summary: Get Author by Id
       parameters:
         - name: authorId
           in: path
@@ -1635,6 +1730,12 @@ components:
         body:
           type: string
           example: Insanity is doing the same thing over and over again and expecting different results
+        createdAt:
+          type: string
+          example: 2024-05-13 11:14:16
+        updatedAt:
+          type: string
+          example: 2024-05-13 11:21:33
         author:
           type: object
           properties:
@@ -1652,6 +1753,7 @@ components:
               example: mhmmdnaufal
             name:
               type: string
+              example: Muhammad Naufal
             image:
               type: object
               properties:
@@ -1735,6 +1837,18 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/OnlyArticleResponse"
+        errors:
+          type: string
+        paging:
+          $ref: "#/components/schemas/PagingResponse"
+
+    WebResponseListQuoteResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/QuoteResponse'
         errors:
           type: string
         paging:
