@@ -12,12 +12,17 @@ import org.knpkid.kms.service.AuthorService;
 import org.knpkid.kms.service.QuoteService;
 import org.knpkid.kms.service.ValidationService;
 import org.knpkid.kms.utility.ConvertToModel;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+
+import static org.knpkid.kms.Constant.UPDATED_AT;
 
 @RequiredArgsConstructor
 @Service
@@ -68,6 +73,13 @@ public class QuoteServiceImpl implements QuoteService {
         quote.setUpdatedAt(LocalDateTime.now());
 
         return ConvertToModel.quoteResponse(quoteRepository.save(quote));
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Page<QuoteResponse> getAll(int page, int size) {
+        return quoteRepository.findAll(PageRequest.of(page, size, Sort.by(Sort.Order.desc(UPDATED_AT))))
+                .map(ConvertToModel::quoteResponse);
     }
 
     private Quote getQuoteById(Integer quoteId) {

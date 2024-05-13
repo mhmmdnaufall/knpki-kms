@@ -13,10 +13,14 @@ import org.knpkid.kms.service.ValidationService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -192,5 +196,32 @@ class QuoteServiceImplTest {
         final var error = assertThrows(ResponseStatusException.class, () -> quoteService.update(1, request, admin));
         assertEquals(HttpStatus.FORBIDDEN, error.getStatusCode());
         assertEquals("this quote belongs to someone else", error.getReason());
+    }
+
+    @Test
+    void getAll() {
+        final var quote = new Quote();
+        quote.setId(1);
+        quote.setBody("body");
+
+        final var quoteList = List.of(quote);
+
+        final var pageable = PageRequest.of(0, 12, Sort.by(Sort.Order.desc("updatedAt")));
+        {
+            when(quoteRepository.findAll(pageable))
+                    .thenReturn(
+                            new PageImpl<>(
+                                    quoteList,
+                                    PageRequest.of(0, 12),
+                                    quoteList.size()
+                            )
+                    );
+        }
+
+        final var quoteResponsePage = quoteService.getAll(0, 12);
+
+        verify(quoteRepository).findAll(pageable);
+        assertEquals(quoteList.size(), quoteResponsePage.getContent().size());
+        assertEquals(quote.getId(), quoteResponsePage.getContent().get(0).id());
     }
 }

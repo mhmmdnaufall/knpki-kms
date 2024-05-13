@@ -2,14 +2,13 @@ package org.knpkid.kms.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.knpkid.kms.entity.Admin;
-import org.knpkid.kms.model.CreateQuoteRequest;
-import org.knpkid.kms.model.QuoteResponse;
-import org.knpkid.kms.model.UpdateQuoteRequest;
-import org.knpkid.kms.model.WebResponse;
+import org.knpkid.kms.model.*;
 import org.knpkid.kms.service.QuoteService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -44,6 +43,23 @@ public class QuoteController {
                                              Admin admin) {
         final var quoteResponse = quoteService.update(quoteId, request, admin);
         return new WebResponse<>(quoteResponse, null, null);
+    }
+
+    @GetMapping(
+            path = "/api/quotes",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public WebResponse<List<QuoteResponse>> getAll(@RequestParam(required = false, defaultValue = "0") Integer page,
+                                                   @RequestParam(required = false, defaultValue = "12") Integer size) {
+
+        final var quoteResponsePage = quoteService.getAll(page, size);
+        return new WebResponse<>(
+                quoteResponsePage.getContent(), null,
+                new PagingResponse(
+                        quoteResponsePage.getNumber(),
+                        quoteResponsePage.getTotalPages(),
+                        quoteResponsePage.getSize()
+                ));
     }
 
 }

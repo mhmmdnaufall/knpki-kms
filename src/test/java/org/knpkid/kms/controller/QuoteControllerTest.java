@@ -5,14 +5,18 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.knpkid.kms.entity.Admin;
 import org.knpkid.kms.entity.Author;
 import org.knpkid.kms.model.CreateQuoteRequest;
+import org.knpkid.kms.model.PagingResponse;
 import org.knpkid.kms.model.QuoteResponse;
 import org.knpkid.kms.model.UpdateQuoteRequest;
 import org.knpkid.kms.service.QuoteService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -85,5 +89,35 @@ class QuoteControllerTest {
         assertEquals(now, webResponseQuoteResponse.data().createdAt());
         assertEquals(now, webResponseQuoteResponse.data().updatedAt());
         assertEquals(1, webResponseQuoteResponse.data().id());
+    }
+
+    @Test
+    void getAll() {
+        final var now = LocalDateTime.now();
+        final var author = new Author();
+        author.setId(1);
+        author.setName("author");
+
+        final var admin = new Admin();
+        admin.setUsername("admin");
+        final var quoteResponseList = List.of(new QuoteResponse(1, "body", now, now, author, admin));
+
+        {
+            when(quoteService.getAll(0, 12))
+                    .thenReturn(
+                            new PageImpl<>(
+                                    quoteResponseList,
+                                    PageRequest.of(0, 12),
+                                    quoteResponseList.size()
+                            )
+                    );
+        }
+
+        final var webResponse = quoteController.getAll(0, 12);
+
+        verify(quoteService).getAll(0, 12);
+        assertEquals(quoteResponseList, webResponse.data());
+        assertNull(webResponse.errors());
+        assertEquals(new PagingResponse(0, 1, 12), webResponse.paging());
     }
 }
