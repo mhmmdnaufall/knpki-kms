@@ -15,4 +15,7 @@ public interface QuoteService {
     QuoteResponse update(Integer quoteId, UpdateQuoteRequest request, Admin admin);
 
     Page<QuoteResponse> getAll(int page, int size);
+
+    QuoteResponse get(int quoteId);
+
 }

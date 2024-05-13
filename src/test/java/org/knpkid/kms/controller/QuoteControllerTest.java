@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.knpkid.kms.entity.Admin;
 import org.knpkid.kms.entity.Author;
+import org.knpkid.kms.entity.Quote;
 import org.knpkid.kms.model.CreateQuoteRequest;
 import org.knpkid.kms.model.PagingResponse;
 import org.knpkid.kms.model.QuoteResponse;
@@ -119,5 +120,20 @@ class QuoteControllerTest {
         assertEquals(quoteResponseList, webResponse.data());
         assertNull(webResponse.errors());
         assertEquals(new PagingResponse(0, 1, 12), webResponse.paging());
+    }
+
+    @Test
+    void get() {
+        final var quoteResponse = new QuoteResponse(
+                1, "body", LocalDateTime.now(), LocalDateTime.now(), new Author(), new Admin()
+        );
+
+        when(quoteService.get(1)).thenReturn(quoteResponse);
+
+        final var webResponseQuoteResponse = quoteController.get(1);
+
+        verify(quoteService).get(1);
+        assertEquals(quoteResponse, webResponseQuoteResponse.data());
+
     }
 }

@@ -224,4 +224,31 @@ class QuoteServiceImplTest {
         assertEquals(quoteList.size(), quoteResponsePage.getContent().size());
         assertEquals(quote.getId(), quoteResponsePage.getContent().get(0).id());
     }
+
+    @Test
+    void get() {
+        final var quote = new Quote();
+        quote.setId(1);
+        quote.setBody("body");
+
+        when(quoteRepository.findById(1)).thenReturn(Optional.of(quote));
+
+        final var quoteResponse = quoteService.get(1);
+
+        verify(quoteRepository).findById(1);
+        assertEquals(quote.getId(), quoteResponse.id());
+        assertEquals(quote.getBody(), quoteResponse.body());
+    }
+
+    @Test
+    void get_notFound() {
+
+        when(quoteRepository.findById(1)).thenReturn(Optional.empty());
+
+        final var error = assertThrows(ResponseStatusException.class, () -> quoteService.get(1));
+
+        verify(quoteRepository).findById(1);
+        assertEquals(HttpStatus.NOT_FOUND, error.getStatusCode());
+        assertEquals("quote with id '1' is not found", error.getReason());
+    }
 }

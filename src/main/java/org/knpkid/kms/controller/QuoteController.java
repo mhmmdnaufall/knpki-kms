@@ -62,4 +62,13 @@ public class QuoteController {
                 ));
     }
 
+    @GetMapping(
+            path = "/api/quotes/{quoteId}",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public WebResponse<QuoteResponse> get(@PathVariable Integer quoteId) {
+        final var quoteResponse = quoteService.get(quoteId);
+        return new WebResponse<>(quoteResponse, null, null);
+    }
+
 }

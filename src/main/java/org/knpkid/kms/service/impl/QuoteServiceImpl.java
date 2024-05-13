@@ -82,6 +82,12 @@ public class QuoteServiceImpl implements QuoteService {
                 .map(ConvertToModel::quoteResponse);
     }
 
+    @Transactional(readOnly = true)
+    @Override
+    public QuoteResponse get(int quoteId) {
+        return ConvertToModel.quoteResponse(getQuoteById(quoteId));
+    }
+
     private Quote getQuoteById(Integer quoteId) {
         return quoteRepository.findById(quoteId)
                 .orElseThrow(() -> new ResponseStatusException(
