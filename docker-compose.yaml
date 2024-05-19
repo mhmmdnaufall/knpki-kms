@@ -29,11 +29,11 @@ services:
     depends_on:
       - knpki-kms-database
     volumes:
-      - "knpki-kms-image:/application/image"
+      - "knpki-kms-documents:/application/documents"
 
 volumes:
-  knpki-kms-image:
-    name: knpki-kms-image
+  knpki-kms-documents:
+    name: knpki-kms-documents
   knpki-kms-data:
     name: knpki-kms-data
 
