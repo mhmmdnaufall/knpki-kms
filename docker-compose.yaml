@@ -17,7 +17,7 @@ services:
 
   knpki-kms:
     container_name: knpki-kms
-    image: mhmmdnaufal/knpki-kms:1.2.0
+    image: mhmmdnaufal/knpki-kms:2.0.0
     ports:
       - "8080:8080"
     environment:
