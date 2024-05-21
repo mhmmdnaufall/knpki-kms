@@ -8,7 +8,6 @@ import org.knpkid.kms.service.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -34,11 +33,5 @@ public class AuthController {
         SecurityContextHolder.clearContext();
 
     }
-
-    @GetMapping("/api/auth/csrf")
-    public WebResponse<TokenResponse> getCsrfToken(CsrfToken token) {
-        return new WebResponse<>(new TokenResponse(token.getToken()), null, null);
-    }
-
 
 }
