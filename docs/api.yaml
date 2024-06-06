@@ -45,6 +45,8 @@ paths:
       summary: Register Admin
       tags:
         - Admin
+      security:
+        - CsrfToken: []
       requestBody:
         content:
           multipart/form-data:
@@ -69,11 +71,16 @@ paths:
               schema:
                 $ref: "#/components/schemas/WebResponse"
 
+        403:
+          $ref: "#/components/responses/403"
+
   /api/auth/login:
     post:
       summary: Admin login
       tags:
         - Auth
+      security:
+        - CsrfToken: []
       requestBody:
         required: true
         content:
@@ -155,11 +162,32 @@ paths:
         - Auth
       security:
         - BearerToken: []
+        - CsrfToken: []
       responses:
         204:
           description: Success logout admin
         401:
           $ref: "#/components/responses/401"
+
+  /api/auth/csrf:
+    get:
+      summary: Get CSRF token
+      tags:
+        - Auth
+      responses:
+        200:
+          description: Success get CSRF Token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebResponseTokenResponse"
+              example:
+                data:
+                  token: AFrfI_NNzqELpggF6jjV2x5voCvXkDyKQlzaK2zsO1b1VZfeYmK8G8srqsAmw2kwiRXh6ioMjUmy9QyncWXpHlTUDGGRY_W6
+                errors: null
+                paging: null
+
+
 
   /api/articles:
     get:
@@ -316,6 +344,7 @@ paths:
         - Article
       security:
         - BearerToken: []
+        - CsrfToken: []
       requestBody:
         required: true
         content:
@@ -421,6 +450,10 @@ paths:
                     errors: null
                     paging: null
 
+
+        403:
+          $ref: "#/components/responses/403"
+
   /api/articles/{articleId}:
     get:
       summary: View specified article
@@ -522,6 +555,7 @@ paths:
         - Article
       security:
         - BearerToken: []
+        - CsrfToken: []
       parameters:
         - name: articleId
           in: path
@@ -611,6 +645,9 @@ paths:
           $ref: "#/components/responses/401"
 
         403:
+          $ref: "#/components/responses/403"
+
+        403a:
           description: admin trying to update article on another admins article
           content:
             application/json:
@@ -629,6 +666,7 @@ paths:
         - Article
       security:
         - BearerToken: []
+        - CsrfToken: []
       parameters:
         - name: articleId
           in: path
@@ -645,6 +683,9 @@ paths:
           $ref: "#/components/responses/401"
 
         403:
+          $ref: "#/components/responses/403"
+
+        403a:
           description: admin trying to delete article on another admins article
           content:
             application/json:
@@ -883,6 +924,7 @@ paths:
         - Quote
       security:
         - BearerToken: []
+        - CsrfToken: []
       requestBody:
         required: true
         content:
@@ -950,6 +992,8 @@ paths:
                     }
         401:
           $ref: "#/components/responses/401"
+        403:
+          $ref: "#/components/responses/403"
 
     get:
       tags:
@@ -1016,6 +1060,7 @@ paths:
         - Quote
       security:
         - BearerToken: []
+        - CsrfToken: []
       parameters:
         - name: quoteId
           in: path
@@ -1071,6 +1116,8 @@ paths:
                     }
         401:
           $ref: "#/components/responses/401"
+        403:
+          $ref: "#/components/responses/403"
         404:
           description: quote not found
           content:
@@ -1091,6 +1138,7 @@ paths:
         - Quote
       security:
         - BearerToken: []
+        - CsrfToken: []
       parameters:
         - name: quoteId
           in: path
@@ -1105,6 +1153,9 @@ paths:
 
         401:
           $ref: "#/components/responses/401"
+
+        403:
+          $ref: "#/components/responses/403"
 
         404:
           description: quote not found
@@ -1324,6 +1375,12 @@ components:
       in: header
       name: Authorization
 
+    CsrfToken:
+      description: Put CSRF Token
+      type: apiKey
+      in: header
+      name: X-CSRF-TOKEN
+
   responses:
     401:
       description: User Token Unauthorized
@@ -1335,6 +1392,25 @@ components:
             data: null
             errors: Unauthorized
             paging: null
+    403:
+      description: CSRF Token not valid
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              timestamp:
+                type: string
+                example: 2024-02-09T13:10:51.107+00:00
+              status:
+                type: integer
+                example: 403
+              error:
+                type: string
+                example: Forbidden
+              path:
+                type: string
+                example: /api/articles
 
   schemas:
 

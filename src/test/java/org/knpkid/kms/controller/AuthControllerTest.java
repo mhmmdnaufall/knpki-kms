@@ -9,6 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.csrf.CsrfToken;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -41,5 +42,14 @@ class AuthControllerTest {
             authController.logout();
             securityContextHolderMockStatic.verify(SecurityContextHolder::clearContext);
         }
+    }
+
+    @Test
+    void getCsrfToken() {
+        final var csrfTokenMock = mock(CsrfToken.class);
+        final var webResponse = authController.getCsrfToken(csrfTokenMock);
+        assertEquals(csrfTokenMock.getToken(), webResponse.data().token());
+        assertNull(webResponse.errors());
+        assertNull(webResponse.paging());
     }
 }
