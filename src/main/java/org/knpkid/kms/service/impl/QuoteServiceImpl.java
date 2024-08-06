@@ -63,6 +63,8 @@ public class QuoteServiceImpl implements QuoteService {
     @Transactional
     @Override
     public QuoteResponse update(Integer quoteId, UpdateQuoteRequest request, Admin admin) {
+        validationService.validate(request);
+
         final var quote = getQuoteById(quoteId);
         checkQuoteAdmin(quote, admin);
 
