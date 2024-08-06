@@ -5,8 +5,6 @@ services:
   knpki-kms-database:
     container_name: knpki-kms-database
     image: mysql:8.3.0
-    ports:
-      - "3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: admin_root_password_indonesiakeluargaperlindungannasionalkoalisi
       MYSQL_DATABASE: knpki_kms
@@ -17,15 +15,14 @@ services:
 
   knpki-kms:
     container_name: knpki-kms
-    image: mhmmdnaufal/knpki-kms:2.0.0
+    image: mhmmdnaufal/knpki-kms:2.0.1
     ports:
-      - "8080:8080"
+      - "80:8080"
     environment:
       DATABASE_USERNAME: knpkid
       DATABASE_PASSWORD: indonesiakeluargaperlindungannasionalkoalisi
       DATABASE_URL: jdbc:mysql://knpki-kms-database:3306/knpki_kms
       APP_PORT: 8080
-    restart: on-failure
     depends_on:
       - knpki-kms-database
     volumes:
