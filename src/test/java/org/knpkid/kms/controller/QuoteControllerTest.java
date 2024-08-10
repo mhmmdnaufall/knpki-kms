@@ -33,15 +33,15 @@ class QuoteControllerTest {
 
     @Test
     void create() {
-        final var request = new CreateQuoteRequest("body", "author");
+        var request = new CreateQuoteRequest("body", "author");
 
-        final var author = new Author();
+        var author = new Author();
         author.setName("author");
 
-        final var admin = new Admin();
+        var admin = new Admin();
         admin.setUsername("admin");
 
-        final var now = LocalDateTime.now();
+        var now = LocalDateTime.now();
         {
             when(quoteService.create(request, admin)).
                     thenReturn(new QuoteResponse(
@@ -49,7 +49,7 @@ class QuoteControllerTest {
                     ));
         }
 
-        final var webResponseQuoteResponse = quoteController.create(request, admin);
+        var webResponseQuoteResponse = quoteController.create(request, admin);
         assertEquals(1, webResponseQuoteResponse.data().id());
         assertEquals("body", webResponseQuoteResponse.data().body());
         assertEquals(now, webResponseQuoteResponse.data().createdAt());
@@ -61,7 +61,7 @@ class QuoteControllerTest {
 
     @Test
     void delete() {
-        final var admin = new Admin();
+        var admin = new Admin();
         doNothing().when(quoteService).delete(1, admin);
         quoteController.delete(1, admin);
         verify(quoteService).delete(1, admin);
@@ -69,19 +69,19 @@ class QuoteControllerTest {
 
     @Test
     void update() {
-        final var author = new Author();
+        var author = new Author();
         author.setName("author");
 
-        final var admin = new Admin();
+        var admin = new Admin();
         admin.setUsername("admin");
 
-        final var request = new UpdateQuoteRequest("body", author.getName());
-        final var now = LocalDateTime.now();
+        var request = new UpdateQuoteRequest("body", author.getName());
+        var now = LocalDateTime.now();
 
         when(quoteService.update(1, request, admin))
                 .thenReturn(new QuoteResponse(1, request.body(), now, now, author, admin));
 
-        final var webResponseQuoteResponse = quoteController.update(1, request, admin);
+        var webResponseQuoteResponse = quoteController.update(1, request, admin);
 
         verify(quoteService).update(1, request, admin);
         assertEquals("author", webResponseQuoteResponse.data().author().getName());
@@ -94,14 +94,14 @@ class QuoteControllerTest {
 
     @Test
     void getAll() {
-        final var now = LocalDateTime.now();
-        final var author = new Author();
+        var now = LocalDateTime.now();
+        var author = new Author();
         author.setId(1);
         author.setName("author");
 
-        final var admin = new Admin();
+        var admin = new Admin();
         admin.setUsername("admin");
-        final var quoteResponseList = List.of(new QuoteResponse(1, "body", now, now, author, admin));
+        var quoteResponseList = List.of(new QuoteResponse(1, "body", now, now, author, admin));
 
         {
             when(quoteService.getAll(0, 12))
@@ -114,7 +114,7 @@ class QuoteControllerTest {
                     );
         }
 
-        final var webResponse = quoteController.getAll(0, 12);
+        var webResponse = quoteController.getAll(0, 12);
 
         verify(quoteService).getAll(0, 12);
         assertEquals(quoteResponseList, webResponse.data());
@@ -124,13 +124,13 @@ class QuoteControllerTest {
 
     @Test
     void get() {
-        final var quoteResponse = new QuoteResponse(
+        var quoteResponse = new QuoteResponse(
                 1, "body", LocalDateTime.now(), LocalDateTime.now(), new Author(), new Admin()
         );
 
         when(quoteService.get(1)).thenReturn(quoteResponse);
 
-        final var webResponseQuoteResponse = quoteController.get(1);
+        var webResponseQuoteResponse = quoteController.get(1);
 
         verify(quoteService).get(1);
         assertEquals(quoteResponse, webResponseQuoteResponse.data());

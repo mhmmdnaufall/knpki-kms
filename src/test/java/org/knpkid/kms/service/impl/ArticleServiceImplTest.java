@@ -56,14 +56,14 @@ class ArticleServiceImplTest {
 
     @Test
     void create() {
-        final var admin = getAdmin();
-        final var coverImageRequest = getCoverImageRequest();
-        final var tagsRequest = getTagsRequest();
-        final var imagesRequest = getImagesRequest();
-        final var authorsRequest = getAuthorsRequest();
-        final var archiveRequest = getArchiveRequest();
+        var admin = getAdmin();
+        var coverImageRequest = getCoverImageRequest();
+        var tagsRequest = getTagsRequest();
+        var imagesRequest = getImagesRequest();
+        var authorsRequest = getAuthorsRequest();
+        var archiveRequest = getArchiveRequest();
 
-        final var request = new CreateArticleRequest(
+        var request = new CreateArticleRequest(
                 "title",
                 coverImageRequest,
                 "body",
@@ -77,7 +77,7 @@ class ArticleServiceImplTest {
         {
             doNothing().when(validationService).validate(request);
             when(articleRepository.save(any())).then(invocation -> {
-                final var article = (Article) invocation.getArgument(0);
+                var article = (Article) invocation.getArgument(0);
                 article.setId(1);
                 return article;
             });
@@ -88,7 +88,7 @@ class ArticleServiceImplTest {
             when(imageService.save(coverImageRequest)).thenReturn(getCoverImage());
         }
 
-        final var response = articleService.create(request, admin);
+        var response = articleService.create(request, admin);
 
         // 2 imageGallery + 1 coverImage = 3 imageService.save
         verify(imageService, times(3)).save(any());
@@ -111,10 +111,10 @@ class ArticleServiceImplTest {
     @DisplayName("create() - Set Nullable field to null")
     @Test
     void create_null() {
-        final var admin = getAdmin();
-        final var authorsRequest = getAuthorsRequest();
+        var admin = getAdmin();
+        var authorsRequest = getAuthorsRequest();
 
-        final var request = new CreateArticleRequest(
+        var request = new CreateArticleRequest(
                 "title",
                 null,
                 "body",
@@ -128,7 +128,7 @@ class ArticleServiceImplTest {
         {
             doNothing().when(validationService).validate(request);
             when(articleRepository.save(any())).then(invocation -> {
-                final var article = (Article) invocation.getArgument(0);
+                var article = (Article) invocation.getArgument(0);
                 article.setId(1);
                 return article;
             });
@@ -136,7 +136,7 @@ class ArticleServiceImplTest {
             when(authorService.saveAll(authorsRequest)).thenReturn(getAuthors());
         }
 
-        final var response = articleService.create(request, admin);
+        var response = articleService.create(request, admin);
 
         verify(imageService, times(0)).save(any());
         verify(validationService).validate(request);
@@ -158,21 +158,21 @@ class ArticleServiceImplTest {
     @DisplayName("update() - success")
     @Test
     void update() {
-        final var now = LocalDateTime.now();
+        var now = LocalDateTime.now();
 
-        final var admin = getAdmin();
-        final var coverImageRequest = getCoverImageRequest();
-        final var tagsRequest = getTagsRequest();
-        final var imagesRequest = getImagesRequest();
-        final var authorsRequest = getAuthorsRequest();
-        final var archiveRequest = getArchiveRequest();
+        var admin = getAdmin();
+        var coverImageRequest = getCoverImageRequest();
+        var tagsRequest = getTagsRequest();
+        var imagesRequest = getImagesRequest();
+        var authorsRequest = getAuthorsRequest();
+        var archiveRequest = getArchiveRequest();
 
-        final var oldCoverImage = new Image();
-        final var oldArticleImageGallery = List.of(new Image());
-        final var oldArchive = new Archive();
-        final var oldAuthors = Set.of(new Author());
+        var oldCoverImage = new Image();
+        var oldArticleImageGallery = List.of(new Image());
+        var oldArchive = new Archive();
+        var oldAuthors = Set.of(new Author());
 
-        final var article = new Article();
+        var article = new Article();
         article.setId(1);
         article.setAdmin(admin);
         article.setCoverImage(oldCoverImage);
@@ -181,7 +181,7 @@ class ArticleServiceImplTest {
         article.setArchive(oldArchive);
         article.setAuthors(oldAuthors);
 
-        final var request = new UpdateArticleRequest(
+        var request = new UpdateArticleRequest(
                 "title",
                 coverImageRequest,
                 "body",
@@ -201,14 +201,14 @@ class ArticleServiceImplTest {
             when(authorService.saveAll(authorsRequest)).thenReturn(getAuthors());
             when(archiveService.save(archiveRequest)).thenReturn(getArchive());
             when(articleRepository.save(any())).then(invocation -> {
-                final var saveArticle = (Article) invocation.getArgument(0);
+                var saveArticle = (Article) invocation.getArgument(0);
                 saveArticle.setUpdatedAt(now);
                 return saveArticle;
             });
             doNothing().when(archiveService).delete(oldArchive);
         }
 
-        final var response = assertDoesNotThrow(() -> articleService.update(1, request, admin));
+        var response = assertDoesNotThrow(() -> articleService.update(1, request, admin));
 
         verify(validationService).validate(request);
         verify(articleRepository).findById(1);
@@ -243,19 +243,19 @@ class ArticleServiceImplTest {
     @DisplayName("update() - Set nullable fields to null. Including old field")
     @Test
     void update_null() {
-        final var now = LocalDateTime.now();
+        var now = LocalDateTime.now();
 
-        final var admin = getAdmin();
-        final var authorsRequest = getAuthorsRequest();
+        var admin = getAdmin();
+        var authorsRequest = getAuthorsRequest();
 
-        final var oldAuthors = Set.of(new Author());
+        var oldAuthors = Set.of(new Author());
 
-        final var article = new Article();
+        var article = new Article();
         article.setId(1);
         article.setAdmin(admin);
         article.setAuthors(oldAuthors);
 
-        final var request = new UpdateArticleRequest(
+        var request = new UpdateArticleRequest(
                 "title",
                 null,
                 "body",
@@ -272,13 +272,13 @@ class ArticleServiceImplTest {
             when(tagService.saveAll(null)).thenReturn(Collections.emptySet());
             when(authorService.saveAll(authorsRequest)).thenReturn(getAuthors());
             when(articleRepository.save(any())).then(invocation -> {
-                final var saveArticle = (Article) invocation.getArgument(0);
+                var saveArticle = (Article) invocation.getArgument(0);
                 saveArticle.setUpdatedAt(now);
                 return saveArticle;
             });
         }
 
-        final var response = assertDoesNotThrow(() -> articleService.update(1, request, admin));
+        var response = assertDoesNotThrow(() -> articleService.update(1, request, admin));
 
         verify(validationService).validate(request);
         verify(articleRepository).findById(1);
@@ -307,22 +307,22 @@ class ArticleServiceImplTest {
     @DisplayName("update() - use Another Account forbidden")
     @Test
     void update_useAnotherAccount() {
-        final var request = new UpdateArticleRequest(
+        var request = new UpdateArticleRequest(
                 "title", null, "body",
                 "teaser", null, null, Set.of("author"), null
         );
 
-        final var article = new Article();
+        var article = new Article();
         article.setAdmin(getAdmin());
 
-        final var diffAdmin = new Admin();
+        var diffAdmin = new Admin();
         diffAdmin.setUsername("differentAdmin");
 
         {
             when(articleRepository.findById(741237903)).thenReturn(Optional.of(article));
         }
 
-        final var exception = assertThrows(
+        var exception = assertThrows(
                 ResponseStatusException.class,
                 () -> articleService.update(741237903, request, diffAdmin)
         );
@@ -335,13 +335,13 @@ class ArticleServiceImplTest {
     void update_articleNotFound() {
         when(articleRepository.findById(1)).thenReturn(Optional.empty());
 
-        final var request = new UpdateArticleRequest(
+        var request = new UpdateArticleRequest(
                 "title", null, "body",
                 "teaser", null, null, Set.of("author"), null
         );
 
-        final var admin = new Admin();
-        final var exception = assertThrows(
+        var admin = new Admin();
+        var exception = assertThrows(
                 ResponseStatusException.class,
                 () -> articleService.update(1, request, admin)
         );
@@ -352,9 +352,9 @@ class ArticleServiceImplTest {
 
     @Test
     void get() {
-        final var existId = 2131231;
-        final var notExistId = 123021309;
-        final var article = new Article();
+        var existId = 2131231;
+        var notExistId = 123021309;
+        var article = new Article();
         article.setId(existId);
 
         {
@@ -367,7 +367,7 @@ class ArticleServiceImplTest {
         assertEquals(article.getId(), articleResponse.id());
 
         // not exist
-        final var exception = assertThrows(ResponseStatusException.class, () -> articleService.get(notExistId));
+        var exception = assertThrows(ResponseStatusException.class, () -> articleService.get(notExistId));
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
         assertEquals("article with id '%d' is not found".formatted(notExistId), exception.getReason());
 
@@ -378,12 +378,12 @@ class ArticleServiceImplTest {
     @Test
     void delete() {
 
-        final var coverImage = getCoverImage();
-        final var images = List.of(new Image(), new Image());
-        final var archive = getArchive();
-        final var admin = getAdmin();
+        var coverImage = getCoverImage();
+        var images = List.of(new Image(), new Image());
+        var archive = getArchive();
+        var admin = getAdmin();
 
-        final var article = new Article();
+        var article = new Article();
         article.setAdmin(admin);
         article.setCoverImage(coverImage);
         article.setImageGallery(images);
@@ -413,9 +413,9 @@ class ArticleServiceImplTest {
     @Test
     void delete_nullFiles() {
 
-        final var admin = getAdmin();
+        var admin = getAdmin();
 
-        final var article = new Article();
+        var article = new Article();
         article.setAdmin(admin);
 
         {
@@ -439,13 +439,13 @@ class ArticleServiceImplTest {
     @Test
     void delete_articleNotFound() {
 
-        final var admin = new Admin();
+        var admin = new Admin();
 
         {
             when(articleRepository.findById(1)).thenReturn(Optional.empty());
         }
 
-        final var exception = assertThrows(
+        var exception = assertThrows(
                 ResponseStatusException.class,
                 () -> articleService.delete(1, admin)
         );
@@ -464,20 +464,20 @@ class ArticleServiceImplTest {
     @Test
     void delete_useAnotherAccount() {
 
-        final var admin = new Admin();
+        var admin = new Admin();
         admin.setUsername("admin");
 
-        final var article = new Article();
+        var article = new Article();
         article.setAdmin(admin);
 
-        final var diffAdmin = new Admin();
+        var diffAdmin = new Admin();
         diffAdmin.setUsername("different_admin");
 
         {
             when(articleRepository.findById(1)).thenReturn(Optional.of(article));
         }
 
-        final var exception = assertThrows(
+        var exception = assertThrows(
                 ResponseStatusException.class,
                 () -> articleService.delete(1, diffAdmin)
         );
@@ -494,14 +494,14 @@ class ArticleServiceImplTest {
 
     @Test
     void getAll() {
-        final var article = new Article();
+        var article = new Article();
         article.setId(1);
         article.setTitle("title");
         article.setTeaser("teaser");
 
-        final var articles = List.of(article);
+        var articles = List.of(article);
 
-        final var pageable = PageRequest.of(0, 12, Sort.by(Sort.Order.desc("updatedAt")));
+        var pageable = PageRequest.of(0, 12, Sort.by(Sort.Order.desc("updatedAt")));
 
         {
             when(articleRepository.findAll(pageable))
@@ -514,7 +514,7 @@ class ArticleServiceImplTest {
                     );
         }
 
-        final var onlyArticleResponsePage = articleService.getAll(0, 12);
+        var onlyArticleResponsePage = articleService.getAll(0, 12);
 
         verify(articleRepository).findAll(pageable);
         assertEquals(articles.size(), onlyArticleResponsePage.getContent().size());
@@ -525,22 +525,22 @@ class ArticleServiceImplTest {
 
     @Test
     void search() {
-        final var article = new Article();
+        var article = new Article();
         article.setId(1);
         article.setTitle("keyword title");
         article.setTeaser("keyword teaser");
 
-        final var articles = List.of(article);
+        var articles = List.of(article);
 
         {
             when(articleRepository.findAll(any(Specification.class), any(Pageable.class)))
                     .then(invocation -> {
 
-                        final var root = mock(Root.class);
-                        final var query = mock(CriteriaQuery.class);
-                        final var builder = mock(CriteriaBuilder.class);
-                        final var join = mock(Join.class);
-                        final var predicate = mock(Predicate.class);
+                        var root = mock(Root.class);
+                        var query = mock(CriteriaQuery.class);
+                        var builder = mock(CriteriaBuilder.class);
+                        var join = mock(Join.class);
+                        var predicate = mock(Predicate.class);
 
                         {
                             when(builder.or(any(), any(), any(), any())).thenReturn(predicate);
@@ -550,7 +550,7 @@ class ArticleServiceImplTest {
                             when(query.getRestriction()).thenReturn(predicate);
                         }
 
-                        final var specification = (Specification<Article>) invocation.getArgument(0);
+                        var specification = (Specification<Article>) invocation.getArgument(0);
 
                         specification.toPredicate(root, query, builder);
 
@@ -573,7 +573,7 @@ class ArticleServiceImplTest {
                     });
         }
 
-        final var onlyArticleResponsePage = articleService.search("keyword", 0, 12);
+        var onlyArticleResponsePage = articleService.search("keyword", 0, 12);
 
         {
             verify(articleRepository).findAll(any(Specification.class), any(Pageable.class));
@@ -589,14 +589,14 @@ class ArticleServiceImplTest {
     @Test
     void getArticlesByTag() {
 
-        final var article = new Article();
+        var article = new Article();
         article.setId(1);
         article.setTitle("title");
         article.setTeaser("teaser");
 
-        final var articles = List.of(article);
+        var articles = List.of(article);
 
-        final var pageable = PageRequest.of(0, 12, Sort.by(Sort.Order.desc("updatedAt")));
+        var pageable = PageRequest.of(0, 12, Sort.by(Sort.Order.desc("updatedAt")));
 
         {
             when(articleRepository.findByTagsId("tagId", pageable))
@@ -609,7 +609,7 @@ class ArticleServiceImplTest {
                     );
         }
 
-        final var onlyArticleResponsePage = articleService.getArticlesByTag("tagId", 0, 12);
+        var onlyArticleResponsePage = articleService.getArticlesByTag("tagId", 0, 12);
 
         {
             verify(articleRepository).findByTagsId("tagId", pageable);
@@ -625,18 +625,18 @@ class ArticleServiceImplTest {
     @Test
     void getArticlesByAdmin() {
 
-        final var article = new Article();
+        var article = new Article();
         article.setId(1);
         article.setTitle("title");
         article.setTeaser("teaser");
 
-        final var admin = new Admin();
+        var admin = new Admin();
         admin.setUsername("username");
         article.setAdmin(admin);
 
-        final var articles = List.of(article);
+        var articles = List.of(article);
 
-        final var pageable = PageRequest.of(0, 12, Sort.by(Sort.Order.desc("updatedAt")));
+        var pageable = PageRequest.of(0, 12, Sort.by(Sort.Order.desc("updatedAt")));
 
         {
             when(articleRepository.findByAdmin_Username("username", pageable))
@@ -649,7 +649,7 @@ class ArticleServiceImplTest {
                     );
         }
 
-        final var onlyArticleResponsePage = articleService.getArticlesByAdmin("username", 0, 12);
+        var onlyArticleResponsePage = articleService.getArticlesByAdmin("username", 0, 12);
 
         {
             verify(articleRepository).findByAdmin_Username("username", pageable);
@@ -663,7 +663,7 @@ class ArticleServiceImplTest {
     }
 
     private Admin getAdmin() {
-        final var admin = new Admin();
+        var admin = new Admin();
         admin.setUsername("admin");
         return admin;
     }
@@ -673,7 +673,7 @@ class ArticleServiceImplTest {
     }
 
     private Image getCoverImage() {
-        final var image = new Image();
+        var image = new Image();
         image.setId("coverImage");
         image.setFormat(ImageFormat.PNG);
         return image;
@@ -684,11 +684,11 @@ class ArticleServiceImplTest {
     }
 
     private Set<Tag> getTags() {
-        final var tag1 = new Tag();
+        var tag1 = new Tag();
         tag1.setId("tag-1");
         tag1.setName("tag 1");
 
-        final var tag2 = new Tag();
+        var tag2 = new Tag();
         tag1.setId("tag-2");
         tag1.setName("tag 2");
 
@@ -704,11 +704,11 @@ class ArticleServiceImplTest {
     }
 
     private Set<Author> getAuthors() {
-        final var author1 = new Author();
+        var author1 = new Author();
         author1.setId(1);
         author1.setName("author 1");
 
-        final var author2 = new Author();
+        var author2 = new Author();
         author2.setId(2);
         author2.setName("author 1");
 
@@ -720,7 +720,7 @@ class ArticleServiceImplTest {
     }
 
     private Archive getArchive() {
-        final var archive = new Archive();
+        var archive = new Archive();
         archive.setId("archive");
         archive.setFormat(ArchiveFormat.PDF);
         return archive;

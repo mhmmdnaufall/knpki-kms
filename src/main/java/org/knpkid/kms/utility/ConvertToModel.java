@@ -56,10 +56,10 @@ public class ConvertToModel {
     }
 
     public static AuthorResponse authorResponse(Author author) {
-        final var articleList = Optional.ofNullable(author.getArticles())
+        var articleList = Optional.ofNullable(author.getArticles())
                 .orElse(Collections.emptyList());
 
-        final var quoteList = Optional.ofNullable(author.getQuotes())
+        var quoteList = Optional.ofNullable(author.getQuotes())
                 .orElse(Collections.emptyList());
 
         return new AuthorResponse(

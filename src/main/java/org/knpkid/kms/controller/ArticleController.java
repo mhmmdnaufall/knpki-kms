@@ -23,7 +23,7 @@ public class ArticleController {
     )
     @ResponseStatus(code = HttpStatus.CREATED)
     public WebResponse<ArticleResponse> create(@ModelAttribute CreateArticleRequest request, Admin admin) {
-        final var articleResponse = articleService.create(request, admin);
+        var articleResponse = articleService.create(request, admin);
         return new WebResponse<>(articleResponse, null, null);
     }
 
@@ -32,7 +32,7 @@ public class ArticleController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public WebResponse<ArticleResponse> get(@PathVariable Integer articleId) {
-        final var articleResponse = articleService.get(articleId);
+        var articleResponse = articleService.get(articleId);
         return new WebResponse<>(articleResponse, null, null);
     }
 
@@ -45,7 +45,7 @@ public class ArticleController {
                                                @ModelAttribute UpdateArticleRequest request,
                                                Admin admin) {
 
-        final var articleResponse = articleService.update(articleId, request, admin);
+        var articleResponse = articleService.update(articleId, request, admin);
         return new WebResponse<>(articleResponse, null, null);
     }
 
@@ -65,7 +65,7 @@ public class ArticleController {
             @RequestParam(name = "size", required = false, defaultValue = "12") Integer size
     ) {
 
-        final var onlyArticleResponsePage = keyword == null ?
+        var onlyArticleResponsePage = keyword == null ?
                 articleService.getAll(page, size) : articleService.search(keyword, page, size);
 
         return new WebResponse<>(
@@ -89,7 +89,7 @@ public class ArticleController {
             @RequestParam(name = "size", required = false, defaultValue = "12") Integer size
     ) {
 
-        final var onlyArticleResponsePage = articleService.getArticlesByTag(tagId, page, size);
+        var onlyArticleResponsePage = articleService.getArticlesByTag(tagId, page, size);
 
         return new WebResponse<>(
                 onlyArticleResponsePage.getContent(), null,
@@ -111,7 +111,7 @@ public class ArticleController {
             @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
             @RequestParam(name = "size", required = false, defaultValue = "12") Integer size
     ) {
-        final var onlyArticleResponsePage = articleService.getArticlesByAdmin(username, page, size);
+        var onlyArticleResponsePage = articleService.getArticlesByAdmin(username, page, size);
         return new WebResponse<>(
                 onlyArticleResponsePage.getContent(), null,
                 new PagingResponse(

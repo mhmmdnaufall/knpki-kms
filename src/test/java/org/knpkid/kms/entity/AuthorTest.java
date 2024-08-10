@@ -47,7 +47,7 @@ class AuthorTest {
 
     @Test
     void testEquals() {
-        final var author = new Author();
+        var author = new Author();
         assertEquals(AUTHOR, author);
 
         AUTHOR.setId(1);
@@ -82,7 +82,7 @@ class AuthorTest {
         author.setArticles(null);
         assertEquals(AUTHOR, author);
 
-        final var authorUnequal = new Author();
+        var authorUnequal = new Author();
         authorUnequal.setName("unequal");
 
         assertNotEquals(AUTHOR, authorUnequal);
@@ -119,10 +119,10 @@ class AuthorTest {
     }
 
     private int hashCodeCalculate() {
-        final var idHashCode = AUTHOR.getId() == null ? 43 : AUTHOR.getId().hashCode();
-        final var nameHashCode = AUTHOR.getName() == null ? 43 : AUTHOR.getName().hashCode();
-        final var articlesHashCode = AUTHOR.getArticles() == null ? 43 : AUTHOR.getArticles().hashCode();
-        final var quotesHashCode = AUTHOR.getQuotes() == null ? 43 : AUTHOR.getQuotes().hashCode();
+        var idHashCode = AUTHOR.getId() == null ? 43 : AUTHOR.getId().hashCode();
+        var nameHashCode = AUTHOR.getName() == null ? 43 : AUTHOR.getName().hashCode();
+        var articlesHashCode = AUTHOR.getArticles() == null ? 43 : AUTHOR.getArticles().hashCode();
+        var quotesHashCode = AUTHOR.getQuotes() == null ? 43 : AUTHOR.getQuotes().hashCode();
 
         var result = 1;
         result = result * 59 + idHashCode;

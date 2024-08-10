@@ -35,21 +35,21 @@ class QuoteTest {
 
     @Test
     void createdAtGetterSetter() {
-        final var now = LocalDateTime.now();
+        var now = LocalDateTime.now();
         quote.setCreatedAt(now);
         assertEquals(now, quote.getCreatedAt());
     }
 
     @Test
     void updatedAtGetterSetter() {
-        final var now = LocalDateTime.now();
+        var now = LocalDateTime.now();
         quote.setUpdatedAt(now);
         assertEquals(now, quote.getUpdatedAt());
     }
 
     @Test
     void authorGetterSetter() {
-        final var author = new Author();
+        var author = new Author();
         author.setName("author");
 
         quote.setAuthor(author);
@@ -60,7 +60,7 @@ class QuoteTest {
 
     @Test
     void adminGetterSetter() {
-        final var admin = new Admin();
+        var admin = new Admin();
         admin.setUsername("admin");
 
         quote.setAdmin(admin);
@@ -76,7 +76,7 @@ class QuoteTest {
 
     @Test
     void testEquals() {
-        final var quoteEqual = new Quote();
+        var quoteEqual = new Quote();
         assertEquals(quote, quoteEqual);
 
         quote.setId(1);
@@ -95,7 +95,7 @@ class QuoteTest {
         quoteEqual.setBody("body");
         assertEquals(quote, quoteEqual);
 
-        final var now = LocalDateTime.now();
+        var now = LocalDateTime.now();
         quote.setCreatedAt(now);
         quoteEqual.setCreatedAt(now);
         assertEquals(quote, quoteEqual);
@@ -109,13 +109,13 @@ class QuoteTest {
 
     @Test
     void testToString() {
-        final var now = LocalDateTime.now();
+        var now = LocalDateTime.now();
         quote.setId(1);
         quote.setBody("body");
         quote.setCreatedAt(now);
         quote.setUpdatedAt(now);
 
-        final var quoteString = "Quote("
+        var quoteString = "Quote("
                     + "id="+quote.getId()+", "
                     + "body="+quote.getBody()+", "
                     + "createdAt="+now+", "
@@ -137,7 +137,7 @@ class QuoteTest {
         quote.setBody("body");
         assertEquals(hashCodeCalculate(quote), quote.hashCode());
 
-        final var now = LocalDateTime.now();
+        var now = LocalDateTime.now();
         quote.setCreatedAt(now);
         assertEquals(hashCodeCalculate(quote), quote.hashCode());
 
@@ -152,12 +152,12 @@ class QuoteTest {
     }
 
     private int hashCodeCalculate(Quote quote) {
-        final var idHashCode = quote.getId() == null ? 43 : quote.getId().hashCode();
-        final var bodyHashCode = quote.getBody() == null ? 43 : quote.getBody().hashCode();
-        final var createdAtHashCode = quote.getCreatedAt() == null ? 43 : quote.getCreatedAt().hashCode();
-        final var updatedAtHashCode = quote.getUpdatedAt() == null ? 43 : quote.getUpdatedAt().hashCode();
-        final var authorHashCode = quote.getAuthor() == null ? 43 : quote.getAuthor().hashCode();
-        final var adminHashCode = quote.getAdmin() == null ? 43 : quote.getAdmin().hashCode();
+        var idHashCode = quote.getId() == null ? 43 : quote.getId().hashCode();
+        var bodyHashCode = quote.getBody() == null ? 43 : quote.getBody().hashCode();
+        var createdAtHashCode = quote.getCreatedAt() == null ? 43 : quote.getCreatedAt().hashCode();
+        var updatedAtHashCode = quote.getUpdatedAt() == null ? 43 : quote.getUpdatedAt().hashCode();
+        var authorHashCode = quote.getAuthor() == null ? 43 : quote.getAuthor().hashCode();
+        var adminHashCode = quote.getAdmin() == null ? 43 : quote.getAdmin().hashCode();
 
         var result = 1;
         result = result * 59 + idHashCode;

@@ -22,7 +22,7 @@ public class TagServiceImpl implements TagService {
             return Collections.emptySet();
         }
 
-        final var tags = tagsString.stream()
+        var tags = tagsString.stream()
                 .map(this::createTag)
                 .collect(Collectors.toSet());
 
@@ -32,9 +32,9 @@ public class TagServiceImpl implements TagService {
     }
 
     private Tag createTag(String tagName) {
-        final var cleanTagName = tagName.replaceAll("[^a-zA-Z0-9 ]", "").trim().toLowerCase();
+        var cleanTagName = tagName.replaceAll("[^a-zA-Z0-9 ]", "").trim().toLowerCase();
 
-        final var tag = new Tag();
+        var tag = new Tag();
         tag.setId(cleanTagName.replace(' ', '-'));
         tag.setName(cleanTagName);
         return tag;

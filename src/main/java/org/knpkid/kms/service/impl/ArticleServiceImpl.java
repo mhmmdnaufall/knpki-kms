@@ -48,7 +48,7 @@ public class ArticleServiceImpl implements ArticleService {
     public ArticleResponse create(CreateArticleRequest request, Admin admin) {
         validationService.validate(request);
 
-        final var article = new Article();
+        var article = new Article();
         article.setTitle(request.title());
         article.setBody(request.body());
         article.setTeaser(request.teaser());
@@ -74,15 +74,15 @@ public class ArticleServiceImpl implements ArticleService {
     @Transactional
     @Override
     public ArticleResponse update(Integer articleId, UpdateArticleRequest request, Admin admin) {
-        final var article = getArticleById(articleId);
+        var article = getArticleById(articleId);
 
         checkArticleAdmin(article, admin);
         validationService.validate(request);
 
         // for deletion
-        final var oldCoverImage = article.getCoverImage();
-        final var oldArticleImageGallery = article.getImageGallery();
-        final var oldArchive = article.getArchive();
+        var oldCoverImage = article.getCoverImage();
+        var oldArticleImageGallery = article.getImageGallery();
+        var oldArchive = article.getArchive();
 
         article.setTitle(request.title());
         article.setBody(request.body());
@@ -107,7 +107,7 @@ public class ArticleServiceImpl implements ArticleService {
     @Transactional
     @Override
     public void delete(Integer articleId, Admin admin) {
-        final var article = getArticleById(articleId);
+        var article = getArticleById(articleId);
         checkArticleAdmin(article, admin);
 
         articleRepository.delete(article);
@@ -127,8 +127,8 @@ public class ArticleServiceImpl implements ArticleService {
     @Transactional(readOnly = true)
     @Override
     public Page<OnlyArticleResponse> search(String keyword, Integer page, Integer size) {
-        final var specification = (Specification<Article>) (root, query, builder) -> {
-            final var trimmedKeyword = keyword.trim();
+        var specification = (Specification<Article>) (root, query, builder) -> {
+            var trimmedKeyword = keyword.trim();
             return query.where(builder.or(
                     builder.like(root.get("title"), "%" + trimmedKeyword + "%"),
                     builder.like(root.get("teaser"), "%" + trimmedKeyword + "%"),
@@ -143,11 +143,11 @@ public class ArticleServiceImpl implements ArticleService {
             )).getRestriction();
         };
 
-        final var pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc(UPDATED_AT)));
+        var pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc(UPDATED_AT)));
 
-        final var articlesPage = articleRepository.findAll(specification, pageable);
+        var articlesPage = articleRepository.findAll(specification, pageable);
 
-        final var onlyArticleResponses = articlesPage.getContent().stream()
+        var onlyArticleResponses = articlesPage.getContent().stream()
                 .map(ConvertToModel::onlyArticleResponse)
                 .toList();
 
@@ -157,9 +157,9 @@ public class ArticleServiceImpl implements ArticleService {
     @Transactional(readOnly = true)
     @Override
     public Page<OnlyArticleResponse> getArticlesByTag(String tagId, Integer page, Integer size) {
-        final var pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc(UPDATED_AT)));
-        final var articlesPage = articleRepository.findByTagsId(tagId, pageable);
-        final var onlyArticleResponses = articlesPage.getContent().stream()
+        var pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc(UPDATED_AT)));
+        var articlesPage = articleRepository.findByTagsId(tagId, pageable);
+        var onlyArticleResponses = articlesPage.getContent().stream()
                 .map(ConvertToModel::onlyArticleResponse)
                 .toList();
         return new PageImpl<>(onlyArticleResponses, pageable, articlesPage.getTotalElements());
@@ -168,9 +168,9 @@ public class ArticleServiceImpl implements ArticleService {
     @Transactional(readOnly = true)
     @Override
     public Page<OnlyArticleResponse> getArticlesByAdmin(String username, Integer page, Integer size) {
-        final var pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc(UPDATED_AT)));
-        final var articlesPage = articleRepository.findByAdmin_Username(username, pageable);
-        final var onlyArticleResponses = articlesPage.getContent().stream()
+        var pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc(UPDATED_AT)));
+        var articlesPage = articleRepository.findByAdmin_Username(username, pageable);
+        var onlyArticleResponses = articlesPage.getContent().stream()
                 .map(ConvertToModel::onlyArticleResponse)
                 .toList();
         return new PageImpl<>(onlyArticleResponses, pageable, articlesPage.getTotalElements());
@@ -199,7 +199,7 @@ public class ArticleServiceImpl implements ArticleService {
 
         Optional.ofNullable(images)
                 .ifPresent(it -> {
-                    for (final var image : it) {
+                    for (var image : it) {
                         article.getImageGallery().add(imageService.save(image));
                     }
                 });

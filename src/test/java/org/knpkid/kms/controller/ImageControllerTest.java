@@ -18,16 +18,16 @@ class ImageControllerTest {
     @Test
     void getImage() {
 
-        try (final var filesMock = mockStatic(Files.class)) {
+        try (var filesMock = mockStatic(Files.class)) {
 
-            final var imageByte = "image".getBytes();
+            var imageByte = "image".getBytes();
 
             // success
             {
                 filesMock.when(() -> Files.readAllBytes(any())).thenReturn(imageByte);
             }
 
-            final var imageByteArrayResponse = assertDoesNotThrow(() -> IMAGE_CONTROLLER.getImage("image.png"));
+            var imageByteArrayResponse = assertDoesNotThrow(() -> IMAGE_CONTROLLER.getImage("image.png"));
             assertEquals(imageByte, imageByteArrayResponse);
 
             // error
@@ -35,7 +35,7 @@ class ImageControllerTest {
                 filesMock.when(() -> Files.readAllBytes(any())).thenThrow(IOException.class);
             }
 
-            final var exception = assertThrows(
+            var exception = assertThrows(
                     ResponseStatusException.class,
                     () -> IMAGE_CONTROLLER.getImage("image.png")
             );

@@ -19,7 +19,7 @@ public class AuthorJob {
     @Transactional
     public void removeAbandonedAuthor() {
         log.info("checking for abandoned author . . .");
-        final var authors = authorRepository.findByArticlesEmptyAndQuotesEmpty();
+        var authors = authorRepository.findByArticlesEmptyAndQuotesEmpty();
         log.info("total abandoned authors : {}", authors.size());
 
         if (authors.isEmpty()) return;
@@ -27,7 +27,7 @@ public class AuthorJob {
         // if authors != empty
         authorRepository.deleteAll(authors);
 
-        final var deletedAuthorsId = authors.stream().map(Author::getId).toList();
+        var deletedAuthorsId = authors.stream().map(Author::getId).toList();
         log.info("author with id {} have been removed", deletedAuthorsId);
 
     }

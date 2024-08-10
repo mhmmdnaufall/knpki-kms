@@ -25,11 +25,11 @@ class AuthControllerTest {
 
     @Test
     void login() {
-        final var request = new LoginAdminRequest("username", "password");
+        var request = new LoginAdminRequest("username", "password");
 
         when(authService.getLoginToken(request)).thenReturn("token value");
 
-        final var webResponse = authController.login(request);
+        var webResponse = authController.login(request);
 
         assertEquals(new TokenResponse("token value"), webResponse.data());
         assertNull(webResponse.errors());
@@ -38,7 +38,7 @@ class AuthControllerTest {
 
     @Test
     void logout() {
-        try (final var securityContextHolderMockStatic = mockStatic(SecurityContextHolder.class)) {
+        try (var securityContextHolderMockStatic = mockStatic(SecurityContextHolder.class)) {
             authController.logout();
             securityContextHolderMockStatic.verify(SecurityContextHolder::clearContext);
         }
@@ -46,8 +46,8 @@ class AuthControllerTest {
 
     @Test
     void getCsrfToken() {
-        final var csrfTokenMock = mock(CsrfToken.class);
-        final var webResponse = authController.getCsrfToken(csrfTokenMock);
+        var csrfTokenMock = mock(CsrfToken.class);
+        var webResponse = authController.getCsrfToken(csrfTokenMock);
         assertEquals(csrfTokenMock.getToken(), webResponse.data().token());
         assertNull(webResponse.errors());
         assertNull(webResponse.paging());

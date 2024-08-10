@@ -32,7 +32,7 @@ public class ArchiveController {
             boolean wantToDownload,
             HttpServletResponse response
     ) {
-        final var filePath = ARCHIVE_PATH_DIRECTORY.resolve(archiveName);
+        var filePath = ARCHIVE_PATH_DIRECTORY.resolve(archiveName);
         try {
             if (wantToDownload) {
                 response.setHeader(

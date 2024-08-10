@@ -19,7 +19,7 @@ class AdminArgumentResolverTest {
 
     @Test
     void supportsParameter() {
-        final var methodParameter = mock(MethodParameter.class);
+        var methodParameter = mock(MethodParameter.class);
 
         // true
         when(methodParameter.getParameterType()).thenAnswer(invocation -> Admin.class);
@@ -36,21 +36,21 @@ class AdminArgumentResolverTest {
 
     @Test
     void resolveArgument() {
-        final var admin = new Admin();
+        var admin = new Admin();
 
-        final var securityContext = mock(SecurityContext.class);
-        final var authentication = mock(Authentication.class);
+        var securityContext = mock(SecurityContext.class);
+        var authentication = mock(Authentication.class);
         SecurityContextHolder.setContext(securityContext);
 
         when(securityContext.getAuthentication()).thenReturn(authentication);
         when(authentication.getPrincipal()).thenReturn(admin);
 
-        final var parameter = mock(MethodParameter.class);
-        final var mavContainer = mock(ModelAndViewContainer.class);
-        final var webRequest = mock(NativeWebRequest.class);
-        final var binderFactory = mock(WebDataBinderFactory.class);
+        var parameter = mock(MethodParameter.class);
+        var mavContainer = mock(ModelAndViewContainer.class);
+        var webRequest = mock(NativeWebRequest.class);
+        var binderFactory = mock(WebDataBinderFactory.class);
 
-        final var adminResult = adminArgumentResolver.resolveArgument(parameter, mavContainer, webRequest, binderFactory);
+        var adminResult = adminArgumentResolver.resolveArgument(parameter, mavContainer, webRequest, binderFactory);
         assertSame(admin,adminResult);
     }
 }

@@ -55,7 +55,7 @@ class AdminTest {
 
     @Test
     void imageGetterSetter() {
-        final var image = new Image();
+        var image = new Image();
         image.setId("imageId");
         image.setFormat(ImageFormat.PNG);
 
@@ -77,7 +77,7 @@ class AdminTest {
 
     @Test
     void testEquals() {
-        final var image = new Image();
+        var image = new Image();
         image.setId("imageId");
         image.setFormat(ImageFormat.PNG);
 
@@ -87,11 +87,11 @@ class AdminTest {
         ADMIN.setImage(image);
         ADMIN.setArticles(Collections.emptyList());
 
-        final var image2 = new Image();
+        var image2 = new Image();
         image2.setId("imageId");
         image2.setFormat(ImageFormat.PNG);
 
-        final var adminEqual = new Admin();
+        var adminEqual = new Admin();
         adminEqual.setUsername("username");
         adminEqual.setPassword("password");
         adminEqual.setName("name");
@@ -120,7 +120,7 @@ class AdminTest {
         adminEqual.setArticles(null);
         assertEquals(ADMIN, adminEqual);
 
-        final var adminNotEqual = new Admin();
+        var adminNotEqual = new Admin();
         adminNotEqual.setName("unequal");
         assertNotEquals(ADMIN, adminNotEqual);
 
@@ -135,11 +135,11 @@ class AdminTest {
 
     @Test
     void testHashCode() {
-        final var image = new Image();
+        var image = new Image();
         image.setId("imageId");
         image.setFormat(ImageFormat.PNG);
 
-        final var admin = new Admin();
+        var admin = new Admin();
         assertEquals(hashCodeCalculate(admin), admin.hashCode());
 
         admin.setUsername("username");
@@ -157,7 +157,7 @@ class AdminTest {
 
     @Test
     void testToString() {
-        final var image = new Image();
+        var image = new Image();
         image.setId("imageId");
         image.setFormat(ImageFormat.PNG);
 
@@ -168,16 +168,16 @@ class AdminTest {
         ADMIN.setArticles(Collections.emptyList());
         ADMIN.setQuotes(Collections.emptyList());
 
-        final var adminString = "Admin(username=username, password=password, name=name, image=" + image + ", articles=" + Collections.emptyList() + ", quotes=" + Collections.emptyList() + ")";
+        var adminString = "Admin(username=username, password=password, name=name, image=" + image + ", articles=" + Collections.emptyList() + ", quotes=" + Collections.emptyList() + ")";
         assertEquals(adminString, ADMIN.toString());
 
     }
 
     private int hashCodeCalculate(Admin admin) {
-        final var usernameHashCode = admin.getUsername() == null ? 43 : admin.getUsername().hashCode();
-        final var passwordHashCode = admin.getPassword() == null ? 43 : admin.getPassword().hashCode();
-        final var nameHashCode = admin.getName() == null ? 43 : admin.getName().hashCode();
-        final var imageHashCode = admin.getImage() == null ? 43 : admin.getImage().hashCode();
+        var usernameHashCode = admin.getUsername() == null ? 43 : admin.getUsername().hashCode();
+        var passwordHashCode = admin.getPassword() == null ? 43 : admin.getPassword().hashCode();
+        var nameHashCode = admin.getName() == null ? 43 : admin.getName().hashCode();
+        var imageHashCode = admin.getImage() == null ? 43 : admin.getImage().hashCode();
 
         var result = 1;
         result = result * 59 + usernameHashCode;

@@ -30,12 +30,12 @@ class ArticleControllerTest {
 
     @Test
     void create() {
-        final var now = LocalDateTime.now();
+        var now = LocalDateTime.now();
 
-        final var admin = new Admin();
+        var admin = new Admin();
         admin.setUsername("admin");
 
-        final var request = new CreateArticleRequest(
+        var request = new CreateArticleRequest(
                 "title",
                 null,
                 "body",
@@ -46,14 +46,14 @@ class ArticleControllerTest {
                 null
         );
 
-        final var response = new ArticleResponse(
+        var response = new ArticleResponse(
                 1, "title", now, now, "body", "teaser",
                 null, admin, null, null, null, null
         );
 
         when(articleService.create(request, admin)).thenReturn(response);
 
-        final var webResponseArticleResponse = articleController.create(request, admin);
+        var webResponseArticleResponse = articleController.create(request, admin);
         verify(articleService).create(request, admin);
 
         assertNull(webResponseArticleResponse.errors());
@@ -71,15 +71,15 @@ class ArticleControllerTest {
 
     @Test
     void get() {
-        final var image = new Image();
+        var image = new Image();
         image.setId("imageId");
         image.setFormat(ImageFormat.PNG);
 
-        final var now = LocalDateTime.now();
-        final var tags = Set.of(new Tag());
-        final var admin = new Admin();
-        final var authors = Set.of(new Author());
-        final var archive = new Archive();
+        var now = LocalDateTime.now();
+        var tags = Set.of(new Tag());
+        var admin = new Admin();
+        var authors = Set.of(new Author());
+        var archive = new Archive();
 
         when(articleService.get(1)).thenReturn(
                 new ArticleResponse(
@@ -88,7 +88,7 @@ class ArticleControllerTest {
                 )
         );
 
-        final var webResponseArticleResponse = articleController.get(1);
+        var webResponseArticleResponse = articleController.get(1);
 
         verify(articleService).get(1);
 
@@ -112,12 +112,12 @@ class ArticleControllerTest {
 
     @Test
     void update() {
-        final var now = LocalDateTime.now();
+        var now = LocalDateTime.now();
 
-        final var admin = new Admin();
+        var admin = new Admin();
         admin.setUsername("admin");
 
-        final var request = new UpdateArticleRequest(
+        var request = new UpdateArticleRequest(
                 "title",
                 null,
                 "body",
@@ -128,14 +128,14 @@ class ArticleControllerTest {
                 null
         );
 
-        final var response = new ArticleResponse(
+        var response = new ArticleResponse(
                 1, "title", now, now, "body", "teaser",
                 null, admin, null, null, null, null
         );
 
         when(articleService.update(1, request, admin)).thenReturn(response);
 
-        final var webResponseArticleResponse = articleController.update(1, request, admin);
+        var webResponseArticleResponse = articleController.update(1, request, admin);
         verify(articleService).update(1, request, admin);
 
         assertNull(webResponseArticleResponse.errors());
@@ -157,7 +157,7 @@ class ArticleControllerTest {
 
     @Test
     void delete() {
-        final var admin = new Admin();
+        var admin = new Admin();
         doNothing().when(articleService).delete(1, admin);
         articleController.delete(1, admin);
         verify(articleService).delete(1, admin);
@@ -166,11 +166,11 @@ class ArticleControllerTest {
     @DisplayName("getAllOrSearchArticle() - getAll")
     @Test
     void getAllOrSearchArticle_getAll() {
-        final var image = new Image();
+        var image = new Image();
         image.setId("articleId");
         image.setFormat(ImageFormat.PNG);
 
-        final var onlyArticleResponses = List.of(
+        var onlyArticleResponses = List.of(
                 new OnlyArticleResponse(
                         1, "title",
                         LocalDateTime.now(), LocalDateTime.now(),
@@ -189,7 +189,7 @@ class ArticleControllerTest {
                     );
         }
 
-        final var webResponse = articleController.getAllOrSearchArticle(null, 0, 12);
+        var webResponse = articleController.getAllOrSearchArticle(null, 0, 12);
 
         {
             verify(articleService, times(0)).search(anyString(), anyInt(), anyInt());
@@ -205,11 +205,11 @@ class ArticleControllerTest {
     @DisplayName("getAllOrSearchArticle() - search")
     @Test
     void getAllOrSearchArticle_search() {
-        final var image = new Image();
+        var image = new Image();
         image.setId("articleId");
         image.setFormat(ImageFormat.PNG);
 
-        final var onlyArticleResponses = List.of(
+        var onlyArticleResponses = List.of(
                 new OnlyArticleResponse(
                         1, "search title",
                         LocalDateTime.now(), LocalDateTime.now(),
@@ -228,7 +228,7 @@ class ArticleControllerTest {
                     );
         }
 
-        final var webResponse = articleController.getAllOrSearchArticle("search", 0, 12);
+        var webResponse = articleController.getAllOrSearchArticle("search", 0, 12);
 
         {
             verify(articleService).search(anyString(), anyInt(), anyInt());
@@ -243,11 +243,11 @@ class ArticleControllerTest {
 
     @Test
     void getArticlesByTag() {
-        final var image = new Image();
+        var image = new Image();
         image.setId("articleId");
         image.setFormat(ImageFormat.PNG);
 
-        final var onlyArticleResponses = List.of(
+        var onlyArticleResponses = List.of(
                 new OnlyArticleResponse(
                         1, "search title",
                         LocalDateTime.now(), LocalDateTime.now(),
@@ -266,7 +266,7 @@ class ArticleControllerTest {
                     );
         }
 
-        final var webResponse = articleController.getArticlesByTag("tagId", 0, 12);
+        var webResponse = articleController.getArticlesByTag("tagId", 0, 12);
 
         assertEquals(onlyArticleResponses, webResponse.data());
         assertNull(webResponse.errors());
@@ -276,11 +276,11 @@ class ArticleControllerTest {
 
     @Test
     void getAdminArticle() {
-        final var image = new Image();
+        var image = new Image();
         image.setId("articleId");
         image.setFormat(ImageFormat.PNG);
 
-        final var onlyArticleResponses = List.of(
+        var onlyArticleResponses = List.of(
                 new OnlyArticleResponse(
                         1, "search title",
                         LocalDateTime.now(), LocalDateTime.now(),
@@ -299,7 +299,7 @@ class ArticleControllerTest {
                     );
         }
 
-        final var webResponse = articleController.getAdminArticle("username", 0, 12);
+        var webResponse = articleController.getAdminArticle("username", 0, 12);
 
         assertEquals(onlyArticleResponses, webResponse.data());
         assertNull(webResponse.errors());

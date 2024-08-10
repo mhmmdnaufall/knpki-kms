@@ -10,8 +10,8 @@ class ArchiveTest {
 
     @Test
     void archive() {
-        final var uuid = UUID.randomUUID();
-        final var archive = new Archive();
+        var uuid = UUID.randomUUID();
+        var archive = new Archive();
         archive.setId(uuid.toString());
         archive.setFormat(ArchiveFormat.PDF);
 
@@ -21,13 +21,13 @@ class ArchiveTest {
 
     @Test
     void testEquals() {
-        final var uuid = UUID.randomUUID();
+        var uuid = UUID.randomUUID();
 
-        final var archive1 = new Archive();
+        var archive1 = new Archive();
         archive1.setId(uuid.toString());
         archive1.setFormat(ArchiveFormat.PDF);
 
-        final var archive2 = new Archive();
+        var archive2 = new Archive();
         archive2.setId(uuid.toString());
         archive2.setFormat(ArchiveFormat.PDF);
 
@@ -41,7 +41,7 @@ class ArchiveTest {
         archive2.setFormat(null);
         assertEquals(archive1, archive2);
 
-        final var archiveUnequal = new Archive();
+        var archiveUnequal = new Archive();
         archiveUnequal.setId("unequal");
 
         assertNotEquals(archive1, archiveUnequal);
@@ -49,8 +49,8 @@ class ArchiveTest {
 
     @Test
     void canEqual() {
-        final var uuid = UUID.randomUUID();
-        final var archive = new Archive();
+        var uuid = UUID.randomUUID();
+        var archive = new Archive();
         archive.setId(uuid.toString());
         archive.setFormat(ArchiveFormat.PDF);
 
@@ -60,8 +60,8 @@ class ArchiveTest {
 
     @Test
     void testHashCode() {
-        final var uuid = UUID.randomUUID();
-        final var archive = new Archive();
+        var uuid = UUID.randomUUID();
+        var archive = new Archive();
         assertEquals(hashCodeCalculate(archive), archive.hashCode());
 
         archive.setId(uuid.toString());
@@ -73,8 +73,8 @@ class ArchiveTest {
 
     @Test
     void testToString() {
-        final var uuid = UUID.randomUUID();
-        final var archive = new Archive();
+        var uuid = UUID.randomUUID();
+        var archive = new Archive();
         archive.setId(uuid.toString());
         archive.setFormat(ArchiveFormat.PDF);
 
@@ -82,8 +82,8 @@ class ArchiveTest {
     }
 
     private int hashCodeCalculate(Archive archive) {
-        final var idHashCode = archive.getId() == null ? 43 : archive.getId().hashCode();
-        final var formatHashCode = archive.getFormat() == null ? 43 : archive.getFormat().hashCode();
+        var idHashCode = archive.getId() == null ? 43 : archive.getId().hashCode();
+        var formatHashCode = archive.getFormat() == null ? 43 : archive.getFormat().hashCode();
 
         var result = 1;
         result = result * 59 + idHashCode;

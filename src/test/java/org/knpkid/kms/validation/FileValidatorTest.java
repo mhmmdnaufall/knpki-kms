@@ -18,7 +18,7 @@ class FileValidatorTest {
 
     @Test
     void initialize() {
-        final var fileAnnotation = mock(File.class);
+        var fileAnnotation = mock(File.class);
         {
             when(fileAnnotation.max()).thenReturn(5L);
             when(fileAnnotation.size()).thenReturn(FileSize.KB);
@@ -35,8 +35,8 @@ class FileValidatorTest {
     @Test
     void isValid() throws IOException {
         initialize();
-        final var multipartFile = mock(MultipartFile.class);
-        final var context = mock(ConstraintValidatorContext.class);
+        var multipartFile = mock(MultipartFile.class);
+        var context = mock(ConstraintValidatorContext.class);
 
         {
             when(multipartFile.getOriginalFilename()).thenReturn("test.jpg");
@@ -44,7 +44,7 @@ class FileValidatorTest {
             doNothing().when(context).disableDefaultConstraintViolation();
         }
 
-        final var isValid = fileValidator.isValid(multipartFile, context);
+        var isValid = fileValidator.isValid(multipartFile, context);
 
         assertTrue(isValid);
         verify(context).disableDefaultConstraintViolation();
@@ -53,16 +53,16 @@ class FileValidatorTest {
 
     @Test
     void isValid_multipartFile_null() {
-        final var isValid = fileValidator.isValid(null, null);
+        var isValid = fileValidator.isValid(null, null);
         assertTrue(isValid);
     }
 
     @Test
     void isValid_wrongFileSize() throws IOException {
         initialize();
-        final var multipartFile = mock(MultipartFile.class);
-        final var context = mock(ConstraintValidatorContext.class);
-        final var builder = mock(ConstraintValidatorContext.ConstraintViolationBuilder.class);
+        var multipartFile = mock(MultipartFile.class);
+        var context = mock(ConstraintValidatorContext.class);
+        var builder = mock(ConstraintValidatorContext.ConstraintViolationBuilder.class);
 
         {
             when(multipartFile.getOriginalFilename()).thenReturn("file.jpg");
@@ -72,7 +72,7 @@ class FileValidatorTest {
             when(builder.addConstraintViolation()).thenReturn(context);
         }
 
-        final var isValid = fileValidator.isValid(multipartFile, context);
+        var isValid = fileValidator.isValid(multipartFile, context);
 
         assertFalse(isValid);
         verify(context).buildConstraintViolationWithTemplate(anyString());
@@ -82,9 +82,9 @@ class FileValidatorTest {
     @Test
     void isValid_wrongFileFormat() throws IOException {
         initialize();
-        final var multipartFile = mock(MultipartFile.class);
-        final var context = mock(ConstraintValidatorContext.class);
-        final var builder = mock(ConstraintValidatorContext.ConstraintViolationBuilder.class);
+        var multipartFile = mock(MultipartFile.class);
+        var context = mock(ConstraintValidatorContext.class);
+        var builder = mock(ConstraintValidatorContext.ConstraintViolationBuilder.class);
 
         {
             when(multipartFile.getOriginalFilename()).thenReturn("file.pdf"); // should only accept `jpg` file
@@ -94,7 +94,7 @@ class FileValidatorTest {
             when(builder.addConstraintViolation()).thenReturn(context);
         }
 
-        final var isValid = fileValidator.isValid(multipartFile, context);
+        var isValid = fileValidator.isValid(multipartFile, context);
 
         assertFalse(isValid);
         verify(context).buildConstraintViolationWithTemplate(anyString());
@@ -105,7 +105,7 @@ class FileValidatorTest {
     @ValueSource(strings = {"jpg", "jpeg", "png", "pdf"})
     void isValid_validForEveryFileFormat(String format) throws IOException {
         // init
-        final var fileAnnotation = mock(File.class);
+        var fileAnnotation = mock(File.class);
         {
             when(fileAnnotation.max()).thenReturn(5L);
             when(fileAnnotation.size()).thenReturn(FileSize.KB);
@@ -113,8 +113,8 @@ class FileValidatorTest {
         }
         fileValidator.initialize(fileAnnotation);
 
-        final var multipartFile = mock(MultipartFile.class);
-        final var context = mock(ConstraintValidatorContext.class);
+        var multipartFile = mock(MultipartFile.class);
+        var context = mock(ConstraintValidatorContext.class);
 
         // jpg
         {
@@ -123,7 +123,7 @@ class FileValidatorTest {
             doNothing().when(context).disableDefaultConstraintViolation();
         }
 
-        final var isValid = fileValidator.isValid(multipartFile, context);
+        var isValid = fileValidator.isValid(multipartFile, context);
 
         assertTrue(isValid);
         verify(context).disableDefaultConstraintViolation();
@@ -134,8 +134,8 @@ class FileValidatorTest {
 
     @Test
     void isValid_getBytesError() throws IOException {
-        final var multipartFile = mock(MultipartFile.class);
-        final var context = mock(ConstraintValidatorContext.class);
+        var multipartFile = mock(MultipartFile.class);
+        var context = mock(ConstraintValidatorContext.class);
 
         {
             doNothing().when(context).disableDefaultConstraintViolation();

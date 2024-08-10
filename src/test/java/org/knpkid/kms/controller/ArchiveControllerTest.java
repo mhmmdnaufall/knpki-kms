@@ -22,15 +22,15 @@ class ArchiveControllerTest {
     @ParameterizedTest(name = "{displayName}, wantToDownload={0}")
     @ValueSource(booleans = {true, false})
     void getOrDownload(boolean wantToDownload) {
-        final var httpServletResponse = new MockHttpServletResponse();
-        final var fileName = "file.pdf";
-        final var filePath = ARCHIVE_PATH_DIRECTORY.resolve(fileName);
+        var httpServletResponse = new MockHttpServletResponse();
+        var fileName = "file.pdf";
+        var filePath = ARCHIVE_PATH_DIRECTORY.resolve(fileName);
 
-        try (final var filesMock = mockStatic(Files.class)) {
+        try (var filesMock = mockStatic(Files.class)) {
 
             filesMock.when(() -> Files.readAllBytes(filePath)).thenReturn(fileName.getBytes());
 
-            final var fileBytes = archiveController.getOrDownload(fileName, wantToDownload, httpServletResponse);
+            var fileBytes = archiveController.getOrDownload(fileName, wantToDownload, httpServletResponse);
             assertArrayEquals(fileName.getBytes(), fileBytes);
 
             if (wantToDownload) {
@@ -47,15 +47,15 @@ class ArchiveControllerTest {
 
     @Test
     void getOrDownload_readBytesError() {
-        final var httpServletResponse = new MockHttpServletResponse();
-        final var fileName = "file.pdf";
-        final var filePath = ARCHIVE_PATH_DIRECTORY.resolve(fileName);
+        var httpServletResponse = new MockHttpServletResponse();
+        var fileName = "file.pdf";
+        var filePath = ARCHIVE_PATH_DIRECTORY.resolve(fileName);
 
-        try (final var filesMock = mockStatic(Files.class)) {
+        try (var filesMock = mockStatic(Files.class)) {
 
             filesMock.when(() -> Files.readAllBytes(filePath)).thenThrow(new IOException());
 
-            final var error = assertThrows(
+            var error = assertThrows(
                     ResponseStatusException.class,
                     () -> archiveController.getOrDownload(fileName, false, httpServletResponse)
             );

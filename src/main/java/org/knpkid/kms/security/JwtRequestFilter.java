@@ -31,7 +31,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
 
         try {
-            final var requestTokenHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+            var requestTokenHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 
             String username = null;
             String jwtToken = null;
@@ -42,10 +42,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             }
 
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                final var userDetails =  adminService.loadUserByUsername(username);
+                var userDetails =  adminService.loadUserByUsername(username);
 
                 if (jwtTokenUtils.validateToken(jwtToken, userDetails)) {
-                    final var authenticationToken =
+                    var authenticationToken =
                             new UsernamePasswordAuthenticationToken(
                                     userDetails, null, userDetails.getAuthorities()
                             );

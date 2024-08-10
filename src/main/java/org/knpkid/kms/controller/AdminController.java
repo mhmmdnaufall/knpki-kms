@@ -20,7 +20,7 @@ public class AdminController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public WebResponse<AdminResponse> get(Admin admin) {
-        final var adminResponse = adminService.get(admin);
+        var adminResponse = adminService.get(admin);
         return new WebResponse<>(adminResponse, null, null);
     }
 

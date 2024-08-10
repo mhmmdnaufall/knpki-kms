@@ -43,19 +43,19 @@ class QuoteServiceImplTest {
 
     @Test
     void create() {
-        final var request = new CreateQuoteRequest("body", "author");
-        final var author = new Author();
+        var request = new CreateQuoteRequest("body", "author");
+        var author = new Author();
         author.setId(1);
         author.setName("author");
 
-        final var admin = new Admin();
+        var admin = new Admin();
         admin.setUsername("naufal");
 
         {
             doNothing().when(validationService).validate(request);
             when(authorService.getOrCreateByName(request.author())).thenReturn(author);
             when(quoteRepository.save(any())).then(invocation -> {
-                final var quote = (Quote) invocation.getArgument(0);
+                var quote = (Quote) invocation.getArgument(0);
                 assertEquals(request.body(), quote.getBody());
                 assertEquals(author, quote.getAuthor());
                 assertEquals(admin, quote.getAdmin());
@@ -63,7 +63,7 @@ class QuoteServiceImplTest {
             });
         }
 
-        final var response = quoteService.create(request, admin);
+        var response = quoteService.create(request, admin);
 
         verify(validationService).validate(request);
         verify(authorService).getOrCreateByName(request.author());
@@ -75,10 +75,10 @@ class QuoteServiceImplTest {
 
     @Test
     void delete_success() {
-        final var admin = new Admin();
+        var admin = new Admin();
         admin.setUsername("admin");
 
-        final var quote = new Quote();
+        var quote = new Quote();
         quote.setId(1);
         quote.setBody("body");
         quote.setAdmin(admin);
@@ -97,43 +97,43 @@ class QuoteServiceImplTest {
     void delete_idNotFound() {
         when(quoteRepository.findById(1)).thenReturn(Optional.empty());
 
-        final var admin = new Admin();
-        final var error = assertThrows(ResponseStatusException.class, () -> quoteService.delete(1, admin));
+        var admin = new Admin();
+        var error = assertThrows(ResponseStatusException.class, () -> quoteService.delete(1, admin));
         assertEquals("quote with id '1' is not found", error.getReason());
         assertEquals(HttpStatus.NOT_FOUND, error.getStatusCode());
     }
 
     @Test
     void delete_adminForbidden() {
-        final var admin = new Admin();
+        var admin = new Admin();
         admin.setUsername("admin");
 
-        final var quote = new Quote();
+        var quote = new Quote();
         quote.setAdmin(new Admin()); // different admin
 
         {
             when(quoteRepository.findById(1)).thenReturn(Optional.of(quote));
         }
 
-        final var error = assertThrows(ResponseStatusException.class, () -> quoteService.delete(1, admin));
+        var error = assertThrows(ResponseStatusException.class, () -> quoteService.delete(1, admin));
         assertEquals(HttpStatus.FORBIDDEN, error.getStatusCode());
         assertEquals("this quote belongs to someone else", error.getReason());
     }
 
     @Test
     void update() {
-        final var request = new UpdateQuoteRequest("body update", "author update");
-        final var admin = new Admin();
+        var request = new UpdateQuoteRequest("body update", "author update");
+        var admin = new Admin();
         admin.setUsername("username");
 
-        final var author = new Author();
+        var author = new Author();
         author.setName("author");
 
-        final var quote = new Quote();
+        var quote = new Quote();
         quote.setId(1);
         quote.setBody("body");
 
-        final var now = LocalDateTime.now();
+        var now = LocalDateTime.now();
         quote.setCreatedAt(now.minusDays(1));
         quote.setUpdatedAt(now.minusDays(1));
         quote.setAuthor(author);
@@ -142,12 +142,12 @@ class QuoteServiceImplTest {
         {
             when(quoteRepository.findById(1)).thenReturn(Optional.of(quote));
             when(authorService.getOrCreateByName(request.author())).then(invocation -> {
-                final var newAuthor = new Author();
+                var newAuthor = new Author();
                 newAuthor.setName(invocation.getArgument(0));
                 return newAuthor;
             });
             when(quoteRepository.save(any())).then(invocation -> {
-                final var updatedQuote = (Quote) invocation.getArgument(0);
+                var updatedQuote = (Quote) invocation.getArgument(0);
                 assertNotNull(updatedQuote);
                 assertEquals(now.minusDays(1), updatedQuote.getCreatedAt());
                 assertNotEquals(now, updatedQuote.getUpdatedAt());
@@ -157,7 +157,7 @@ class QuoteServiceImplTest {
             });
         }
 
-        final var response = quoteService.update(1, request, admin);
+        var response = quoteService.update(1, request, admin);
 
         verify(quoteRepository).findById(1);
         verify(authorService).getOrCreateByName(request.author());
@@ -170,9 +170,9 @@ class QuoteServiceImplTest {
     void update_idNotFound() {
         when(quoteRepository.findById(1)).thenReturn(Optional.empty());
 
-        final var request = new UpdateQuoteRequest("body", "author");
-        final var admin = new Admin();
-        final var error = assertThrows(
+        var request = new UpdateQuoteRequest("body", "author");
+        var admin = new Admin();
+        var error = assertThrows(
                 ResponseStatusException.class,
                 () -> quoteService.update(1, request, admin)
         );
@@ -182,31 +182,31 @@ class QuoteServiceImplTest {
 
     @Test
     void update_adminForbidden() {
-        final var admin = new Admin();
+        var admin = new Admin();
         admin.setUsername("admin");
 
-        final var quote = new Quote();
+        var quote = new Quote();
         quote.setAdmin(new Admin()); // different admin
 
         {
             when(quoteRepository.findById(1)).thenReturn(Optional.of(quote));
         }
 
-        final var request = new UpdateQuoteRequest("body", "author");
-        final var error = assertThrows(ResponseStatusException.class, () -> quoteService.update(1, request, admin));
+        var request = new UpdateQuoteRequest("body", "author");
+        var error = assertThrows(ResponseStatusException.class, () -> quoteService.update(1, request, admin));
         assertEquals(HttpStatus.FORBIDDEN, error.getStatusCode());
         assertEquals("this quote belongs to someone else", error.getReason());
     }
 
     @Test
     void getAll() {
-        final var quote = new Quote();
+        var quote = new Quote();
         quote.setId(1);
         quote.setBody("body");
 
-        final var quoteList = List.of(quote);
+        var quoteList = List.of(quote);
 
-        final var pageable = PageRequest.of(0, 12, Sort.by(Sort.Order.desc("updatedAt")));
+        var pageable = PageRequest.of(0, 12, Sort.by(Sort.Order.desc("updatedAt")));
         {
             when(quoteRepository.findAll(pageable))
                     .thenReturn(
@@ -218,7 +218,7 @@ class QuoteServiceImplTest {
                     );
         }
 
-        final var quoteResponsePage = quoteService.getAll(0, 12);
+        var quoteResponsePage = quoteService.getAll(0, 12);
 
         verify(quoteRepository).findAll(pageable);
         assertEquals(quoteList.size(), quoteResponsePage.getContent().size());
@@ -227,13 +227,13 @@ class QuoteServiceImplTest {
 
     @Test
     void get() {
-        final var quote = new Quote();
+        var quote = new Quote();
         quote.setId(1);
         quote.setBody("body");
 
         when(quoteRepository.findById(1)).thenReturn(Optional.of(quote));
 
-        final var quoteResponse = quoteService.get(1);
+        var quoteResponse = quoteService.get(1);
 
         verify(quoteRepository).findById(1);
         assertEquals(quote.getId(), quoteResponse.id());
@@ -245,7 +245,7 @@ class QuoteServiceImplTest {
 
         when(quoteRepository.findById(1)).thenReturn(Optional.empty());
 
-        final var error = assertThrows(ResponseStatusException.class, () -> quoteService.get(1));
+        var error = assertThrows(ResponseStatusException.class, () -> quoteService.get(1));
 
         verify(quoteRepository).findById(1);
         assertEquals(HttpStatus.NOT_FOUND, error.getStatusCode());

@@ -48,7 +48,7 @@ public class AdminServiceImpl implements AdminService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "username already registered");
         }
 
-        final var admin = new Admin();
+        var admin = new Admin();
         admin.setUsername(request.username());
         admin.setPassword(passwordEncoder.encode(request.password()));
         admin.setName(request.name());

@@ -26,13 +26,13 @@ public class ImageServiceImpl implements ImageService {
     @Override
     @SneakyThrows
     public Image save(MultipartFile imageFile) {
-        final var imageFormat = Objects.requireNonNull(imageFile.getOriginalFilename()).split("\\.")[1];
+        var imageFormat = Objects.requireNonNull(imageFile.getOriginalFilename()).split("\\.")[1];
 
-        final var image = new Image();
+        var image = new Image();
         image.setId(UUID.randomUUID().toString());
         image.setFormat(ImageFormat.valueOf(imageFormat.toUpperCase()));
 
-        final var imagePath = IMAGE_PATH_DIRECTORY.resolve(image.toString());
+        var imagePath = IMAGE_PATH_DIRECTORY.resolve(image.toString());
 
         if (!Files.exists(IMAGE_PATH_DIRECTORY))
             Files.createDirectories(IMAGE_PATH_DIRECTORY);
@@ -47,7 +47,7 @@ public class ImageServiceImpl implements ImageService {
     @SneakyThrows
     public void delete(Image image) {
         imageRepository.delete(image);
-        final var imagePath = IMAGE_PATH_DIRECTORY.resolve(image.toString());
+        var imagePath = IMAGE_PATH_DIRECTORY.resolve(image.toString());
         if (!Files.deleteIfExists(imagePath)) {
             log.warn("image with id '{}' was missing before deletion", image.getId());
         }
@@ -58,7 +58,7 @@ public class ImageServiceImpl implements ImageService {
     public void deleteAll(Iterable<Image> images) {
         imageRepository.deleteAll(images);
         for (var image : images) {
-            final var imagePath = IMAGE_PATH_DIRECTORY.resolve(image.toString());
+            var imagePath = IMAGE_PATH_DIRECTORY.resolve(image.toString());
             if (!Files.deleteIfExists(imagePath)) {
                 log.warn("image with id '{}' was missing before deletion", image.getId());
             }

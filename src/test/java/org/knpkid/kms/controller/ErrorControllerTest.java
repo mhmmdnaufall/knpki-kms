@@ -16,23 +16,23 @@ class ErrorControllerTest {
 
     @Test
     void responseStatusException() {
-        final var responseStatusException = mock(ResponseStatusException.class);
+        var responseStatusException = mock(ResponseStatusException.class);
         when(responseStatusException.getStatusCode()).thenReturn(HttpStatus.UNAUTHORIZED);
         when(responseStatusException.getReason()).thenReturn("responseStatusException message");
 
-        final var responseEntity = errorController.responseStatusException(responseStatusException);
+        var responseEntity = errorController.responseStatusException(responseStatusException);
 
         assertErrorResponse(responseEntity, HttpStatus.UNAUTHORIZED, "responseStatusException message");
     }
 
     @Test
     void constraintViolationException() {
-        final var constraintViolationException = mock(ConstraintViolationException.class);
+        var constraintViolationException = mock(ConstraintViolationException.class);
         when(constraintViolationException.getMessage()).thenReturn("constraintViolationException message");
 
-        final var webResponse = errorController.constraintViolationException(constraintViolationException);
+        var webResponse = errorController.constraintViolationException(constraintViolationException);
 
-        final var responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(webResponse);
+        var responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(webResponse);
 
         assertErrorResponse(responseEntity, HttpStatus.BAD_REQUEST, "constraintViolationException message");
     }

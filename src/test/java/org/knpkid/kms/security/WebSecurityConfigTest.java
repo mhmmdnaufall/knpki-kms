@@ -47,7 +47,7 @@ class WebSecurityConfigTest {
 
     @Test
     void daoAuthenticationProvider() {
-        final var daoAuthenticationProvider = webSecurityConfig.daoAuthenticationProvider();
+        var daoAuthenticationProvider = webSecurityConfig.daoAuthenticationProvider();
         assertNotNull(daoAuthenticationProvider);
     }
 
@@ -65,14 +65,14 @@ class WebSecurityConfigTest {
             when(httpSecurity.build()).thenReturn(new DefaultSecurityFilterChain(any()));
         }
 
-        final var securityFilterChain = webSecurityConfig.filterChain(httpSecurity);
+        var securityFilterChain = webSecurityConfig.filterChain(httpSecurity);
         assertNotNull(securityFilterChain);
 
     }
 
     @Test
     void corsConfigurationSource() {
-        final var corsConfigurationSource = webSecurityConfig.corsConfigurationSource();
+        var corsConfigurationSource = webSecurityConfig.corsConfigurationSource();
         assertNotNull(corsConfigurationSource);
     }
 }

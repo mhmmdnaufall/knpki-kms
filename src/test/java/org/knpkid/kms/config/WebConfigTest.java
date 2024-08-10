@@ -2,11 +2,7 @@ package org.knpkid.kms.config;
 
 import org.junit.jupiter.api.Test;
 import org.knpkid.kms.resolver.AdminArgumentResolver;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
-import org.springframework.web.servlet.config.annotation.CorsRegistration;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
 
 import java.util.ArrayList;
 
@@ -20,7 +16,7 @@ class WebConfigTest {
 
     @Test
     void addArgumentResolvers() {
-        final var listSpy = spy(new ArrayList<HandlerMethodArgumentResolver>());
+        var listSpy = spy(new ArrayList<HandlerMethodArgumentResolver>());
 
         webConfig.addArgumentResolvers(listSpy);
 

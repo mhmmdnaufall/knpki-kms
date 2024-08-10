@@ -21,14 +21,14 @@ public class TagJob {
 
         log.info("checking for abandoned tags . . .");
 
-        final var tags = tagRepository.findByArticlesEmpty();
+        var tags = tagRepository.findByArticlesEmpty();
 
         log.info("total abandoned tags : {}", tags.size());
 
         if (!tags.isEmpty()) {
             tagRepository.deleteAll(tags);
 
-            final var deletedTagId = tags.stream().map(Tag::getId).toList();
+            var deletedTagId = tags.stream().map(Tag::getId).toList();
             log.info("tags with id {} have been removed", deletedTagId);
         }
     }

@@ -45,12 +45,12 @@ class AdminServiceImplTest {
     void loadByUsername() {
         // admin exist
         when(adminRepository.findById("username")).thenReturn(Optional.of(new Admin()));
-        final var admin = adminService.loadUserByUsername("username");
+        var admin = adminService.loadUserByUsername("username");
         assertNotNull(admin);
 
         // admin not exist
         when(adminRepository.findById("username")).thenReturn(Optional.empty());
-         final var exception = assertThrows(
+         var exception = assertThrows(
                  UsernameNotFoundException.class,
                  () -> adminService.loadUserByUsername("username")
          );
@@ -59,11 +59,11 @@ class AdminServiceImplTest {
 
     @Test
     void get() {
-        final var admin = new Admin();
+        var admin = new Admin();
         admin.setName("Admin Test");
         admin.setUsername("admin");
 
-        final var adminResponse = adminService.get(admin);
+        var adminResponse = adminService.get(admin);
         assertEquals(admin.getName(), adminResponse.name());
         assertEquals(admin.getUsername(), adminResponse.username());
         assertEquals(admin.getImage(), adminResponse.image());
@@ -74,18 +74,19 @@ class AdminServiceImplTest {
     @ValueSource(booleans = {true, false})
     void register(boolean isAccountExist) {
 
-        final var mockImage = mock(MultipartFile.class);
+        var mockImage = mock(MultipartFile.class);
 
-        final var request = new RegisterAdminRequest(
+        var request = new RegisterAdminRequest(
                 "username", "password", "name", mockImage
         );
 
         {
             when(adminRepository.existsById(request.username())).thenReturn(isAccountExist);
+            doNothing().when(validationService).validate(request);
         }
 
         if (isAccountExist) {
-            final var exception = assertThrows(ResponseStatusException.class, () -> adminService.register(request));
+            var exception = assertThrows(ResponseStatusException.class, () -> adminService.register(request));
             assertEquals(HttpStatus.CONFLICT, exception.getStatusCode());
             assertEquals("username already registered", exception.getReason());
             return;
@@ -96,13 +97,14 @@ class AdminServiceImplTest {
         }
 
         assertDoesNotThrow(() -> adminService.register(request));
+        verify(validationService).validate(request);
         verify(adminRepository).save(any());
         verify(passwordEncoder).encode(any());
         verify(imageService).save(any());
 
         // null image
         reset(adminRepository, imageService, passwordEncoder);
-        final var nullImageRequest = new RegisterAdminRequest(
+        var nullImageRequest = new RegisterAdminRequest(
                 "username", "password", "name", null
         );
 

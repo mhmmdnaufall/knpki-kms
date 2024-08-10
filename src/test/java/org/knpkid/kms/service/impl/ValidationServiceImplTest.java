@@ -27,7 +27,7 @@ class ValidationServiceImplTest {
 
     @Test
     void validate() {
-        final var request = new LoginAdminRequest("", "");
+        var request = new LoginAdminRequest("", "");
 
         // validated
         when(validator.validate(request)).thenReturn(Collections.emptySet());

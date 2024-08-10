@@ -40,9 +40,9 @@ public class QuoteServiceImpl implements QuoteService {
     public QuoteResponse create(CreateQuoteRequest request, Admin admin) {
         validationService.validate(request);
 
-        final var author = authorService.getOrCreateByName(request.author());
+        var author = authorService.getOrCreateByName(request.author());
 
-        final var quote = new Quote();
+        var quote = new Quote();
         quote.setBody(request.body());
         quote.setAuthor(author);
         quote.setAdmin(admin);
@@ -53,7 +53,7 @@ public class QuoteServiceImpl implements QuoteService {
     @Transactional
     @Override
     public void delete(Integer quoteId, Admin admin) {
-        final var quote = getQuoteById(quoteId);
+        var quote = getQuoteById(quoteId);
         checkQuoteAdmin(quote, admin);
 
         quoteRepository.delete(quote);
@@ -65,10 +65,10 @@ public class QuoteServiceImpl implements QuoteService {
     public QuoteResponse update(Integer quoteId, UpdateQuoteRequest request, Admin admin) {
         validationService.validate(request);
 
-        final var quote = getQuoteById(quoteId);
+        var quote = getQuoteById(quoteId);
         checkQuoteAdmin(quote, admin);
 
-        final var author = authorService.getOrCreateByName(request.author());
+        var author = authorService.getOrCreateByName(request.author());
 
         quote.setAuthor(author);
         quote.setBody(request.body());

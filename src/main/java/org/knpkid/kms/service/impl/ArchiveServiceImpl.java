@@ -25,13 +25,13 @@ public class ArchiveServiceImpl implements ArchiveService {
     @Override
     @SneakyThrows
     public Archive save(MultipartFile archiveFile) {
-        final var fileFormat = Objects.requireNonNull(archiveFile.getOriginalFilename()).split("\\.")[1];
+        var fileFormat = Objects.requireNonNull(archiveFile.getOriginalFilename()).split("\\.")[1];
 
-        final var archive = new Archive();
+        var archive = new Archive();
         archive.setId(UUID.randomUUID().toString());
         archive.setFormat(ArchiveFormat.valueOf(fileFormat.toUpperCase()));
 
-        final var archivePath = ARCHIVE_PATH_DIRECTORY.resolve(archive.toString());
+        var archivePath = ARCHIVE_PATH_DIRECTORY.resolve(archive.toString());
 
         if (!Files.exists(archivePath))
             Files.createDirectories(ARCHIVE_PATH_DIRECTORY);
@@ -45,7 +45,7 @@ public class ArchiveServiceImpl implements ArchiveService {
     @SneakyThrows
     public void delete(Archive archive) {
         archiveRepository.delete(archive);
-        final var archivePath = ARCHIVE_PATH_DIRECTORY.resolve(archive.toString());
+        var archivePath = ARCHIVE_PATH_DIRECTORY.resolve(archive.toString());
         if (!Files.deleteIfExists(archivePath)) {
             log.warn("archive with id '{}' was missing before deletion", archive.getId());
         }

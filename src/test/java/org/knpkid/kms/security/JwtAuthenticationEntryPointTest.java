@@ -28,9 +28,9 @@ class JwtAuthenticationEntryPointTest {
 
     @Test
     void commence() throws IOException {
-        final var request = new MockHttpServletRequest();
-        final var response = new MockHttpServletResponse();
-        final var authException = new AuthenticationCredentialsNotFoundException("");
+        var request = new MockHttpServletRequest();
+        var response = new MockHttpServletResponse();
+        var authException = new AuthenticationCredentialsNotFoundException("");
 
         when(objectMapper.writeValueAsString(any())).thenReturn(anyString());
 

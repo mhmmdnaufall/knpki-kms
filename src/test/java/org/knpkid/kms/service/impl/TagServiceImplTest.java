@@ -27,7 +27,7 @@ class TagServiceImplTest {
     void saveAll() {
 
         when(tagRepository.saveAll(any())).then(invocation -> {
-            final var tagSet = (Set<Tag>) invocation.getArgument(0);
+            var tagSet = (Set<Tag>) invocation.getArgument(0);
 
             assertTrue(
                 tagSet.stream()
@@ -47,7 +47,7 @@ class TagServiceImplTest {
             return tagSet.stream().toList();
         });
 
-        final var tagSet = tagService.saveAll(Set.of("tag 1", "tag 2"));
+        var tagSet = tagService.saveAll(Set.of("tag 1", "tag 2"));
 
         verify(tagRepository).saveAll(any());
 
@@ -70,7 +70,7 @@ class TagServiceImplTest {
 
     @Test
     void saveAll_nullParameter() {
-        final var tagsSet = tagService.saveAll(null);
+        var tagsSet = tagService.saveAll(null);
         assertEquals(Collections.emptySet(), tagsSet);
 
         verify(tagRepository, times(0)).saveAll(any());

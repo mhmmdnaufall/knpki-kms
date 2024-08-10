@@ -42,21 +42,21 @@ class ArticleTest {
 
     @Test
     void createdAtGetterSetter() {
-        final var localDateTimeNow = LocalDateTime.now();
+        var localDateTimeNow = LocalDateTime.now();
         ARTICLE.setCreatedAt(localDateTimeNow);
         assertEquals(localDateTimeNow, ARTICLE.getCreatedAt());
     }
 
     @Test
     void updatedAtGetterSetter() {
-        final var localDateTimeNow = LocalDateTime.now();
+        var localDateTimeNow = LocalDateTime.now();
         ARTICLE.setUpdatedAt(localDateTimeNow);
         assertEquals(localDateTimeNow, ARTICLE.getUpdatedAt());
     }
 
     @Test
     void coverImageGetterSetter() {
-        final var image = new Image();
+        var image = new Image();
         ARTICLE.setCoverImage(image);
         assertEquals(image, ARTICLE.getCoverImage());
     }
@@ -75,14 +75,14 @@ class ArticleTest {
 
     @Test
     void adminGetterSetter() {
-        final var admin = new Admin();
+        var admin = new Admin();
         ARTICLE.setAdmin(admin);
         assertEquals(admin, ARTICLE.getAdmin());
     }
 
     @Test
     void tagsGetterSetter() {
-        final var tags = Set.of(new Tag());
+        var tags = Set.of(new Tag());
         ARTICLE.setTags(tags);
         assertEquals(tags, ARTICLE.getTags());
         assertEquals(1, ARTICLE.getTags().size());
@@ -90,7 +90,7 @@ class ArticleTest {
 
     @Test
     void imagesGetterSetter() {
-        final var images = List.of(new Image(), new Image());
+        var images = List.of(new Image(), new Image());
         ARTICLE.setImageGallery(images);
         assertEquals(images, ARTICLE.getImageGallery());
         assertEquals(2, ARTICLE.getImageGallery().size());
@@ -98,11 +98,11 @@ class ArticleTest {
 
     @Test
     void authorsGetterSetter() {
-        final var author1 = new Author();
+        var author1 = new Author();
         author1.setName("author1");
         author1.setId(1);
 
-        final var author2 = new Author();
+        var author2 = new Author();
         author1.setName("author2");
         author1.setId(2);
 
@@ -113,9 +113,9 @@ class ArticleTest {
 
     @Test
     void archiveGetterSetter() {
-        final var uuid = UUID.randomUUID();
+        var uuid = UUID.randomUUID();
 
-        final var archive = new Archive();
+        var archive = new Archive();
         archive.setId(uuid.toString());
         archive.setFormat(ArchiveFormat.PDF);
 
@@ -126,15 +126,15 @@ class ArticleTest {
 
     @Test
     void testEquals() {
-        final var now = LocalDateTime.now();
+        var now = LocalDateTime.now();
 
-        final var author1 = new Author();
+        var author1 = new Author();
         author1.setId(1);
 
-        final var author2 = new Author();
+        var author2 = new Author();
         author2.setId(2);
 
-        final var articleEqual = new Article();
+        var articleEqual = new Article();
         assertEquals(ARTICLE, articleEqual);
 
         ARTICLE.setId(1);
@@ -229,18 +229,18 @@ class ArticleTest {
         ARTICLE.setTags(Set.of(new Tag()));
         assertEquals(hashCodeCalculate(), ARTICLE.hashCode());
 
-        final var author1 = new Author();
+        var author1 = new Author();
         author1.setName("author1");
         author1.setId(1);
 
-        final var author2 = new Author();
+        var author2 = new Author();
         author1.setName("author2");
         author1.setId(2);
 
         ARTICLE.setAuthors(Set.of(author1, author2));
         assertEquals(hashCodeCalculate(), ARTICLE.hashCode());
 
-        final var archive = new Archive();
+        var archive = new Archive();
         archive.setId(UUID.randomUUID().toString());
         archive.setFormat(ArchiveFormat.PDF);
 
@@ -252,9 +252,9 @@ class ArticleTest {
     @Test
     void testToString() {
 
-        final var now = LocalDateTime.now();
+        var now = LocalDateTime.now();
 
-        final var image = new Image();
+        var image = new Image();
         image.setId("articleId");
         image.setFormat(ImageFormat.PNG);
 
@@ -269,7 +269,7 @@ class ArticleTest {
         ARTICLE.setImageGallery(List.of(image));
         ARTICLE.setTags(Set.of(new Tag()));
 
-        final var articleString = "Article("
+        var articleString = "Article("
                 + "id=48120402, title=title, createdAt=" + now
                 + ", updatedAt=" + now + ", coverImage=" + image + ", body=body, teaser=teaser, "
                 + "authors=null, "
@@ -280,18 +280,18 @@ class ArticleTest {
     }
 
     private int hashCodeCalculate() {
-        final var idHashCode = ARTICLE.getId() == null ? 43 : ARTICLE.getId().hashCode();
-        final var titleHashCode = ARTICLE.getTitle() == null ? 43 : ARTICLE.getTitle().hashCode();
-        final var createdAtHashCode = ARTICLE.getCreatedAt() == null ? 43 : ARTICLE.getCreatedAt().hashCode();
-        final var updatedAtHashCode = ARTICLE.getUpdatedAt() == null ? 43 : ARTICLE.getUpdatedAt().hashCode();
-        final var coverImageHashCode = ARTICLE.getCoverImage() == null ? 43 : ARTICLE.getCoverImage().hashCode();
-        final var bodyHashCode = ARTICLE.getBody() == null ? 43 : ARTICLE.getBody().hashCode();
-        final var teaserHashCode = ARTICLE.getTeaser() == null ? 43 : ARTICLE.getTeaser().hashCode();
-        final var authorsHashCode = ARTICLE.getAuthors() == null ? 43 : ARTICLE.getAuthors().hashCode();
-        final var tagsHashCode = ARTICLE.getTags() == null ? 43 : ARTICLE.getTags().hashCode();
-        final var imageGalleryHashCode = ARTICLE.getImageGallery() == null ? 43 : ARTICLE.getImageGallery().hashCode();
-        final var archiveHashCode = ARTICLE.getArchive() == null ? 43 : ARTICLE.getArchive().hashCode();
-        final var adminHashCode = ARTICLE.getAdmin() == null ? 43 : ARTICLE.getAdmin().hashCode();
+        var idHashCode = ARTICLE.getId() == null ? 43 : ARTICLE.getId().hashCode();
+        var titleHashCode = ARTICLE.getTitle() == null ? 43 : ARTICLE.getTitle().hashCode();
+        var createdAtHashCode = ARTICLE.getCreatedAt() == null ? 43 : ARTICLE.getCreatedAt().hashCode();
+        var updatedAtHashCode = ARTICLE.getUpdatedAt() == null ? 43 : ARTICLE.getUpdatedAt().hashCode();
+        var coverImageHashCode = ARTICLE.getCoverImage() == null ? 43 : ARTICLE.getCoverImage().hashCode();
+        var bodyHashCode = ARTICLE.getBody() == null ? 43 : ARTICLE.getBody().hashCode();
+        var teaserHashCode = ARTICLE.getTeaser() == null ? 43 : ARTICLE.getTeaser().hashCode();
+        var authorsHashCode = ARTICLE.getAuthors() == null ? 43 : ARTICLE.getAuthors().hashCode();
+        var tagsHashCode = ARTICLE.getTags() == null ? 43 : ARTICLE.getTags().hashCode();
+        var imageGalleryHashCode = ARTICLE.getImageGallery() == null ? 43 : ARTICLE.getImageGallery().hashCode();
+        var archiveHashCode = ARTICLE.getArchive() == null ? 43 : ARTICLE.getArchive().hashCode();
+        var adminHashCode = ARTICLE.getAdmin() == null ? 43 : ARTICLE.getAdmin().hashCode();
 
         var result = 1;
         result = result * 59 + idHashCode;

@@ -38,7 +38,7 @@ class AuthServiceImplTest {
     @Test
     void getLoginToken() {
 
-        final var request = new LoginAdminRequest("admin", "password");
+        var request = new LoginAdminRequest("admin", "password");
 
         // success getLoginToken
         doNothing().when(validationService).validate(any());
@@ -46,13 +46,13 @@ class AuthServiceImplTest {
         when(adminService.loadUserByUsername(anyString())).thenReturn(new Admin());
         when(jwtTokenUtils.generateToken(any())).thenReturn("token");
 
-        final var loginToken = authService.getLoginToken(request);
+        var loginToken = authService.getLoginToken(request);
         assertNotNull(loginToken);
         assertEquals("token", loginToken);
 
         // failed getLoginToken
         when(authenticationManager.authenticate(any())).thenThrow(RuntimeException.class);
-        final var exception = assertThrows(ResponseStatusException.class, () -> authService.getLoginToken(request));
+        var exception = assertThrows(ResponseStatusException.class, () -> authService.getLoginToken(request));
         assertEquals("username or password wrong", exception.getReason());
         assertEquals(HttpStatus.UNAUTHORIZED, exception.getStatusCode());
     }

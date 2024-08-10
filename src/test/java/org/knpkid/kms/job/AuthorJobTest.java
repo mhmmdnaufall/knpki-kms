@@ -24,7 +24,7 @@ class AuthorJobTest {
 
     @Test
     void removeAbandonedAuthor() {
-        final var author = new Author();
+        var author = new Author();
         author.setId(1);
         {
             when(authorRepository.findByArticlesEmptyAndQuotesEmpty())

@@ -33,18 +33,18 @@ class ArchiveServiceImplTest {
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
     void save(boolean isDirectoriesExist) throws IOException {
-        final var uuid = UUID.randomUUID();
-        try (final var filesMock = mockStatic(Files.class);
-             final var uuidMock = mockStatic(UUID.class)) {
+        var uuid = UUID.randomUUID();
+        try (var filesMock = mockStatic(Files.class);
+             var uuidMock = mockStatic(UUID.class)) {
 
-            final var archiveFile = mock(MultipartFile.class);
+            var archiveFile = mock(MultipartFile.class);
             {
                 when(archiveFile.getOriginalFilename()).thenReturn("file.pdf");
                 doNothing().when(archiveFile).transferTo(any(Path.class));
                 uuidMock.when(UUID::randomUUID).thenReturn(uuid);
                 when(archiveRepository.save(any()))
                         .then(invocation -> {
-                            final var archive = (Archive) invocation.getArgument(0);
+                            var archive = (Archive) invocation.getArgument(0);
                             assertEquals(uuid.toString(), archive.getId());
                             assertEquals("pdf", archive.getFormat().name().toLowerCase());
                             return archive;
@@ -65,8 +65,8 @@ class ArchiveServiceImplTest {
     @Test
     @DisplayName("save - createDirectories Error")
     void save_errorIOException() throws IOException {
-        try (final var filesMock = mockStatic(Files.class)) {
-            final var archiveFile = mock(MultipartFile.class);
+        try (var filesMock = mockStatic(Files.class)) {
+            var archiveFile = mock(MultipartFile.class);
 
             {
                 when(archiveFile.getOriginalFilename()).thenReturn("file.pdf");
@@ -74,7 +74,7 @@ class ArchiveServiceImplTest {
                 filesMock.when(() -> Files.createDirectories(any())).thenThrow(IOException.class);
             }
 
-            final var error = assertThrows(IOException.class, () -> archiveService.save(archiveFile));
+            var error = assertThrows(IOException.class, () -> archiveService.save(archiveFile));
 
             assertNotNull(error);
             filesMock.verify(() -> Files.exists(any()));
@@ -87,8 +87,8 @@ class ArchiveServiceImplTest {
     @Test
     @DisplayName("save - tranferTo Error")
     void save_errorIOException_2() throws IOException {
-        try (final var filesMock = mockStatic(Files.class)) {
-            final var archiveFile = mock(MultipartFile.class);
+        try (var filesMock = mockStatic(Files.class)) {
+            var archiveFile = mock(MultipartFile.class);
 
             {
                 when(archiveFile.getOriginalFilename()).thenReturn("file.pdf");
@@ -96,7 +96,7 @@ class ArchiveServiceImplTest {
                 doThrow(IOException.class).when(archiveFile).transferTo(any(Path.class));
             }
 
-            final var error = assertThrows(IOException.class, () -> archiveService.save(archiveFile));
+            var error = assertThrows(IOException.class, () -> archiveService.save(archiveFile));
 
             assertNotNull(error);
             filesMock.verify(() -> Files.exists(any()));
@@ -109,12 +109,12 @@ class ArchiveServiceImplTest {
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
     void delete(boolean isArchiveFileExist) {
-        final var uuid = UUID.randomUUID();
-        final var archive = new Archive();
+        var uuid = UUID.randomUUID();
+        var archive = new Archive();
         archive.setId(uuid.toString());
         archive.setFormat(ArchiveFormat.PDF);
 
-        try (final var filesMock = mockStatic(Files.class)) {
+        try (var filesMock = mockStatic(Files.class)) {
             {
                 doNothing().when(archiveRepository).delete(archive);
                 filesMock.when(() -> Files.deleteIfExists(any()))
@@ -130,19 +130,19 @@ class ArchiveServiceImplTest {
 
     @Test
     void delete_errorIOException() {
-        final var uuid = UUID.randomUUID();
-        final var archive = new Archive();
+        var uuid = UUID.randomUUID();
+        var archive = new Archive();
         archive.setId(uuid.toString());
         archive.setFormat(ArchiveFormat.PDF);
 
-        try (final var filesMock = mockStatic(Files.class)) {
+        try (var filesMock = mockStatic(Files.class)) {
             {
                 doNothing().when(archiveRepository).delete(archive);
                 filesMock.when(() -> Files.deleteIfExists(any()))
                         .thenThrow(IOException.class);
             }
 
-            final var error = assertThrows(IOException.class, () -> archiveService.delete(archive));
+            var error = assertThrows(IOException.class, () -> archiveService.delete(archive));
 
             assertNotNull(error);
             verify(archiveRepository).delete(archive);

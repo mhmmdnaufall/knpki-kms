@@ -21,7 +21,7 @@ class JwtTokenUtilsTest {
 
     @Test
     void generateToken() {
-        final var token = getJwtToken();
+        var token = getJwtToken();
 
         System.out.println(token);
         assertNotNull(token);
@@ -30,15 +30,15 @@ class JwtTokenUtilsTest {
 
     @Test
     void getUsernameFromToken() {
-        final var username = jwtTokenUtils.getUsernameFromToken(getJwtToken());
+        var username = jwtTokenUtils.getUsernameFromToken(getJwtToken());
         assertEquals("admintest", username);
     }
 
     @Test
     void getExpirationDateFromToken() {
-        final var expirationDate = jwtTokenUtils.getExpirationDateFromToken(getJwtToken());
-        final var expirationLocalDate = LocalDate.ofInstant(expirationDate.toInstant(), ZoneId.systemDefault());
-        final var expectedExpired = LocalDate.ofInstant(
+        var expirationDate = jwtTokenUtils.getExpirationDateFromToken(getJwtToken());
+        var expirationLocalDate = LocalDate.ofInstant(expirationDate.toInstant(), ZoneId.systemDefault());
+        var expectedExpired = LocalDate.ofInstant(
                 Instant.now().plus(60_000, ChronoUnit.MILLIS), ZoneId.systemDefault()
         );
         assertEquals(expectedExpired, expirationLocalDate);
@@ -46,15 +46,15 @@ class JwtTokenUtilsTest {
 
     @Test
     void validateToken() {
-        final var admin = getAdmin();
-        final var jwtToken = getJwtToken();
+        var admin = getAdmin();
+        var jwtToken = getJwtToken();
 
         // valid
         var isTokenValid = jwtTokenUtils.validateToken(getJwtToken(), admin);
         assertTrue(isTokenValid);
 
         // not valid expired token
-        final var mockJwtTokenUtils = spy(jwtTokenUtils);
+        var mockJwtTokenUtils = spy(jwtTokenUtils);
         when(mockJwtTokenUtils.getExpirationDateFromToken(jwtToken))
                 .thenReturn(new Date(System.currentTimeMillis() - 10000000000L));
         when(mockJwtTokenUtils.getUsernameFromToken(jwtToken)).thenReturn(admin.getUsername());
@@ -74,18 +74,18 @@ class JwtTokenUtilsTest {
 
     @Test
     void validateUnvalidatedToken() {
-        final var isTokenTrue = jwtTokenUtils.validateToken(getJwtToken(), new Admin());
+        var isTokenTrue = jwtTokenUtils.validateToken(getJwtToken(), new Admin());
         assertFalse(isTokenTrue);
     }
 
     @Test
     void jwtTokenUtilNoArgsConstructor() {
-        final var jwtTokenUtilsNoArgsConstructor = new JwtTokenUtils();
+        var jwtTokenUtilsNoArgsConstructor = new JwtTokenUtils();
         assertNotSame(jwtTokenUtils, jwtTokenUtilsNoArgsConstructor);
     }
 
     private Admin getAdmin() {
-        final var admin = new Admin();
+        var admin = new Admin();
         admin.setUsername("admintest");
         admin.setPassword("password");
         admin.setName("Admin Test");

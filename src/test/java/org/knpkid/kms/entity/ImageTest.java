@@ -29,14 +29,14 @@ class ImageTest {
 
     @Test
     void testEquals() {
-        final var imageEqual = new Image();
+        var imageEqual = new Image();
         assertEquals(IMAGE, imageEqual);
 
         IMAGE.setId("imageId");
         imageEqual.setId("imageId");
         assertEquals(IMAGE, imageEqual);
 
-        final var imageNotEqual = new Image();
+        var imageNotEqual = new Image();
         imageNotEqual.setId("diffId");
         assertNotEquals(IMAGE, imageNotEqual);
 
@@ -84,8 +84,8 @@ class ImageTest {
 
 
     private int hashCodeCalculate() {
-        final var idHashCode = IMAGE.getId() == null ? 43 : IMAGE.getId().hashCode();
-        final var formatHashCode = IMAGE.getFormat() == null ? 43 : IMAGE.getFormat().hashCode();
+        var idHashCode = IMAGE.getId() == null ? 43 : IMAGE.getId().hashCode();
+        var formatHashCode = IMAGE.getFormat() == null ? 43 : IMAGE.getFormat().hashCode();
         return (59 + idHashCode) * 59 + formatHashCode;
     }
 }

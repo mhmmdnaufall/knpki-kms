@@ -11,7 +11,7 @@ class KnpkiKmsApplicationTest {
 
     @Test
     void passwordEncoder() {
-        final var passwordEncoder = app.passwordEncoder();
+        var passwordEncoder = app.passwordEncoder();
         assertNotNull(passwordEncoder);
         assertTrue(passwordEncoder instanceof BCryptPasswordEncoder);
     }

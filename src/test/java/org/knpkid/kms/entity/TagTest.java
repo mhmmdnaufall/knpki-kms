@@ -24,7 +24,7 @@ class TagTest {
 
     @Test
     void articlesGetterSetter() {
-        final var articleList = List.of(new Article(), new Article());
+        var articleList = List.of(new Article(), new Article());
         tag.setArticles(articleList);
         assertEquals(articleList, tag.getArticles());
         assertEquals(2, tag.getArticles().size());
@@ -32,12 +32,12 @@ class TagTest {
 
     @Test
     void testEquals() {
-        final var articleList = List.of(new Article(), new Article());
+        var articleList = List.of(new Article(), new Article());
         tag.setId("id");
         tag.setName("name");
         tag.setArticles(articleList);
 
-        final var tagEqual = new Tag();
+        var tagEqual = new Tag();
         tagEqual.setId("id");
         tagEqual.setName("name");
         tagEqual.setArticles(articleList);
@@ -55,7 +55,7 @@ class TagTest {
         tagEqual.setArticles(null);
         assertEquals(tag, tagEqual);
 
-        final var tagNotEqual = new Tag();
+        var tagNotEqual = new Tag();
         tagNotEqual.setName("unequal");
         assertNotEquals(tag, tagNotEqual);
     }
@@ -67,7 +67,7 @@ class TagTest {
 
     @Test
     void testHashCode() {
-        final var tag = new Tag();
+        var tag = new Tag();
         assertEquals(hashCodeCalculate(tag), tag.hashCode());
 
         tag.setId("id");
@@ -82,19 +82,19 @@ class TagTest {
 
     @Test
     void testToString() {
-        final var articleList = List.of(new Article(), new Article());
+        var articleList = List.of(new Article(), new Article());
         tag.setId("id");
         tag.setName("name");
         tag.setArticles(articleList);
 
-        final var tagString = "Tag(id=id, name=name, articles=[Article(id=null, title=null, createdAt=null, updatedAt=null, coverImage=null, body=null, teaser=null, authors=null, tags=null, imageGallery=null, archive=null, admin=null), Article(id=null, title=null, createdAt=null, updatedAt=null, coverImage=null, body=null, teaser=null, authors=null, tags=null, imageGallery=null, archive=null, admin=null)])";
+        var tagString = "Tag(id=id, name=name, articles=[Article(id=null, title=null, createdAt=null, updatedAt=null, coverImage=null, body=null, teaser=null, authors=null, tags=null, imageGallery=null, archive=null, admin=null), Article(id=null, title=null, createdAt=null, updatedAt=null, coverImage=null, body=null, teaser=null, authors=null, tags=null, imageGallery=null, archive=null, admin=null)])";
         assertEquals(tagString, tag.toString());
     }
 
     private int hashCodeCalculate(Tag tag) {
-        final var idHashCode = tag.getId() == null ? 43 : tag.getId().hashCode();
-        final var nameHashCode = tag.getName() == null ? 43 : tag.getName().hashCode();
-        final var articlesHashCode = tag.getArticles() == null ? 43 : tag.getArticles().hashCode();
+        var idHashCode = tag.getId() == null ? 43 : tag.getId().hashCode();
+        var nameHashCode = tag.getName() == null ? 43 : tag.getName().hashCode();
+        var articlesHashCode = tag.getArticles() == null ? 43 : tag.getArticles().hashCode();
 
         var result = 1;
         result = result * 59 + idHashCode;

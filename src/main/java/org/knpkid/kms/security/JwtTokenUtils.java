@@ -34,7 +34,7 @@ public class JwtTokenUtils {
     }
 
     public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
-        final var claims = getAllClaimsFromToken(token);
+        var claims = getAllClaimsFromToken(token);
         return claimsResolver.apply(claims);
     }
 
@@ -47,7 +47,7 @@ public class JwtTokenUtils {
     }
 
     public String generateToken(UserDetails userDetails) {
-        final var claims = new HashMap<String, Object>();
+        var claims = new HashMap<String, Object>();
         return doGenerateToken(claims, userDetails.getUsername());
     }
 
@@ -62,12 +62,12 @@ public class JwtTokenUtils {
     }
 
     private boolean isTokenExpired(String token) {
-        final var expiration = getExpirationDateFromToken(token);
+        var expiration = getExpirationDateFromToken(token);
         return expiration.before(new Date());
     }
 
     public boolean validateToken(String token, UserDetails userDetails) {
-        final var username = getUsernameFromToken(token);
+        var username = getUsernameFromToken(token);
         return (username.equals(userDetails.getUsername())) && (!isTokenExpired(token));
     }
 

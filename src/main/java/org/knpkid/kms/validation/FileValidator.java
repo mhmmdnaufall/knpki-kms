@@ -30,12 +30,12 @@ public class FileValidator implements ConstraintValidator<File, MultipartFile> {
         // null value = ok
         if (value == null) return true;
 
-        final var errorMessageStringBuilder = new StringBuilder();
+        var errorMessageStringBuilder = new StringBuilder();
         errorMessageStringBuilder.append(context.getDefaultConstraintMessageTemplate());
         context.disableDefaultConstraintViolation(); // disable default constraint violation
 
-        final var sizeOk = checkFileSize(value.getBytes().length, errorMessageStringBuilder);
-        final var formatOk = (formats.length == 0) || checkFileFormat(value.getOriginalFilename(), errorMessageStringBuilder);
+        var sizeOk = checkFileSize(value.getBytes().length, errorMessageStringBuilder);
+        var formatOk = (formats.length == 0) || checkFileFormat(value.getOriginalFilename(), errorMessageStringBuilder);
 
         if (sizeOk && formatOk) return true;
 

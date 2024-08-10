@@ -26,21 +26,21 @@ class AuthorServiceImplTest {
 
     @Test
     void saveAll() {
-        final var existingAuthor = new Author();
+        var existingAuthor = new Author();
         existingAuthor.setId(1);
         existingAuthor.setName("author 1");
 
         {
             when(authorRepository.findByNameIn(any()))
                     .then(invocation -> {
-                        final var authorStringModifiableSet = (Set<String>) invocation.getArgument(0);
+                        var authorStringModifiableSet = (Set<String>) invocation.getArgument(0);
                         assertTrue(authorStringModifiableSet.contains("author 1"));
                         assertTrue(authorStringModifiableSet.contains("author 2"));
                         return List.of(existingAuthor);
                     });
 
             when(authorRepository.saveAll(any())).then(invocation -> {
-                final var authorSet = (Set<Author>) invocation.getArgument(0);
+                var authorSet = (Set<Author>) invocation.getArgument(0);
 
                 // authors that have been saved shouldn't need to be saved again
                 // only save "unsaved authors"
@@ -50,7 +50,7 @@ class AuthorServiceImplTest {
             });
         }
 
-        final var authorSet = authorService.saveAll(Set.of("author 1", "author 2"));
+        var authorSet = authorService.saveAll(Set.of("author 1", "author 2"));
 
         verify(authorRepository).findByNameIn(any());
         verify(authorRepository).saveAll(any());
@@ -62,12 +62,12 @@ class AuthorServiceImplTest {
 
     @Test
     void getOrCreateByName_get() {
-        final var existAuthor = new Author();
+        var existAuthor = new Author();
         existAuthor.setId(1);
         existAuthor.setName("author");
 
         when(authorRepository.findByName("author")).thenReturn(Optional.of(existAuthor));
-        final var author = authorService.getOrCreateByName("author");
+        var author = authorService.getOrCreateByName("author");
 
         verify(authorRepository).findByName("author");
         verify(authorRepository, times(0)).save(any());
@@ -79,11 +79,11 @@ class AuthorServiceImplTest {
     void getOrCreateByName_create() {
         when(authorRepository.findByName("author")).thenReturn(Optional.empty());
         when(authorRepository.save(any())).then(invocation -> {
-            final var author = (Author) invocation.getArgument(0);
+            var author = (Author) invocation.getArgument(0);
             assertEquals("author", author.getName());
             return author;
         });
-        final var author = authorService.getOrCreateByName("author");
+        var author = authorService.getOrCreateByName("author");
 
         verify(authorRepository).findByName("author");
         verify(authorRepository).save(any());
@@ -92,13 +92,13 @@ class AuthorServiceImplTest {
 
     @Test
     void get() {
-        final var author = new Author();
+        var author = new Author();
         author.setId(1);
         author.setName("author");
 
         when(authorRepository.findById(1)).thenReturn(Optional.of(author));
 
-        final var authorResponse = authorService.get(1);
+        var authorResponse = authorService.get(1);
 
         verify(authorRepository).findById(1);
         assertEquals(author.getId(), authorResponse.id());
@@ -111,7 +111,7 @@ class AuthorServiceImplTest {
     void get_authorNotFound() {
         when(authorRepository.findById(1)).thenReturn(Optional.empty());
 
-        final var error = assertThrows(ResponseStatusException.class, () -> authorService.get(1));
+        var error = assertThrows(ResponseStatusException.class, () -> authorService.get(1));
         verify(authorRepository).findById(1);
         assertEquals(HttpStatus.NOT_FOUND, error.getStatusCode());
         assertEquals("author with id '1' is not found", error.getReason());

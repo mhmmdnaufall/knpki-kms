@@ -23,7 +23,7 @@ public class AuthController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public WebResponse<TokenResponse> login(@RequestBody LoginAdminRequest request) {
-        final var jwtToken = authService.getLoginToken(request);
+        var jwtToken = authService.getLoginToken(request);
         return new WebResponse<>(new TokenResponse(jwtToken), null, null);
     }
 

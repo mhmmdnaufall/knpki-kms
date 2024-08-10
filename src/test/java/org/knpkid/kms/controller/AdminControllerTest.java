@@ -27,11 +27,11 @@ class AdminControllerTest {
 
     @Test
     void get() {
-        final var image = new Image();
+        var image = new Image();
         image.setId("imageId");
         image.setFormat(ImageFormat.PNG);
 
-        final var admin = new Admin();
+        var admin = new Admin();
         admin.setName("Admin Test");
         admin.setUsername("admin");
         admin.setImage(image);
@@ -39,7 +39,7 @@ class AdminControllerTest {
         when(adminService.get(admin))
                 .thenReturn(new AdminResponse(admin.getUsername(), admin.getName(), admin.getImage()));
 
-        final var webResponse = adminController.get(admin);
+        var webResponse = adminController.get(admin);
         assertEquals(admin.getName(), webResponse.data().name());
         assertEquals(admin.getUsername(), webResponse.data().username());
         assertEquals(admin.getImage(), webResponse.data().image());
@@ -49,13 +49,13 @@ class AdminControllerTest {
 
     @Test
     void register() {
-        final var request = new RegisterAdminRequest(
+        var request = new RegisterAdminRequest(
                 "username", "password", "name", mock(MultipartFile.class)
         );
 
         doNothing().when(adminService).register(request);
 
-        final var webResponse = adminController.register(request);
+        var webResponse = adminController.register(request);
 
         verify(adminService).register(request);
 

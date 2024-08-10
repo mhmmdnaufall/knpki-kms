@@ -43,7 +43,7 @@ public class WebSecurityConfig {
 
     @Bean
     public DaoAuthenticationProvider daoAuthenticationProvider() {
-        final var daoAuthenticationProvider = new DaoAuthenticationProvider();
+        var daoAuthenticationProvider = new DaoAuthenticationProvider();
         daoAuthenticationProvider.setUserDetailsService(adminService);
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
 
@@ -75,7 +75,7 @@ public class WebSecurityConfig {
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
-        final var configuration = new CorsConfiguration();
+        var configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of("https://www.knpkid.org/"));
         configuration.setAllowedMethods(
                 List.of(
@@ -93,7 +93,7 @@ public class WebSecurityConfig {
                         "X-CSRF-TOKEN"
                 )
         );
-        final var source = new UrlBasedCorsConfigurationSource();
+        var source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
 
         return source;

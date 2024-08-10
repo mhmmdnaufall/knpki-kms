@@ -26,13 +26,13 @@ class AuthorControllerTest {
     @Test
     void get() {
 
-        final var authorResponse = new AuthorResponse(
+        var authorResponse = new AuthorResponse(
                 1, "author", Collections.emptyList(), Collections.emptyList()
         );
 
         when(authorService.get(1)).thenReturn(authorResponse);
 
-        final var webResponseAuthorResponse = authorController.get(1);
+        var webResponseAuthorResponse = authorController.get(1);
 
         verify(authorService).get(1);
         assertEquals(authorResponse, webResponseAuthorResponse.data());

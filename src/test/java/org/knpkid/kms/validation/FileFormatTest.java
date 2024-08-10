@@ -13,10 +13,10 @@ class FileFormatTest {
 
     @Test
     void valueOf() {
-        final var jpg = FileFormat.valueOf("JPG");
-        final var jpeg = FileFormat.valueOf("JPEG");
-        final var png = FileFormat.valueOf("PNG");
-        final var pdf = FileFormat.valueOf("PDF");
+        var jpg = FileFormat.valueOf("JPG");
+        var jpeg = FileFormat.valueOf("JPEG");
+        var png = FileFormat.valueOf("PNG");
+        var pdf = FileFormat.valueOf("PDF");
 
         assertEquals(FileFormat.JPG, jpg);
         assertEquals(FileFormat.JPEG, jpeg);

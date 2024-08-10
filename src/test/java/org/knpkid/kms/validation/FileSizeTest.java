@@ -8,9 +8,9 @@ class FileSizeTest {
 
     @Test
     void getSize() {
-        final var kb = FileSize.KB;
-        final var mb = FileSize.MB;
-        final var gb = FileSize.GB;
+        var kb = FileSize.KB;
+        var mb = FileSize.MB;
+        var gb = FileSize.GB;
 
         assertEquals(1024, kb.getSize());
         assertEquals(1_048_576, mb.getSize());
@@ -24,9 +24,9 @@ class FileSizeTest {
 
     @Test
     void valueOf() {
-        final var kb = FileSize.valueOf("KB");
-        final var mb = FileSize.valueOf("MB");
-        final var gb = FileSize.valueOf("GB");
+        var kb = FileSize.valueOf("KB");
+        var mb = FileSize.valueOf("MB");
+        var gb = FileSize.valueOf("GB");
 
         assertEquals(FileSize.KB, kb);
         assertEquals(FileSize.MB, mb);

@@ -32,15 +32,15 @@ class ImageServiceImplTest {
     @ValueSource(booleans = {true, false})
     void save(boolean isImageDirectoryExist) throws IOException {
 
-        try (final var filesMock = mockStatic(Files.class)) {
-            final var multipartFileMock = mock(MultipartFile.class);
+        try (var filesMock = mockStatic(Files.class)) {
+            var multipartFileMock = mock(MultipartFile.class);
 
             {
                 when(multipartFileMock.getOriginalFilename()).thenReturn("image.jpg");
                 filesMock.when(() -> Files.exists(any())).thenReturn(isImageDirectoryExist);
                 doNothing().when(multipartFileMock).transferTo(any(Path.class));
                 when(imageRepository.save(any())).then(invocation -> {
-                    final var image = (Image) invocation.getArgument(0);
+                    var image = (Image) invocation.getArgument(0);
                     assertEquals(ImageFormat.JPG, image.getFormat());
 
                     return image;
@@ -68,9 +68,9 @@ class ImageServiceImplTest {
     @ValueSource(booleans = {true, false})
     void delete(boolean isImagePathExist) {
 
-        try (final var filesMock = mockStatic(Files.class)) {
+        try (var filesMock = mockStatic(Files.class)) {
 
-            final var image = new Image();
+            var image = new Image();
             image.setId("imageId");
             image.setFormat(ImageFormat.PNG);
 
@@ -98,21 +98,21 @@ class ImageServiceImplTest {
     @ValueSource(booleans = {true, false})
     void deleteAll(boolean isImagePathExist) {
 
-        try (final var filesMock = mockStatic(Files.class)) {
+        try (var filesMock = mockStatic(Files.class)) {
 
-            final var image1 = new Image();
+            var image1 = new Image();
             image1.setId("image1");
             image1.setFormat(ImageFormat.PNG);
 
-            final var image2 = new Image();
+            var image2 = new Image();
             image2.setId("image2");
             image2.setFormat(ImageFormat.JPG);
 
-            final var image3 = new Image();
+            var image3 = new Image();
             image3.setId("image3");
             image3.setFormat(ImageFormat.JPEG);
 
-            final var images = List.of(image1, image2, image3);
+            var images = List.of(image1, image2, image3);
 
             {
                 doNothing().when(imageRepository).deleteAll(images);

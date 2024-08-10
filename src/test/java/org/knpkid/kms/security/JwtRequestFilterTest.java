@@ -54,19 +54,19 @@ class JwtRequestFilterTest {
             boolean isTokenValidate
     ) throws ServletException, IOException {
 
-        final var request = new MockHttpServletRequest();
+        var request = new MockHttpServletRequest();
         if (!isTokenHeaderNull) request.addHeader("Authorization", tokenHeaderPrefixWord + " token");
 
-        final var response = new MockHttpServletResponse();
-        final var filterChain = mock(FilterChain.class);
+        var response = new MockHttpServletResponse();
+        var filterChain = mock(FilterChain.class);
 
         {
             lenient().when(jwtTokenUtils.getUsernameFromToken(anyString())).thenReturn("admintest");
             lenient().when(adminService.loadUserByUsername("admintest")).thenReturn(new Admin());
             lenient().when(jwtTokenUtils.validateToken(anyString(), any())).thenReturn(isTokenValidate);
 
-            final var securityContext = mock(SecurityContext.class);
-            final var authentication = mock(Authentication.class);
+            var securityContext = mock(SecurityContext.class);
+            var authentication = mock(Authentication.class);
             SecurityContextHolder.setContext(securityContext);
             lenient().when(securityContext.getAuthentication()).thenReturn(isSecContextAuthIsNull ? null : authentication);
 
@@ -80,20 +80,20 @@ class JwtRequestFilterTest {
     @Test
     void doFilterInternal_CatchError() {
 
-        final var request = new MockHttpServletRequest();
+        var request = new MockHttpServletRequest();
         request.addHeader("Authorization", "Bearer token");
 
-        final var response = new MockHttpServletResponse();
-        final var filterChain = mock(FilterChain.class);
+        var response = new MockHttpServletResponse();
+        var filterChain = mock(FilterChain.class);
 
-        try (final var securityContextHolderMockStatic = mockStatic(SecurityContextHolder.class)) {
+        try (var securityContextHolderMockStatic = mockStatic(SecurityContextHolder.class)) {
 
             {
                 when(jwtTokenUtils.getUsernameFromToken(anyString())).thenReturn("admintest");
                 when(adminService.loadUserByUsername("admintest")).thenReturn(new Admin());
                 when(jwtTokenUtils.validateToken(anyString(), any())).thenThrow(ExpiredJwtException.class);
 
-                final var securityContext = mock(SecurityContext.class);
+                var securityContext = mock(SecurityContext.class);
                 securityContextHolderMockStatic.when(SecurityContextHolder::getContext).thenReturn(securityContext);
                 when(securityContext.getAuthentication()).thenReturn(null);
             }

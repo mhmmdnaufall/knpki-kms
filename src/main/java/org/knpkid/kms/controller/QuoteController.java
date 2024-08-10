@@ -23,7 +23,7 @@ public class QuoteController {
     )
     @ResponseStatus(HttpStatus.CREATED)
     public WebResponse<QuoteResponse> create(@RequestBody CreateQuoteRequest request, Admin admin) {
-        final var quoteResponse = quoteService.create(request, admin);
+        var quoteResponse = quoteService.create(request, admin);
         return new WebResponse<>(quoteResponse, null, null);
     }
 
@@ -41,7 +41,7 @@ public class QuoteController {
     public WebResponse<QuoteResponse> update(@PathVariable Integer quoteId,
                                              @RequestBody UpdateQuoteRequest request,
                                              Admin admin) {
-        final var quoteResponse = quoteService.update(quoteId, request, admin);
+        var quoteResponse = quoteService.update(quoteId, request, admin);
         return new WebResponse<>(quoteResponse, null, null);
     }
 
@@ -52,7 +52,7 @@ public class QuoteController {
     public WebResponse<List<QuoteResponse>> getAll(@RequestParam(required = false, defaultValue = "0") Integer page,
                                                    @RequestParam(required = false, defaultValue = "12") Integer size) {
 
-        final var quoteResponsePage = quoteService.getAll(page, size);
+        var quoteResponsePage = quoteService.getAll(page, size);
         return new WebResponse<>(
                 quoteResponsePage.getContent(), null,
                 new PagingResponse(
@@ -67,7 +67,7 @@ public class QuoteController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public WebResponse<QuoteResponse> get(@PathVariable Integer quoteId) {
-        final var quoteResponse = quoteService.get(quoteId);
+        var quoteResponse = quoteService.get(quoteId);
         return new WebResponse<>(quoteResponse, null, null);
     }
 

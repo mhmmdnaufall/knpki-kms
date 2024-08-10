@@ -30,7 +30,7 @@ public class AuthServiceImpl implements AuthService {
 
         authenticate(request.username(), request.password());
 
-        final var admin = adminService.loadUserByUsername(request.username());
+        var admin = adminService.loadUserByUsername(request.username());
         return jwtTokenUtils.generateToken(admin);
     }
 

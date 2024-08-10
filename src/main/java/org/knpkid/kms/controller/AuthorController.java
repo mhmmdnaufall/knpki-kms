@@ -17,7 +17,7 @@ public class AuthorController {
 
     @GetMapping(path = "/api/authors/{authorId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public WebResponse<AuthorResponse> get(@PathVariable Integer authorId) {
-        final var authorResponse = authorService.get(authorId);
+        var authorResponse = authorService.get(authorId);
         return new WebResponse<>(authorResponse, null, null);
     }
 
