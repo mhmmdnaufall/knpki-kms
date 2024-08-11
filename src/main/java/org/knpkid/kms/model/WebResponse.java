@@ -1,3 +1,3 @@
 package org.knpkid.kms.model;
 
-public record WebResponse<T>(T data, String errors, PagingResponse paging) { }
+public record WebResponse<T>(T data, Object errors, PagingResponse paging) { }
