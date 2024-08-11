@@ -1,6 +1,6 @@
 FROM eclipse-temurin:21.0.2_13-jre as builder
 WORKDIR extracted
-COPY ./build/libs/knpki-kms-2.0.2.jar knpki-kms.jar
+COPY ./build/libs/knpki-kms-2.1.0.jar knpki-kms.jar
 RUN java -Djarmode=layertools -jar knpki-kms.jar extract
 
 FROM  eclipse-temurin:21.0.2_13-jre
