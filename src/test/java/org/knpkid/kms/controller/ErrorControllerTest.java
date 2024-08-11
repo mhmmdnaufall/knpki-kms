@@ -1,11 +1,14 @@
 package org.knpkid.kms.controller;
 
+import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
-import org.knpkid.kms.model.WebResponse;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -22,34 +25,45 @@ class ErrorControllerTest {
 
         var responseEntity = errorController.responseStatusException(responseStatusException);
 
-        assertErrorResponse(responseEntity, HttpStatus.UNAUTHORIZED, "responseStatusException message");
+        assertNotNull(responseEntity);
+        assertNotNull(responseEntity.getBody());
+        assertNull(responseEntity.getBody().data());
+        assertNull(responseEntity.getBody().paging());
+        assertNotNull(responseEntity.getBody().errors());
+        assertEquals("responseStatusException message", responseEntity.getBody().errors());
+        assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
     }
 
     @Test
     void constraintViolationException() {
-        var constraintViolationException = mock(ConstraintViolationException.class);
-        when(constraintViolationException.getMessage()).thenReturn("constraintViolationException message");
+        var violation1 = mock(ConstraintViolation.class);
+        var violation2 = mock(ConstraintViolation.class);
 
-        var webResponse = errorController.constraintViolationException(constraintViolationException);
+        var path1 = mock(jakarta.validation.Path.class);
+        var path2 = mock(jakarta.validation.Path.class);
 
-        var responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(webResponse);
+        {
+            when(path1.toString()).thenReturn("field1");
+            when(path2.toString()).thenReturn("field2");
 
-        assertErrorResponse(responseEntity, HttpStatus.BAD_REQUEST, "constraintViolationException message");
-    }
+            when(violation1.getPropertyPath()).thenReturn(path1);
+            when(violation2.getPropertyPath()).thenReturn(path2);
 
-    private <T> void assertErrorResponse(
-            ResponseEntity<WebResponse<T>> responseEntity,
-            HttpStatus expectedStatus,
-            String expectedErrorMessage
-    ) {
-        assertAll(
-                () -> assertNotNull(responseEntity),
-                () -> assertNotNull(responseEntity.getBody()),
-                () -> assertNull(responseEntity.getBody().data()),
-                () -> assertNull(responseEntity.getBody().paging()),
-                () -> assertNotNull(responseEntity.getBody().errors()),
-                () -> assertEquals(expectedErrorMessage, responseEntity.getBody().errors()),
-                () -> assertEquals(expectedStatus, responseEntity.getStatusCode())
-        );
+            when(violation1.getMessage()).thenReturn("must not be null");
+            when(violation2.getMessage()).thenReturn("must be greater than zero");
+        }
+
+        var violationSet = Set.<ConstraintViolation<?>>of(violation1, violation2);
+
+        var constraintViolationException = new ConstraintViolationException(violationSet);
+
+        var response = errorController.constraintViolationException(constraintViolationException);
+
+        var errors = (Map<String, List<String>>) response.errors();
+        assertEquals(2, errors.size());
+        assertEquals(1, errors.get("field1").size());
+        assertEquals("must not be null", errors.get("field1").get(0));
+        assertEquals(1, errors.get("field2").size());
+        assertEquals("must be greater than zero", errors.get("field2").get(0));
     }
 }
