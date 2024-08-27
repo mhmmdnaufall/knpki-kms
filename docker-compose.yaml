@@ -15,6 +15,7 @@ services:
 
   knpki-kms:
     container_name: knpki-kms
+    restart: unless-stopped
     image: mhmmdnaufal/knpki-kms:2.1.0
     ports:
       - "80:8080"
